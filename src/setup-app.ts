@@ -1,7 +1,10 @@
 import express, { Application } from "express";
-// import { videoRouter } from "./video/router/video.router";
-// import { deleteDbRouter } from "./deleteDb/delete.router";
-// import { routes } from "./core/const/routes";
+import { routes } from "./core/const/routes";
+import {
+  blogsAuthRouter,
+  blogsPublicRouter,
+} from "./entities/blogs/routers/blogs.router";
+import { clearDbRouter } from "./entities/testing/clearDb.router";
 
 export const setupApp = (app: Application) => {
   app.use(express.json());
@@ -10,6 +13,8 @@ export const setupApp = (app: Application) => {
     res.status(200).send("Good luck!");
   });
 
-  // app.use(routes.videos, videoRouter);
-  // app.use(routes.testing, deleteDbRouter);
+  app.use(routes.blogs, blogsPublicRouter);
+  app.use(routes.blogs, blogsAuthRouter);
+
+  app.use(routes.testing, clearDbRouter);
 };
