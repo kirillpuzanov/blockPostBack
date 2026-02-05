@@ -8,7 +8,7 @@ export const getBlogHandler = (
   req: Request<{ id: string }, Blog | null>,
   res: Response,
 ) => {
-  const blog = blogsRepository.getBlog(req.params.id);
+  const blog = blogsRepository.getById(req.params.id);
 
   if (!blog) {
     res
