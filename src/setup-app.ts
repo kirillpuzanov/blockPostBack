@@ -1,8 +1,14 @@
 import express, { Application } from "express";
 import { routes } from "./core/const/routes";
-import { blogsAuthRouter, blogsPublicRouter, } from "./entities/blogs/routers/blogs.router";
+import {
+  blogsAuthRouter,
+  blogsPublicRouter,
+} from "./entities/blogs/routers/blogs.router";
 import { clearDbRouter } from "./entities/testing/clearDb.router";
-import { postsAuthRouter, postsPublicRouter, } from "./entities/posts/routers/posts.router";
+import {
+  postsAuthRouter,
+  postsPublicRouter,
+} from "./entities/posts/routers/posts.router";
 
 export const setupApp = (app: Application) => {
   app.use(express.json());
