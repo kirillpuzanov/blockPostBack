@@ -1,4 +1,5 @@
 import { Blog } from "../entities/blogs/types/blog";
+import { Post } from "../entities/posts/types/post";
 
 export const database = {
   blogs: <Blog[]>[
@@ -16,5 +17,5 @@ export const database = {
     },
   ],
 
-  posts: [],
+  posts: <Post[]>[],
 };

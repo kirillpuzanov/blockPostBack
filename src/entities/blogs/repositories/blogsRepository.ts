@@ -1,4 +1,4 @@
-import { Blog } from "../types/blog.type";
+import { Blog } from "../types/blog";
 import { database } from "../../../db/database";
 
 export const blogsRepository = {
@@ -34,7 +34,9 @@ export const blogsRepository = {
     }
     database.blogs.splice(idx, 1);
 
-    //todo удалять посты связанные с этим блогом ??
+    /** удаляем посты привязанные к этому блогу */
+    const filteredPosts = database.posts.filter((el) => el.blogId !== id);
+    database.posts = filteredPosts;
     return;
   },
 };
