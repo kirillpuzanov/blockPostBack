@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Blog } from "../../types/blog.type";
+import { Blog } from "../../types/blog";
 import { blogsRepository } from "../../repositories/blogsRepository";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { createBaseError } from "../../../../core/utils/baseError";

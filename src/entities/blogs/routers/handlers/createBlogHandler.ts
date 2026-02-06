@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Blog, BlogInputDTO } from "../../types/blog.type";
+import { Blog, BlogInputDTO } from "../../types/blog";
 import { createNewBlog } from "../../utils";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { blogsRepository } from "../../repositories/blogsRepository";

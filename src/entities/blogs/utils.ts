@@ -1,4 +1,4 @@
-import { Blog, BlogInputDTO } from "./types/blog.type";
+import { Blog, BlogInputDTO } from "./types/blog";
 
 export const createNewBlog = (inputBlog: BlogInputDTO): Blog => {
   const id = String(new Date().getTime());
