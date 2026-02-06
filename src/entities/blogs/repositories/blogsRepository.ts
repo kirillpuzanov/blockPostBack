@@ -25,4 +25,16 @@ export const blogsRepository = {
     database.blogs[idx] = updatedBlog;
     return;
   },
+
+  deleteById(id: string) {
+    const idx = database.blogs.findIndex((el) => el.id === id);
+
+    if (idx === -1) {
+      throw new Error("blog for delete not found");
+    }
+    database.blogs.splice(idx, 1);
+
+    //todo удалять посты связанные с этим блогом ??
+    return;
+  },
 };

@@ -6,6 +6,8 @@ import { validationResult } from "../../../core/middlewares/validationResult";
 import { authAdminGuardMiddleware } from "../../../auth/authAdminGuardMiddleware";
 import { createBlogHandler } from "./handlers/createBlogHandler";
 import { updateBlogHandler } from "./handlers/updateBlogHandler";
+import { deleteBlogHandler } from "./handlers/deleteBlogHandler";
+import { inputBlogFieldValidation } from "../validation/inputBlogValidation";
 
 export const blogsPublicRouter = Router({});
 export const blogsAuthRouter = Router({});
@@ -18,7 +20,7 @@ blogsAuthRouter
   .post(
     "",
     authAdminGuardMiddleware,
-    // валидация полей тела
+    inputBlogFieldValidation,
     validationResult,
     createBlogHandler,
   )
@@ -26,7 +28,14 @@ blogsAuthRouter
     "/:id",
     authAdminGuardMiddleware,
     idValidation,
-    // валидация полей тела
+    inputBlogFieldValidation,
     validationResult,
     updateBlogHandler,
+  )
+  .delete(
+    "/:id",
+    authAdminGuardMiddleware,
+    idValidation,
+    validationResult,
+    deleteBlogHandler,
   );
