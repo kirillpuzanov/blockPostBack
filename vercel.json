@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "lessons",
+  "name": "blockpostback",
   "builds": [
     {
       "src": "src/index.ts",
