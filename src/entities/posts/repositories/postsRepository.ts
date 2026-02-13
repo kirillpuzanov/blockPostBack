@@ -1,38 +1,41 @@
-import { database } from "../../../db/database";
-import { Post } from "../types/post";
+import { postCollection } from "../../../db/database";
+import { PostDb, PostInput } from "../types/post";
+import { ObjectId, WithId } from "mongodb";
 
 export const postsRepository = {
-  getAll(): Post[] {
-    return database.posts ?? [];
+  async getAll(): Promise<WithId<PostDb>[]> {
+    return postCollection.find().toArray();
   },
 
-  getById(id: string): Post | null {
-    const res = database.posts.find((el: Post) => el.id === id);
-    return res || null;
+  async getById(id: string): Promise<WithId<PostDb> | null> {
+    return postCollection.findOne({ _id: new ObjectId(id) });
   },
 
-  add(newPost: Post) {
-    database.posts.push(newPost);
-    return newPost;
+  async add(newPost: PostDb): Promise<WithId<PostDb>> {
+    const createdPost = await postCollection.insertOne(newPost);
+    return { ...newPost, _id: createdPost.insertedId };
   },
 
-  update(updatedPost: Post) {
-    const idx = database.posts.findIndex((el) => el.id === updatedPost.id);
+  async update(updatedPost: PostInput, id: string): Promise<void> {
+    const { title, content, blogId, shortDescription } = updatedPost;
 
-    if (idx === -1) {
+    const res = await postCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { title, content, blogId, shortDescription },
+    );
+
+    if (res.matchedCount < 1) {
       throw new Error("Post for update not found");
     }
-    database.posts[idx] = updatedPost;
     return;
   },
 
-  deleteById(id: string) {
-    const idx = database.posts.findIndex((el) => el.id === id);
+  async deleteById(id: string): Promise<void> {
+    const res = await postCollection.deleteOne({ _id: new ObjectId(id) });
 
-    if (idx === -1) {
+    if (res.deletedCount < 1) {
       throw new Error("Post for delete not found");
     }
-    database.posts.splice(idx, 1);
     return;
   },
 };

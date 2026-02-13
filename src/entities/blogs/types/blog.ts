@@ -6,5 +6,7 @@ export type BlogViewModel = {
   createdAt: string;
 };
 
+// todo add   isMembership: boolean in type
+
 export type BlogInput = Omit<BlogViewModel, "id" | "createdAt">;
 export type BlogDb = Omit<BlogViewModel, "id">;
