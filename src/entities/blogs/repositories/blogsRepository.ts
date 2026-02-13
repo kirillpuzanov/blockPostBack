@@ -1,42 +1,43 @@
-import { Blog } from "../types/blog";
-import { database } from "../../../db/database";
+import { BlogDb, BlogInput } from "../types/blog";
+import { ObjectId, WithId } from "mongodb";
+import { blogCollection, postCollection } from "../../../db/database";
 
 export const blogsRepository = {
-  getAll(): Blog[] {
-    return database.blogs ?? [];
+  async getAll(): Promise<WithId<BlogDb>[]> {
+    return blogCollection.find().toArray();
   },
 
-  getById(id: string): Blog | null {
-    const res = database.blogs.find((el: Blog) => el.id === id);
-    return res || null;
+  async getById(id: string): Promise<WithId<BlogDb> | null> {
+    return blogCollection.findOne({ _id: new ObjectId(id) });
   },
 
-  add(newBlog: Blog) {
-    database.blogs.push(newBlog);
-    return newBlog;
+  async add(newBlog: BlogDb): Promise<WithId<BlogDb>> {
+    const createdBlog = await blogCollection.insertOne(newBlog);
+    return { ...newBlog, _id: createdBlog.insertedId };
   },
 
-  update(updatedBlog: Blog) {
-    const idx = database.blogs.findIndex((el) => el.id === updatedBlog.id);
+  async update(updatedBlog: BlogInput, id: string): Promise<void> {
+    const { name, description, websiteUrl } = updatedBlog;
+    const res = await blogCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { name, description, websiteUrl } },
+    );
 
-    if (idx === -1) {
-      throw new Error("blog for update not found");
+    if (res.matchedCount < 1) {
+      throw new Error("blog not found");
     }
-    database.blogs[idx] = updatedBlog;
     return;
   },
 
-  deleteById(id: string) {
-    const idx = database.blogs.findIndex((el) => el.id === id);
+  async deleteById(id: string): Promise<void> {
+    const res = await blogCollection.deleteOne({ _id: new ObjectId(id) });
 
-    if (idx === -1) {
-      throw new Error("blog for delete not found");
+    if (res.deletedCount < 1) {
+      throw new Error("blog not found");
     }
-    database.blogs.splice(idx, 1);
 
     /** удаляем посты привязанные к этому блогу */
-    const filteredPosts = database.posts.filter((el) => el.blogId !== id);
-    database.posts = filteredPosts;
+    await postCollection.deleteMany({ blogId: id });
     return;
   },
 };

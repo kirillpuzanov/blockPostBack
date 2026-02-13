@@ -4,7 +4,7 @@ import { postsRepository } from "../../repositories/postsRepository";
 import { Post, PostInputDTO } from "../../types/post";
 import { createNewPost } from "../../utils";
 import { database } from "../../../../db/database";
-import { Blog } from "../../../blogs/types/blog";
+
 import { createBaseError } from "../../../../core/utils/baseError";
 
 export const createPostHandler = (
@@ -12,7 +12,7 @@ export const createPostHandler = (
   res: Response,
 ) => {
   const { blogId } = req.body;
-  const blog = database.blogs.find((el: Blog) => el.id === blogId);
+  const blog = database.blogs.find((el: any) => el.id === blogId);
 
   if (!blog) {
     res.status(HTTP_STATUS.badRequest).send(

@@ -1,25 +1,28 @@
 import { Request, Response } from "express";
-import { Blog, BlogInputDTO } from "../../types/blog";
+import { BlogInput, BlogViewModel } from "../../types/blog";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { blogsRepository } from "../../repositories/blogsRepository";
 import { createBaseError } from "../../../../core/utils/baseError";
-import { createNewBlog } from "../../utils";
 
-export const updateBlogHandler = (
-  req: Request<{ id: string }, Blog, BlogInputDTO>,
+export const updateBlogHandler = async (
+  req: Request<{ id: string }, BlogViewModel, BlogInput>,
   res: Response,
 ) => {
-  const id = req.params.id;
-  const blog = blogsRepository.getById(id);
+  try {
+    const id = req.params.id;
+    const blog = await blogsRepository.getById(id);
 
-  if (!blog) {
-    res
-      .status(HTTP_STATUS.notFound)
-      .send(createBaseError([{ field: "id", message: "blog not found" }]));
+    if (!blog) {
+      res
+        .status(HTTP_STATUS.notFound)
+        .send(createBaseError([{ field: "id", message: "blog not found" }]));
+    }
+    const { name, description, websiteUrl } = req.body;
+    await blogsRepository.update({ name, description, websiteUrl }, id);
+
+    res.sendStatus(HTTP_STATUS.noContent);
+    return;
+  } catch {
+    res.sendStatus(HTTP_STATUS.serverError);
   }
-  const updatedBlog = { ...createNewBlog(req.body), id };
-  blogsRepository.update(updatedBlog);
-
-  res.sendStatus(HTTP_STATUS.noContent);
-  return;
 };
