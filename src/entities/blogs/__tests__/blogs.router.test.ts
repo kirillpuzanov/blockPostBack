@@ -3,6 +3,8 @@ import express from "express";
 import { setupApp } from "../../../setup-app";
 import { HTTP_STATUS } from "../../../core/const/statuses";
 import { routes } from "../../../core/const/routes";
+import { runDb } from "../../../db/database";
+import { SETTINGS } from "../../../core/settings/settings";
 
 const testAuthHeader = {
   Authorization: "Basic YWRtaW46cXdlcnR5",
@@ -19,6 +21,7 @@ describe("Blogs API", () => {
   };
 
   beforeAll(async () => {
+    await runDb(SETTINGS.MONGO_URL);
     await request(app).delete(routes.testing).expect(HTTP_STATUS.noContent);
   });
 

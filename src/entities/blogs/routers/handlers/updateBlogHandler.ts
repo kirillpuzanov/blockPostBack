@@ -17,8 +17,11 @@ export const updateBlogHandler = async (
         .status(HTTP_STATUS.notFound)
         .send(createBaseError([{ field: "id", message: "blog not found" }]));
     }
-    const { name, description, websiteUrl } = req.body;
-    await blogsRepository.update({ name, description, websiteUrl }, id);
+    const { name, description, websiteUrl, isMembership } = req.body;
+    await blogsRepository.update(
+      { name, description, websiteUrl, isMembership },
+      id,
+    );
 
     res.sendStatus(HTTP_STATUS.noContent);
     return;
