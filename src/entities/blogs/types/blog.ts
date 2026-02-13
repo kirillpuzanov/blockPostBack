@@ -7,5 +7,8 @@ export type BlogViewModel = {
   isMembership: boolean;
 };
 
-export type BlogInput = Omit<BlogViewModel, "id" | "createdAt">;
+export type BlogInput = Omit<
+  BlogViewModel,
+  "id" | "createdAt" | "isMembership"
+>;
 export type BlogDb = Omit<BlogViewModel, "id">;
