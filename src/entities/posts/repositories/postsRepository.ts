@@ -21,7 +21,7 @@ export const postsRepository = {
 
     const res = await postCollection.updateOne(
       { _id: new ObjectId(id) },
-      { title, content, blogId, shortDescription },
+      { $set: { title, content, blogId, shortDescription } },
     );
 
     if (res.matchedCount < 1) {
