@@ -1,57 +1,45 @@
 import request from "supertest";
 import express from "express";
 import { setupApp } from "../../../setup-app";
-import { createNewBlog } from "../utils";
 import { HTTP_STATUS } from "../../../core/const/statuses";
 import { routes } from "../../../core/const/routes";
+import { runDb } from "../../../db/database";
+import { SETTINGS } from "../../../core/settings/settings";
+import { generateAuthHeader } from "../../../core/utils/generateAuthHeader";
+import { createBlog } from "./blogTestUtils";
 
-const testAuthHeader = {
-  Authorization: "Basic YWRtaW46cXdlcnR5",
-};
+const testAuthHeader = generateAuthHeader();
 
 describe("Blogs API", () => {
   const app = express();
   setupApp(app);
 
-  const newCorrectBlog = createNewBlog({
+  const newCorrectBlog = {
     name: "name blog",
     description: "test description",
     websiteUrl: "https://test.com",
-  });
+  };
 
   beforeAll(async () => {
+    await runDb(SETTINGS.MONGO_URL);
     await request(app).delete(routes.testing).expect(HTTP_STATUS.noContent);
   });
 
   it("should get all blogs", async () => {
-    const firstBlog = await request(app)
-      .post(routes.blogs)
-      .set(testAuthHeader)
-      .send(newCorrectBlog)
-      .expect(HTTP_STATUS.created);
-
-    const secondBlog = await request(app)
-      .post(routes.blogs)
-      .set(testAuthHeader)
-      .send(newCorrectBlog)
-      .expect(HTTP_STATUS.created);
+    const firstBlog = await createBlog(app, newCorrectBlog);
+    const secondBlog = await createBlog(app, newCorrectBlog);
 
     const allBlogs = await request(app)
       .get(routes.blogs)
       .expect(HTTP_STATUS.ok);
 
-    expect(allBlogs.body[0].id).toBe(firstBlog.body.id);
-    expect(allBlogs.body[1].id).toBe(secondBlog.body.id);
+    expect(allBlogs.body[0].id).toBe(firstBlog.id);
+    expect(allBlogs.body[1].id).toBe(secondBlog.id);
   });
 
   it("should get blog by id and update him", async () => {
-    const newBlog = await request(app)
-      .post(routes.blogs)
-      .set(testAuthHeader)
-      .send(newCorrectBlog)
-      .expect(HTTP_STATUS.created);
-
-    const blogId = newBlog.body.id;
+    const newBlog = await createBlog(app, newCorrectBlog);
+    const blogId = newBlog.id;
 
     await request(app)
       .get(`${routes.blogs}/${blogId}`)
@@ -70,23 +58,24 @@ describe("Blogs API", () => {
       .send(updateField)
       .expect(HTTP_STATUS.noContent);
 
-    const updateBlog = await request(app)
+    const updatedBlog = await request(app)
       .get(`${routes.blogs}/${blogId}`)
       .send(newCorrectBlog)
       .expect(HTTP_STATUS.ok);
 
-    expect(updateBlog.body).toEqual({ id: blogId, ...updateField });
+    expect(updatedBlog.body).toEqual({
+      id: blogId,
+      createdAt: newBlog.createdAt,
+      isMembership: newBlog.isMembership,
+      ...updateField,
+    });
   });
 
   it("should success delete blog", async () => {
-    const newBlog = await request(app)
-      .post(routes.blogs)
-      .set(testAuthHeader)
-      .send(newCorrectBlog)
-      .expect(HTTP_STATUS.created);
+    const newBlog = await createBlog(app, newCorrectBlog);
 
     await request(app)
-      .delete(`${routes.blogs}/${newBlog.body.id}`)
+      .delete(`${routes.blogs}/${newBlog.id}`)
       .set(testAuthHeader)
       .expect(HTTP_STATUS.noContent);
   });
@@ -105,14 +94,10 @@ describe("Blogs API", () => {
   });
 
   it("should not update if not validField body", async () => {
-    const newBlog = await request(app)
-      .post(routes.blogs)
-      .set(testAuthHeader)
-      .send(newCorrectBlog)
-      .expect(HTTP_STATUS.created);
+    const newBlog = await createBlog(app, newCorrectBlog);
 
     const updated = await request(app)
-      .put(`${routes.blogs}/${newBlog.body.id}`)
+      .put(`${routes.blogs}/${newBlog.id}`)
       .set(testAuthHeader)
       .send({
         ...newCorrectBlog,

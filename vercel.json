@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "lessons",
+  "name": "blockpostback",
   "builds": [
     {
       "src": "src/index.ts",
@@ -12,5 +12,10 @@
       "src": "/(.*)",
       "dest": "src/index.ts"
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "develop": false
+    }
+  }
 }
