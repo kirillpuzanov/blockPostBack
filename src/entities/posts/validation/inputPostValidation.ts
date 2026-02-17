@@ -34,3 +34,9 @@ export const inputPostFieldValidation = [
   contentValidation,
   blogIdValidation,
 ];
+
+export const inputPostByBlogFieldValidation = [
+  titleValidation,
+  shortDescriptionValidation,
+  contentValidation,
+];

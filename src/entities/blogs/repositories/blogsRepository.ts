@@ -1,6 +1,7 @@
 import { BlogDb, BlogInput } from "../types/blog";
 import { ObjectId, WithId } from "mongodb";
 import { blogCollection, postCollection } from "../../../db/database";
+import { PostDb } from "../../posts/types/post";
 
 export const blogsRepository = {
   async getAll(): Promise<WithId<BlogDb>[]> {
@@ -9,6 +10,10 @@ export const blogsRepository = {
 
   async getById(id: string): Promise<WithId<BlogDb> | null> {
     return blogCollection.findOne({ _id: new ObjectId(id) });
+  },
+
+  async getPostsByBlog(blogId: string): Promise<WithId<PostDb>[]> {
+    return postCollection.find({ blogId }).toArray();
   },
 
   async add(newBlog: BlogDb): Promise<WithId<BlogDb>> {
@@ -26,6 +31,12 @@ export const blogsRepository = {
     if (res.matchedCount < 1) {
       throw new Error("blog not found");
     }
+
+    /** обновим имя блога в привязанных к нему постах */
+    await postCollection.updateMany(
+      { blogId: id },
+      { $set: { blogName: name } },
+    );
     return;
   },
 
