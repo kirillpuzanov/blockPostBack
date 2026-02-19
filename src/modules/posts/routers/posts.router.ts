@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authAdminGuardMiddleware } from "../../../auth/authAdminGuardMiddleware";
 import { validationResult } from "../../../core/middlewares/validationResult";
-import { idValidation } from "../../../core/middlewares/idValidation";
+import { handleIdValidation } from "../../../core/middlewares/idValidation";
 import { getPostHandler } from "./handlers/getPostHandler";
 import { getPostsHandler } from "./handlers/getPostsHandler";
 import { createPostHandler } from "./handlers/createPostHandler";
@@ -14,7 +14,7 @@ export const postsAuthRouter = Router({});
 
 postsPublicRouter
   .get("", getPostsHandler)
-  .get("/:id", idValidation, validationResult, getPostHandler);
+  .get("/:id", handleIdValidation(), validationResult, getPostHandler);
 
 postsAuthRouter
   .post(
@@ -27,7 +27,7 @@ postsAuthRouter
   .put(
     "/:id",
     authAdminGuardMiddleware,
-    idValidation,
+    handleIdValidation(),
     inputPostFieldValidation,
     validationResult,
     updatePostHandler,
@@ -35,7 +35,7 @@ postsAuthRouter
   .delete(
     "/:id",
     authAdminGuardMiddleware,
-    idValidation,
+    handleIdValidation(),
     validationResult,
     deletePostHandler,
   );

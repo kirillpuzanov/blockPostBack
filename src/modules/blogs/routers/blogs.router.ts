@@ -1,10 +1,7 @@
 import { Router } from "express";
 import { getBlogsHandler } from "./handlers/getBlogsHandler";
 import { getBlogHandler } from "./handlers/getBlogHandler";
-import {
-  blogIdValidation,
-  idValidation,
-} from "../../../core/middlewares/idValidation";
+import { handleIdValidation } from "../../../core/middlewares/idValidation";
 import { validationResult } from "../../../core/middlewares/validationResult";
 import { authAdminGuardMiddleware } from "../../../auth/authAdminGuardMiddleware";
 import { createBlogHandler } from "./handlers/createBlogHandler";
@@ -20,10 +17,10 @@ export const blogsAuthRouter = Router({});
 
 blogsPublicRouter
   .get("", getBlogsHandler)
-  .get("/:id", idValidation, validationResult, getBlogHandler)
+  .get("/:id", handleIdValidation(), validationResult, getBlogHandler)
   .get(
     "/:blogId/posts",
-    blogIdValidation,
+    handleIdValidation("blogId"),
     validationResult,
     getBlogPostsHandler,
   );
@@ -39,7 +36,7 @@ blogsAuthRouter
   .post(
     "/:blogId/posts",
     authAdminGuardMiddleware,
-    blogIdValidation,
+    handleIdValidation("blogId"),
     inputPostByBlogFieldValidation,
     validationResult,
     createBlogPostHandler,
@@ -47,7 +44,7 @@ blogsAuthRouter
   .put(
     "/:id",
     authAdminGuardMiddleware,
-    idValidation,
+    handleIdValidation(),
     inputBlogFieldValidation,
     validationResult,
     updateBlogHandler,
@@ -55,7 +52,7 @@ blogsAuthRouter
   .delete(
     "/:id",
     authAdminGuardMiddleware,
-    idValidation,
+    handleIdValidation(),
     validationResult,
     deleteBlogHandler,
   );

@@ -3,12 +3,12 @@ import { routes } from "./core/const/routes";
 import {
   blogsAuthRouter,
   blogsPublicRouter,
-} from "./entities/blogs/routers/blogs.router";
-import { clearDbRouter } from "./entities/testing/clearDb.router";
+} from "./modules/blogs/routers/blogs.router";
+import { clearDbRouter } from "./modules/testing/clearDb.router";
 import {
   postsAuthRouter,
   postsPublicRouter,
-} from "./entities/posts/routers/posts.router";
+} from "./modules/posts/routers/posts.router";
 
 export const setupApp = (app: Application) => {
   app.use(express.json());

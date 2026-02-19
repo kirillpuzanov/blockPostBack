@@ -1,7 +1,7 @@
-import { BlogDb } from "../entities/blogs/types/blog";
+import { BlogDb } from "../modules/blogs/types/blog";
 import { Collection, MongoClient } from "mongodb";
 import { SETTINGS } from "../core/settings/settings";
-import { PostDb } from "../entities/posts/types/post";
+import { PostDb } from "../modules/posts/types/post";
 
 const BLOGS_COLLECTION_NAME = "blogs";
 const POSTS_COLLECTION_NAME = "posts";
