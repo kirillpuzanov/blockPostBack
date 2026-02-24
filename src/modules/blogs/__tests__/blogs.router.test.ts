@@ -3,7 +3,7 @@ import express from "express";
 import { setupApp } from "../../../setup-app";
 import { HTTP_STATUS } from "../../../core/const/statuses";
 import { routes } from "../../../core/const/routes";
-import { runDb } from "../../../db/database";
+import { runDb, stopDb } from "../../../db/database";
 import { SETTINGS } from "../../../core/settings/settings";
 import { generateAuthHeader } from "../../../core/utils/generateAuthHeader";
 import { createBlog } from "./blogTestUtils";
@@ -23,6 +23,10 @@ describe("Blogs API", () => {
   beforeAll(async () => {
     await runDb(SETTINGS.MONGO_URL);
     await request(app).delete(routes.testing).expect(HTTP_STATUS.noContent);
+  });
+
+  afterAll(async () => {
+    await stopDb();
   });
 
   it("should get all blogs", async () => {
@@ -78,6 +82,19 @@ describe("Blogs API", () => {
       .delete(`${routes.blogs}/${newBlog.id}`)
       .set(testAuthHeader)
       .expect(HTTP_STATUS.noContent);
+  });
+
+  it("should error delete if block not found", async () => {
+    const newBlog = await createBlog(app, newCorrectBlog);
+    const notFoundId = newBlog.id.split("").reverse().join("");
+
+    const deleteResponse = await request(app)
+      .delete(`${routes.blogs}/${notFoundId}`)
+      .set(testAuthHeader)
+      .expect(HTTP_STATUS.notFound);
+    expect(deleteResponse.body).toEqual({
+      errorsMessages: [{ field: "id", message: "blog not found" }],
+    });
   });
 
   it("should not create if not validField body", async () => {

@@ -26,3 +26,7 @@ export const runDb = async (dbUrl: string) => {
     throw new Error("!!  error connection DB  !!");
   }
 };
+
+export const stopDb = async () => {
+  await client.close();
+};

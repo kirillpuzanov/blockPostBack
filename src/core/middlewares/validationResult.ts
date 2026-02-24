@@ -6,7 +6,7 @@ import {
 } from "express-validator";
 import { BaseError } from "../types/baseError";
 import { HTTP_STATUS } from "../const/statuses";
-import { createBaseError } from "../utils/baseError";
+import { createErrorMessages } from "../errors/errorHandler";
 
 const errorFormat = (error: ValidationError): BaseError => {
   const e = error as unknown as FieldValidationError;
@@ -26,7 +26,7 @@ export const validationResult = (
     .array({ onlyFirstError: true });
 
   if (!!errors?.length) {
-    res.status(HTTP_STATUS.badRequest).send(createBaseError(errors));
+    res.status(HTTP_STATUS.badRequest).send(createErrorMessages(errors));
   }
   next();
 };

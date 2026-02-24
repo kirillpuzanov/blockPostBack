@@ -1,6 +1,7 @@
 import { postCollection } from "../../../db/database";
 import { PostDb, PostInput } from "../types/post";
 import { ObjectId, WithId } from "mongodb";
+import { NotFoundError } from "../../../core/errors/errorHandler";
 
 export const postsRepository = {
   async getAll(): Promise<WithId<PostDb>[]> {
@@ -25,7 +26,7 @@ export const postsRepository = {
     );
 
     if (res.matchedCount < 1) {
-      throw new Error("Post for update not found");
+      throw new NotFoundError("not found for update", "post");
     }
     return;
   },
@@ -34,7 +35,7 @@ export const postsRepository = {
     const res = await postCollection.deleteOne({ _id: new ObjectId(id) });
 
     if (res.deletedCount < 1) {
-      throw new Error("Post for delete not found");
+      throw new NotFoundError("not found for delete", "post");
     }
     return;
   },

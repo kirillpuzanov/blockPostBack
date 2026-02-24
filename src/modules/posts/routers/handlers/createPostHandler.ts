@@ -2,10 +2,12 @@ import { Request, Response } from "express";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { postsRepository } from "../../repositories/postsRepository";
 import { PostDb, PostInput, PostViewModel } from "../../types/post";
-
-import { createBaseError } from "../../../../core/utils/baseError";
 import { blogsRepository } from "../../../blogs/repositories/blogsRepository";
 import { mapToPostView } from "../mappers/mapToPostView";
+import {
+  errorHandler,
+  NotFoundError,
+} from "../../../../core/errors/errorHandler";
 
 export const createPostHandler = async (
   req: Request<{}, PostViewModel, PostInput>,
@@ -16,15 +18,7 @@ export const createPostHandler = async (
     const blog = await blogsRepository.getById(blogId);
 
     if (!blog) {
-      res.status(HTTP_STATUS.badRequest).send(
-        createBaseError([
-          {
-            field: "blogId",
-            message: "blog not found",
-          },
-        ]),
-      );
-      return;
+      throw new NotFoundError("blog not found", "blogId");
     }
     const { content, shortDescription, title } = req.body;
     const newPost: PostDb = {
@@ -39,7 +33,7 @@ export const createPostHandler = async (
     const postView = mapToPostView(createdPost);
 
     res.status(HTTP_STATUS.created).send(postView);
-  } catch {
-    res.sendStatus(HTTP_STATUS.serverError);
+  } catch (error) {
+    errorHandler(error, res);
   }
 };

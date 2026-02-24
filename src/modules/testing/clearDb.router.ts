@@ -1,6 +1,7 @@
 import { Response, Router } from "express";
 import { blogCollection, postCollection } from "../../db/database";
 import { HTTP_STATUS } from "../../core/const/statuses";
+import { errorHandler } from "../../core/errors/errorHandler";
 
 export const clearDbRouter = Router({});
 
@@ -11,7 +12,7 @@ clearDbRouter.delete("", async (_, res: Response) => {
       postCollection.deleteMany(),
     ]);
     res.sendStatus(HTTP_STATUS.noContent);
-  } catch {
-    res.sendStatus(HTTP_STATUS.serverError);
+  } catch (error) {
+    errorHandler(error, res);
   }
 });

@@ -2,7 +2,10 @@ import { Request, Response } from "express";
 import { BlogInput, BlogViewModel } from "../../types/blog";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { blogsRepository } from "../../repositories/blogsRepository";
-import { createBaseError } from "../../../../core/utils/baseError";
+import {
+  errorHandler,
+  NotFoundError,
+} from "../../../../core/errors/errorHandler";
 
 export const updateBlogHandler = async (
   req: Request<{ id: string }, BlogViewModel, BlogInput>,
@@ -13,9 +16,7 @@ export const updateBlogHandler = async (
     const blog = await blogsRepository.getById(id);
 
     if (!blog) {
-      res
-        .status(HTTP_STATUS.notFound)
-        .send(createBaseError([{ field: "id", message: "blog not found" }]));
+      throw new NotFoundError("blog not found", "id");
     }
     const { name, description, websiteUrl } = req.body;
 
@@ -23,7 +24,7 @@ export const updateBlogHandler = async (
 
     res.sendStatus(HTTP_STATUS.noContent);
     return;
-  } catch {
-    res.sendStatus(HTTP_STATUS.serverError);
+  } catch (error) {
+    errorHandler(error, res);
   }
 };

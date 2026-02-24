@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import { postsRepository } from "../../repositories/postsRepository";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
-import { createBaseError } from "../../../../core/utils/baseError";
+import {
+  errorHandler,
+  NotFoundError,
+} from "../../../../core/errors/errorHandler";
 
 export const deletePostHandler = async (
   req: Request<{ id: string }>,
@@ -12,15 +15,12 @@ export const deletePostHandler = async (
     const post = await postsRepository.getById(id);
 
     if (!post) {
-      res
-        .status(HTTP_STATUS.notFound)
-        .send(createBaseError([{ field: "id", message: "post not found" }]));
-      return;
+      throw new NotFoundError("post not found", "id");
     }
     await postsRepository.deleteById(id);
     res.sendStatus(HTTP_STATUS.noContent);
     return;
-  } catch {
-    res.sendStatus(HTTP_STATUS.serverError);
+  } catch (error) {
+    errorHandler(error, res);
   }
 };

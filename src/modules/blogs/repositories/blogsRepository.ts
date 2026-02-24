@@ -2,6 +2,7 @@ import { BlogDb, BlogInput } from "../types/blog";
 import { ObjectId, WithId } from "mongodb";
 import { blogCollection, postCollection } from "../../../db/database";
 import { PostDb } from "../../posts/types/post";
+import { NotFoundError } from "../../../core/errors/errorHandler";
 
 export const blogsRepository = {
   async getAll(): Promise<WithId<BlogDb>[]> {
@@ -29,7 +30,7 @@ export const blogsRepository = {
     );
 
     if (res.matchedCount < 1) {
-      throw new Error("blog not found");
+      throw new NotFoundError("not found", "blog");
     }
 
     /** обновим имя блога в привязанных к нему постах */
@@ -44,7 +45,7 @@ export const blogsRepository = {
     const res = await blogCollection.deleteOne({ _id: new ObjectId(id) });
 
     if (res.deletedCount < 1) {
-      throw new Error("blog not found");
+      throw new NotFoundError("not found", "blog");
     }
 
     /** удаляем посты привязанные к этому блогу */
