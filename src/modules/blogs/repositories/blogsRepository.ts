@@ -1,12 +1,33 @@
-import { BlogDb, BlogInput } from "../types/blog";
+import { BlogDb, BlogInput, BlogQueryInput } from "../types/blog";
 import { ObjectId, WithId } from "mongodb";
 import { blogCollection, postCollection } from "../../../db/database";
 import { PostDb } from "../../posts/types/post";
 import { NotFoundError } from "../../../core/errors/errorHandler";
 
 export const blogsRepository = {
-  async getAll(): Promise<WithId<BlogDb>[]> {
-    return blogCollection.find().toArray();
+  async getAll(
+    query: BlogQueryInput,
+  ): Promise<{ blogs: WithId<BlogDb>[]; totalCount: number }> {
+    const { pageNumber, pageSize, sortBy, sortDirection, searchNameTerm } =
+      query;
+
+    const skip = (pageNumber - 1) * pageSize;
+    const filter: Record<string, object> = {};
+
+    if (searchNameTerm) {
+      filter.name = { $regex: searchNameTerm, $options: "i" };
+    }
+
+    const blogs = await blogCollection
+      .find(filter)
+      .sort([sortBy, sortDirection])
+      .skip(skip)
+      .limit(pageSize)
+      .toArray();
+
+    const totalCount = await blogCollection.countDocuments(filter);
+
+    return { blogs, totalCount };
   },
 
   async getById(id: string): Promise<WithId<BlogDb> | null> {

@@ -1,3 +1,5 @@
+import { PageAndSort } from "../../../core/types/pageAndSort";
+
 export type BlogViewModel = {
   id: string;
   name: string;
@@ -11,4 +13,18 @@ export type BlogInput = Omit<
   BlogViewModel,
   "id" | "createdAt" | "isMembership"
 >;
+
 export type BlogDb = Omit<BlogViewModel, "id">;
+
+export enum BlogSortFields {
+  createdAt = "createdAt",
+  name = "name",
+}
+
+export enum PostBlogSortFields {
+  createdAt = "createdAt",
+}
+
+export type BlogQueryInput = PageAndSort<BlogSortFields> & {
+  searchNameTerm?: string;
+};

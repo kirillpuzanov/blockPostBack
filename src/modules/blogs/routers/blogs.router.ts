@@ -11,16 +11,24 @@ import { getBlogPostsHandler } from "./handlers/getBlogPostsHandler";
 import { inputBlogFieldValidation } from "../validation/inputBlogValidation";
 import { inputPostByBlogFieldValidation } from "../../posts/validation/inputPostValidation";
 import { createBlogPostHandler } from "./handlers/createBlogPostHandler";
+import { pageSortValidation } from "../../../core/middlewares/pageSortValidation";
+import { BlogSortFields, PostBlogSortFields } from "../types/blog";
 
 export const blogsPublicRouter = Router({});
 export const blogsAuthRouter = Router({});
 
 blogsPublicRouter
-  .get("", getBlogsHandler)
+  .get(
+    "",
+    pageSortValidation(BlogSortFields),
+    validationResult,
+    getBlogsHandler,
+  )
   .get("/:id", handleIdValidation(), validationResult, getBlogHandler)
   .get(
     "/:blogId/posts",
     handleIdValidation("blogId"),
+    pageSortValidation(PostBlogSortFields),
     validationResult,
     getBlogPostsHandler,
   );
