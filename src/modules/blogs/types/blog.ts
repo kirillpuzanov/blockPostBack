@@ -21,6 +21,10 @@ export enum BlogSortFields {
   name = "name",
 }
 
+export enum PostsByBlogSortFields {
+  createdAt = "createdAt",
+}
+
 export enum PostBlogSortFields {
   createdAt = "createdAt",
 }
@@ -28,3 +32,5 @@ export enum PostBlogSortFields {
 export type BlogQueryInput = PageAndSort<BlogSortFields> & {
   searchNameTerm?: string;
 };
+
+export type PostsByBlogQueryInput = PageAndSort<PostsByBlogSortFields>;

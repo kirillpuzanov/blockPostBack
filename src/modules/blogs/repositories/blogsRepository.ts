@@ -1,4 +1,9 @@
-import { BlogDb, BlogInput, BlogQueryInput } from "../types/blog";
+import {
+  BlogDb,
+  BlogInput,
+  BlogQueryInput,
+  PostsByBlogQueryInput,
+} from "../types/blog";
 import { ObjectId, WithId } from "mongodb";
 import { blogCollection, postCollection } from "../../../db/database";
 import { PostDb } from "../../posts/types/post";
@@ -34,8 +39,23 @@ export const blogsRepository = {
     return blogCollection.findOne({ _id: new ObjectId(id) });
   },
 
-  async getPostsByBlog(blogId: string): Promise<WithId<PostDb>[]> {
-    return postCollection.find({ blogId }).toArray();
+  async getPostsByBlog(
+    blogId: string,
+    query: PostsByBlogQueryInput,
+  ): Promise<{ postsByBlog: WithId<PostDb>[]; totalCount: number }> {
+    const { pageNumber, pageSize, sortBy, sortDirection } = query;
+
+    const skip = (pageNumber - 1) * pageSize;
+
+    const postsByBlog = await postCollection
+      .find({ blogId })
+      .sort([sortBy, sortDirection])
+      .skip(skip)
+      .limit(pageSize)
+      .toArray();
+    const totalCount = await postCollection.countDocuments({ blogId });
+
+    return { postsByBlog, totalCount };
   },
 
   async add(newBlog: BlogDb): Promise<WithId<BlogDb>> {

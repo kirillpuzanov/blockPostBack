@@ -27,10 +27,10 @@ export const pageSortValidation = <T extends string>(
       .default(DEFAULT_SORT_BY)
       .isString()
       .isIn(sortedFields)
-      .withMessage(`sortBy must be one of ${sortedFields.join(",")}`),
+      .withMessage(`sortBy must be one of: ${sortedFields.join(",")}`),
     query("sortDirection")
       .default(DEFAULT_SORT_DIRECTION)
       .isIn(directions)
-      .withMessage(`sortDirection must be one of ${directions.join(",")}`),
+      .withMessage(`sortDirection must be one of: ${directions.join(",")}`),
   ];
 };

@@ -7,7 +7,7 @@ import { authAdminGuardMiddleware } from "../../../auth/authAdminGuardMiddleware
 import { createBlogHandler } from "./handlers/createBlogHandler";
 import { updateBlogHandler } from "./handlers/updateBlogHandler";
 import { deleteBlogHandler } from "./handlers/deleteBlogHandler";
-import { getBlogPostsHandler } from "./handlers/getBlogPostsHandler";
+import { getPostsByBlogHandler } from "./handlers/getPostsByBlogHandler";
 import { inputBlogFieldValidation } from "../validation/inputBlogValidation";
 import { inputPostByBlogFieldValidation } from "../../posts/validation/inputPostValidation";
 import { createBlogPostHandler } from "./handlers/createBlogPostHandler";
@@ -30,7 +30,7 @@ blogsPublicRouter
     handleIdValidation("blogId"),
     pageSortValidation(PostBlogSortFields),
     validationResult,
-    getBlogPostsHandler,
+    getPostsByBlogHandler,
   );
 
 blogsAuthRouter

@@ -3,22 +3,16 @@ import { blogsRepository } from "../../repositories/blogsRepository";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { mapToBlogView } from "../mappers/mapToBlogView";
 import { errorHandler } from "../../../../core/errors/errorHandler";
-import { matchedData } from "express-validator";
-import { BlogQueryInput } from "../../types/blog";
 import { getPaginatedOutput } from "../../../../core/utils/getPaginatedOutput";
+import { getMatchedQuery } from "../../../../core/utils/getMatchedQuery";
+import { BlogQueryInput } from "../../types/blog";
 
 export const getBlogsHandler = async (req: Request, res: Response) => {
   try {
-    const matchedQuery = matchedData<BlogQueryInput>(req, {
-      locations: ["query"],
-      includeOptionals: true,
-    });
+    const matchedQuery = getMatchedQuery<BlogQueryInput>(req);
     const { pageNumber, pageSize } = matchedQuery;
 
-    const { blogs, totalCount } = await blogsRepository.getAll({
-      ...req.query,
-      ...matchedQuery,
-    });
+    const { blogs, totalCount } = await blogsRepository.getAll(matchedQuery);
 
     const blogsView = blogs.map((el) => mapToBlogView(el));
     const output = getPaginatedOutput(blogsView, {
