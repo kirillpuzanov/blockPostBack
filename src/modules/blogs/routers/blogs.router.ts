@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { getBlogsHandler } from "./handlers/getBlogsHandler";
 import { getBlogHandler } from "./handlers/getBlogHandler";
-import { handleIdValidation } from "../../../core/middlewares/idValidation";
+import {
+  handleBlogIdValidation,
+  handleIdValidation,
+} from "../../../core/middlewares/idValidation";
 import { validationResult } from "../../../core/middlewares/validationResult";
 import { authAdminGuardMiddleware } from "../../../auth/authAdminGuardMiddleware";
 import { createBlogHandler } from "./handlers/createBlogHandler";
@@ -24,10 +27,10 @@ blogsPublicRouter
     validationResult,
     getBlogsHandler,
   )
-  .get("/:id", handleIdValidation(), validationResult, getBlogHandler)
+  .get("/:id", handleIdValidation, validationResult, getBlogHandler)
   .get(
     "/:blogId/posts",
-    handleIdValidation("blogId"),
+    handleBlogIdValidation,
     pageSortValidation(PostBlogSortFields),
     validationResult,
     getPostsByBlogHandler,
@@ -44,7 +47,7 @@ blogsAuthRouter
   .post(
     "/:blogId/posts",
     authAdminGuardMiddleware,
-    handleIdValidation("blogId"),
+    handleBlogIdValidation,
     inputPostByBlogFieldValidation,
     validationResult,
     createBlogPostHandler,
@@ -52,7 +55,7 @@ blogsAuthRouter
   .put(
     "/:id",
     authAdminGuardMiddleware,
-    handleIdValidation(),
+    handleIdValidation,
     inputBlogFieldValidation,
     validationResult,
     updateBlogHandler,
@@ -60,7 +63,7 @@ blogsAuthRouter
   .delete(
     "/:id",
     authAdminGuardMiddleware,
-    handleIdValidation(),
+    handleIdValidation,
     validationResult,
     deleteBlogHandler,
   );

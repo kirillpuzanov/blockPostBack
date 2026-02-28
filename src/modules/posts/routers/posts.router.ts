@@ -21,7 +21,7 @@ postsPublicRouter
     validationResult,
     getPostsHandler,
   )
-  .get("/:id", handleIdValidation(), validationResult, getPostHandler);
+  .get("/:id", handleIdValidation, validationResult, getPostHandler);
 
 postsAuthRouter
   .post(
@@ -34,7 +34,7 @@ postsAuthRouter
   .put(
     "/:id",
     authAdminGuardMiddleware,
-    handleIdValidation(),
+    handleIdValidation,
     inputPostFieldValidation,
     validationResult,
     updatePostHandler,
@@ -42,7 +42,7 @@ postsAuthRouter
   .delete(
     "/:id",
     authAdminGuardMiddleware,
-    handleIdValidation(),
+    handleIdValidation,
     validationResult,
     deletePostHandler,
   );
