@@ -37,8 +37,8 @@ describe("Blogs API", () => {
       .get(routes.blogs)
       .expect(HTTP_STATUS.ok);
 
-    expect(allBlogs.body[0].id).toBe(firstBlog.id);
-    expect(allBlogs.body[1].id).toBe(secondBlog.id);
+    expect(allBlogs.body.items[0].id).toBe(secondBlog.id);
+    expect(allBlogs.body.items[1].id).toBe(firstBlog.id);
   });
 
   it("should get blog by id and update him", async () => {
