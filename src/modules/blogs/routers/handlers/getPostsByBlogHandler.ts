@@ -9,9 +9,10 @@ import {
 } from "../../../../core/errors/errorHandler";
 import { getMatchedQuery } from "../../../../core/utils/getMatchedQuery";
 import { getPaginatedOutput } from "../../../../core/utils/getPaginatedOutput";
+import { PageAndSort } from "../../../../core/types/pageAndSort";
 
 export const getPostsByBlogHandler = async (
-  req: Request<{ blogId: string }, BlogViewModel, {}>,
+  req: Request<{ blogId: string }, PageAndSort<BlogViewModel>, {}>,
   res: Response,
 ) => {
   try {
