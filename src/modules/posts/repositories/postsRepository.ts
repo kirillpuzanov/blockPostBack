@@ -1,11 +1,25 @@
 import { postCollection } from "../../../db/database";
-import { PostDb, PostInput } from "../types/post";
+import { PostDb, PostInput, PostsQueryInput } from "../types/post";
 import { ObjectId, WithId } from "mongodb";
 import { NotFoundError } from "../../../core/errors/errorHandler";
 
 export const postsRepository = {
-  async getAll(): Promise<WithId<PostDb>[]> {
-    return postCollection.find().toArray();
+  async getAll(
+    query: PostsQueryInput,
+  ): Promise<{ posts: WithId<PostDb>[]; totalCount: number }> {
+    const { pageNumber, pageSize, sortBy, sortDirection } = query;
+
+    const skip = (pageNumber - 1) * pageSize;
+
+    const posts = await postCollection
+      .find()
+      .sort([sortBy, sortDirection])
+      .skip(skip)
+      .limit(pageSize)
+      .toArray();
+
+    const totalCount = await postCollection.countDocuments();
+    return { posts, totalCount };
   },
 
   async getById(id: string): Promise<WithId<PostDb> | null> {

@@ -1,3 +1,5 @@
+import { PageAndSort } from "../../../core/types/pageAndSort";
+
 export type PostViewModel = {
   id: string;
   title: string;
@@ -10,3 +12,9 @@ export type PostViewModel = {
 
 export type PostInput = Omit<PostViewModel, "id" | "blogName" | "createdAt">;
 export type PostDb = Omit<PostViewModel, "id">;
+
+export enum PostSortFields {
+  createdAt = "createdAt",
+}
+
+export type PostsQueryInput = PageAndSort<PostSortFields>;

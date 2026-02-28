@@ -8,12 +8,19 @@ import { createPostHandler } from "./handlers/createPostHandler";
 import { updatePostHandler } from "./handlers/updatePostHandler";
 import { deletePostHandler } from "./handlers/deletePostHandler";
 import { inputPostFieldValidation } from "../validation/inputPostValidation";
+import { pageSortValidation } from "../../../core/middlewares/pageSortValidation";
+import { PostSortFields } from "../types/post";
 
 export const postsPublicRouter = Router({});
 export const postsAuthRouter = Router({});
 
 postsPublicRouter
-  .get("", getPostsHandler)
+  .get(
+    "",
+    pageSortValidation(PostSortFields),
+    validationResult,
+    getPostsHandler,
+  )
   .get("/:id", handleIdValidation(), validationResult, getPostHandler);
 
 postsAuthRouter
