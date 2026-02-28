@@ -15,6 +15,8 @@ export type PostDb = Omit<PostViewModel, "id">;
 
 export enum PostSortFields {
   createdAt = "createdAt",
+  title = "title",
+  blogName = "blogName",
 }
 
 export type PostsQueryInput = PageAndSort<PostSortFields>;

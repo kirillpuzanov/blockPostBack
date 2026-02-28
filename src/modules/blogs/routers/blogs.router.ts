@@ -15,7 +15,7 @@ import { inputBlogFieldValidation } from "../validation/inputBlogValidation";
 import { inputPostByBlogFieldValidation } from "../../posts/validation/inputPostValidation";
 import { createBlogPostHandler } from "./handlers/createBlogPostHandler";
 import { pageSortValidation } from "../../../core/middlewares/pageSortValidation";
-import { BlogSortFields, PostBlogSortFields } from "../types/blog";
+import { BlogSortFields, PostsByBlogSortFields } from "../types/blog";
 
 export const blogsPublicRouter = Router({});
 export const blogsAuthRouter = Router({});
@@ -31,7 +31,7 @@ blogsPublicRouter
   .get(
     "/:blogId/posts",
     handleBlogIdValidation,
-    pageSortValidation(PostBlogSortFields),
+    pageSortValidation(PostsByBlogSortFields),
     validationResult,
     getPostsByBlogHandler,
   );

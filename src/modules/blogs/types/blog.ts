@@ -23,10 +23,8 @@ export enum BlogSortFields {
 
 export enum PostsByBlogSortFields {
   createdAt = "createdAt",
-}
-
-export enum PostBlogSortFields {
-  createdAt = "createdAt",
+  title = "title",
+  blogName = "blogName",
 }
 
 export type BlogQueryInput = PageAndSort<BlogSortFields> & {
