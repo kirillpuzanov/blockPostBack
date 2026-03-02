@@ -1,15 +1,12 @@
 import { Request, Response } from "express";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { BlogViewModel, PostsByBlogQueryInput } from "../../types/blog";
-import { blogsRepository } from "../../repositories/blogsRepository";
 import { mapToPostView } from "../../../posts/routers/mappers/mapToPostView";
-import {
-  errorHandler,
-  NotFoundError,
-} from "../../../../core/errors/errorHandler";
+import { errorHandler } from "../../../../core/errors/errorHandler";
 import { getMatchedQuery } from "../../../../core/utils/getMatchedQuery";
 import { getPaginatedOutput } from "../../../../core/utils/getPaginatedOutput";
 import { PageAndSort } from "../../../../core/types/pageAndSort";
+import { blogsService } from "../../application/blogs.sservice";
 
 export const getPostsByBlogHandler = async (
   req: Request<{ blogId: string }, PageAndSort<BlogViewModel>, {}>,
@@ -17,16 +14,11 @@ export const getPostsByBlogHandler = async (
 ) => {
   try {
     const blogId = req.params.blogId;
-    const blog = await blogsRepository.getById(blogId);
-
-    if (!blog) {
-      throw new NotFoundError("blog does not exists", "blogId");
-    }
 
     const matchedQuery = getMatchedQuery<PostsByBlogQueryInput>(req);
     const { pageNumber, pageSize } = matchedQuery;
 
-    const { postsByBlog, totalCount } = await blogsRepository.getPostsByBlog(
+    const { postsByBlog, totalCount } = await blogsService.getPostsByBlog(
       blogId,
       matchedQuery,
     );

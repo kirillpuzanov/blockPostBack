@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
-import { blogsRepository } from "../../repositories/blogsRepository";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
-import {
-  errorHandler,
-  NotFoundError,
-} from "../../../../core/errors/errorHandler";
+import { errorHandler } from "../../../../core/errors/errorHandler";
+import { blogsService } from "../../application/blogs.sservice";
 
 export const deleteBlogHandler = async (
   req: Request<{ id: string }>,
@@ -12,12 +9,7 @@ export const deleteBlogHandler = async (
 ) => {
   try {
     const id = req.params.id;
-    const blog = await blogsRepository.getById(id);
-
-    if (!blog) {
-      throw new NotFoundError("blog not found", "id");
-    }
-    await blogsRepository.deleteById(id);
+    await blogsService.deleteBlog(id);
     res.sendStatus(HTTP_STATUS.noContent);
     return;
   } catch (error) {
