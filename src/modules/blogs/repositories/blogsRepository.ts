@@ -73,13 +73,6 @@ export const blogsRepository = {
     if (res.matchedCount < 1) {
       throw new NotFoundError("not found", "blog");
     }
-
-    /** обновим имя блога в привязанных к нему постах */
-    await postCollection.updateMany(
-      { blogId: id },
-      { $set: { blogName: name } },
-    );
-    return;
   },
 
   async deleteById(id: string): Promise<void> {
@@ -88,9 +81,5 @@ export const blogsRepository = {
     if (res.deletedCount < 1) {
       throw new NotFoundError("not found", "blog");
     }
-
-    /** удаляем посты привязанные к этому блогу */
-    await postCollection.deleteMany({ blogId: id });
-    return;
   },
 };

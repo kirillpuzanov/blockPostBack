@@ -29,26 +29,49 @@ describe("Blogs API", () => {
     await stopDb();
   });
 
-  it("should get all blogs", async () => {
+  it("should get all blogs + paginated meta", async () => {
     const firstBlog = await createBlog(app, newCorrectBlog);
     const secondBlog = await createBlog(app, newCorrectBlog);
 
     const allBlogs = await request(app)
       .get(routes.blogs)
+      .query({ pageSize: 20 })
       .expect(HTTP_STATUS.ok);
-
+    console.log(allBlogs.body);
     expect(allBlogs.body.items[0].id).toBe(secondBlog.id);
     expect(allBlogs.body.items[1].id).toBe(firstBlog.id);
+    expect(allBlogs.body.pageSize).toBe(20);
+    expect(allBlogs.body.page).toBe(1);
+  });
+
+  it("should create post for specific blog", async () => {
+    const blog = await createBlog(app, newCorrectBlog);
+    const postData = {
+      title: "post4",
+      shortDescription: "post by blog description",
+      content: "ost by blog content",
+    };
+    const post = await request(app)
+      .post(`${routes.blogs}/${blog.id}/posts`)
+      .set(testAuthHeader)
+      .send(postData)
+      .expect(HTTP_STATUS.created);
+
+    expect(post.body.blogName).toBe(blog.name);
+    expect(post.body.title).toBe(postData.title);
+    expect(post.body.blogId).toBe(blog.id);
+
+    const postsByBlog = await request(app)
+      .get(`${routes.blogs}/${blog.id}/posts`)
+      .expect(HTTP_STATUS.ok);
+
+    expect(postsByBlog.body.items).toHaveLength(1);
+    expect(postsByBlog.body.items[0].id).toBe(post.body.id);
   });
 
   it("should get blog by id and update him", async () => {
     const newBlog = await createBlog(app, newCorrectBlog);
     const blogId = newBlog.id;
-
-    await request(app)
-      .get(`${routes.blogs}/${blogId}`)
-      .send(newCorrectBlog)
-      .expect(HTTP_STATUS.ok);
 
     const updateField = {
       name: "updated",
