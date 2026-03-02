@@ -10,7 +10,7 @@ export type PostViewModel = {
   createdAt: string;
 };
 
-export type CreatePostInput = Omit<
+export type CreatePostByBlogInput = Omit<
   PostViewModel,
   "blogId" | "id" | "blogName" | "createdAt"
 >;

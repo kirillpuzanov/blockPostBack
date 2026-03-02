@@ -7,8 +7,9 @@ import {
 import { WithId } from "mongodb";
 import { blogsRepository } from "../repositories/blogsRepository";
 import { NotFoundError } from "../../../core/errors/errorHandler";
-import { CreatePostInput, PostDb } from "../../posts/types/post";
+import { CreatePostByBlogInput, PostDb } from "../../posts/types/post";
 import { postsRepository } from "../../posts/repositories/postsRepository";
+import { postsService } from "../../posts/application/posts.service";
 
 export const blogsService = {
   async getAll(
@@ -52,7 +53,7 @@ export const blogsService = {
 
   async createPostByBlog(
     blogId: string,
-    inputPost: CreatePostInput,
+    inputPost: CreatePostByBlogInput,
   ): Promise<WithId<PostDb>> {
     const blog = await blogsRepository.getById(blogId);
 
@@ -69,7 +70,7 @@ export const blogsService = {
       createdAt: new Date().toISOString(),
     };
 
-    return postsRepository.add(newPost);
+    return postsRepository.create(newPost);
   },
 
   async updateBlog(updatedBlog: BlogInput, id: string): Promise<void> {
@@ -81,6 +82,9 @@ export const blogsService = {
 
     const { name, description, websiteUrl } = updatedBlog;
     await blogsRepository.update({ name, description, websiteUrl }, id);
+
+    /** обновим имя блога в привязанных к нему постах */
+    await postsService.updateManyPost({ blogId: id }, { blogName: name });
     return;
   },
 
@@ -91,6 +95,9 @@ export const blogsService = {
       throw new NotFoundError("blog not found", "id");
     }
     await blogsRepository.deleteById(id);
+
+    /** удаляем посты привязанные к этому блогу */
+    await postsService.deleteManyPost({ blogId: id });
     return;
   },
 };
