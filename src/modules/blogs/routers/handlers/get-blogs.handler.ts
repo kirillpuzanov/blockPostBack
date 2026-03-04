@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
-import { mapToBlogView } from "../mappers/mapToBlogView";
+import { mapToBlogView } from "../mappers/map-to-blog-view";
 import { errorHandler } from "../../../../core/errors/errorHandler";
 import { getPaginatedOutput } from "../../../../core/utils/getPaginatedOutput";
 import { getMatchedQuery } from "../../../../core/utils/getMatchedQuery";

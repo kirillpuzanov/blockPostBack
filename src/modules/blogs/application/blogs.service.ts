@@ -5,7 +5,7 @@ import {
   PostsByBlogQueryInput,
 } from "../types/blog";
 import { WithId } from "mongodb";
-import { blogsRepository } from "../repositories/blogsRepository";
+import { blogsRepository } from "../repositories/blogs.repository";
 import { NotFoundError } from "../../../core/errors/errorHandler";
 import { CreatePostByBlogInput, PostDb } from "../../posts/types/post";
 import { postsRepository } from "../../posts/repositories/postsRepository";

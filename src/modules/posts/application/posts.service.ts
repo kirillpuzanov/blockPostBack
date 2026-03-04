@@ -2,7 +2,7 @@ import { WithId } from "mongodb";
 import { PostDb, PostInput, PostsQueryInput } from "../types/post";
 import { postsRepository } from "../repositories/postsRepository";
 import { NotFoundError } from "../../../core/errors/errorHandler";
-import { blogsRepository } from "../../blogs/repositories/blogsRepository";
+import { blogsRepository } from "../../blogs/repositories/blogs.repository";
 import { postCollection } from "../../../db/database";
 
 export const postsService = {

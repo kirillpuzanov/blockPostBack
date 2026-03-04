@@ -1,19 +1,19 @@
 import { Router } from "express";
-import { getBlogsHandler } from "./handlers/getBlogsHandler";
-import { getBlogHandler } from "./handlers/getBlogHandler";
+import { getBlogsHandler } from "./handlers/get-blogs.handler";
+import { getBlogHandler } from "./handlers/get-blog.handler";
 import {
   handleBlogIdValidation,
   handleIdValidation,
 } from "../../../core/middlewares/idValidation";
 import { validationResult } from "../../../core/middlewares/validationResult";
 import { authAdminGuardMiddleware } from "../../../auth/authAdminGuardMiddleware";
-import { createBlogHandler } from "./handlers/createBlogHandler";
-import { updateBlogHandler } from "./handlers/updateBlogHandler";
-import { deleteBlogHandler } from "./handlers/deleteBlogHandler";
-import { getPostsByBlogHandler } from "./handlers/getPostsByBlogHandler";
-import { inputBlogFieldValidation } from "../validation/inputBlogValidation";
+import { createBlogHandler } from "./handlers/create-blog.handler";
+import { updateBlogHandler } from "./handlers/update-blog.handler";
+import { deleteBlogHandler } from "./handlers/delete-blog.handler";
+import { getPostsByBlogHandler } from "./handlers/get-posts-by-blog.handler";
+import { inputBlogFieldValidation } from "../validation/input-blog.validation";
 import { inputPostByBlogFieldValidation } from "../../posts/validation/inputPostValidation";
-import { createBlogPostHandler } from "./handlers/createBlogPostHandler";
+import { createBlogPostHandler } from "./handlers/create-blog-post.handler";
 import { pageSortValidation } from "../../../core/middlewares/pageSortValidation";
 import { BlogSortFields, PostsByBlogSortFields } from "../types/blog";
 

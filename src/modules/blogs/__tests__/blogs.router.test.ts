@@ -6,7 +6,7 @@ import { routes } from "../../../core/const/routes";
 import { runDb, stopDb } from "../../../db/database";
 import { SETTINGS } from "../../../core/settings/settings";
 import { generateAuthHeader } from "../../../core/utils/generateAuthHeader";
-import { createBlog } from "./blogTestUtils";
+import { createBlog } from "./blog-test.utils";
 
 const testAuthHeader = generateAuthHeader();
 
