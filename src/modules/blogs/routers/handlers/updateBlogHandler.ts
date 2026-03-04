@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { BlogInput, BlogViewModel } from "../../types/blog";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { errorHandler } from "../../../../core/errors/errorHandler";
-import { blogsService } from "../../application/blogs.sservice";
+import { blogsService } from "../../application/blogs.service";
 
 export const updateBlogHandler = async (
   req: Request<{ id: string }, BlogViewModel, BlogInput>,

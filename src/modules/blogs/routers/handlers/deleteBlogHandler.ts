@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { errorHandler } from "../../../../core/errors/errorHandler";
-import { blogsService } from "../../application/blogs.sservice";
+import { blogsService } from "../../application/blogs.service";
 
 export const deleteBlogHandler = async (
   req: Request<{ id: string }>,

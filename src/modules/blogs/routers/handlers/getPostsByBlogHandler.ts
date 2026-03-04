@@ -6,7 +6,7 @@ import { errorHandler } from "../../../../core/errors/errorHandler";
 import { getMatchedQuery } from "../../../../core/utils/getMatchedQuery";
 import { getPaginatedOutput } from "../../../../core/utils/getPaginatedOutput";
 import { PageAndSort } from "../../../../core/types/pageAndSort";
-import { blogsService } from "../../application/blogs.sservice";
+import { blogsService } from "../../application/blogs.service";
 
 export const getPostsByBlogHandler = async (
   req: Request<{ blogId: string }, PageAndSort<BlogViewModel>, {}>,

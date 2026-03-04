@@ -3,7 +3,7 @@ import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { BlogViewModel } from "../../types/blog";
 import { mapToBlogView } from "../mappers/mapToBlogView";
 import { errorHandler } from "../../../../core/errors/errorHandler";
-import { blogsService } from "../../application/blogs.sservice";
+import { blogsService } from "../../application/blogs.service";
 
 export const getBlogHandler = async (
   req: Request<{ id: string }, BlogViewModel | null>,

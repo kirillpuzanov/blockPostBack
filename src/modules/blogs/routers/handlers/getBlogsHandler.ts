@@ -5,7 +5,7 @@ import { errorHandler } from "../../../../core/errors/errorHandler";
 import { getPaginatedOutput } from "../../../../core/utils/getPaginatedOutput";
 import { getMatchedQuery } from "../../../../core/utils/getMatchedQuery";
 import { BlogQueryInput } from "../../types/blog";
-import { blogsService } from "../../application/blogs.sservice";
+import { blogsService } from "../../application/blogs.service";
 
 export const getBlogsHandler = async (req: Request, res: Response) => {
   try {

@@ -3,7 +3,7 @@ import { BlogInput, BlogViewModel } from "../../types/blog";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { mapToBlogView } from "../mappers/mapToBlogView";
 import { errorHandler } from "../../../../core/errors/errorHandler";
-import { blogsService } from "../../application/blogs.sservice";
+import { blogsService } from "../../application/blogs.service";
 
 export const createBlogHandler = async (
   req: Request<{}, BlogViewModel, BlogInput>,
