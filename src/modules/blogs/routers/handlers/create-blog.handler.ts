@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { BlogInput, BlogViewModel } from "../../types/blog";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { mapToBlogView } from "../mappers/map-to-blog-view";
-import { errorHandler } from "../../../../core/errors/errorHandler";
+import { errorHandler } from "../../../../core/errors/error.handler";
 import { blogsService } from "../../application/blogs.service";
 
 export const createBlogHandler = async (

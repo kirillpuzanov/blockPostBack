@@ -7,7 +7,7 @@ import {
 import { ObjectId, WithId } from "mongodb";
 import { blogCollection, postCollection } from "../../../db/database";
 import { PostDb } from "../../posts/types/post";
-import { NotFoundError } from "../../../core/errors/errorHandler";
+import { NotFoundError } from "../../../core/errors/error.handler";
 
 export const blogsRepository = {
   async getAll(

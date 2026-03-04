@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { mapToBlogView } from "../mappers/map-to-blog-view";
-import { errorHandler } from "../../../../core/errors/errorHandler";
-import { getPaginatedOutput } from "../../../../core/utils/getPaginatedOutput";
-import { getMatchedQuery } from "../../../../core/utils/getMatchedQuery";
+import { errorHandler } from "../../../../core/errors/error.handler";
+import { getPaginatedOutput } from "../../../../core/utils/get-paginated-output";
+import { getMatchedQuery } from "../../../../core/utils/get-matched-query";
 import { BlogQueryInput } from "../../types/blog";
 import { blogsService } from "../../application/blogs.service";
 

@@ -1,4 +1,4 @@
-import { BaseError } from "../types/baseError";
+import { BaseError } from "../types/base-error";
 import { Response } from "express";
 import { HTTP_STATUS } from "../const/statuses";
 

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { PostInput, PostViewModel } from "../../types/post";
-import { mapToPostView } from "../mappers/mapToPostView";
-import { errorHandler } from "../../../../core/errors/errorHandler";
+import { mapToPostView } from "../mappers/map-to-post-view";
+import { errorHandler } from "../../../../core/errors/error.handler";
 import { postsService } from "../../application/posts.service";
 
 export const createPostHandler = async (

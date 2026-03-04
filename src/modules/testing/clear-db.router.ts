@@ -1,7 +1,7 @@
 import { Response, Router } from "express";
 import { blogCollection, postCollection } from "../../db/database";
 import { HTTP_STATUS } from "../../core/const/statuses";
-import { errorHandler } from "../../core/errors/errorHandler";
+import { errorHandler } from "../../core/errors/error.handler";
 
 export const clearDbRouter = Router({});
 

@@ -6,9 +6,9 @@ import {
 } from "../types/blog";
 import { WithId } from "mongodb";
 import { blogsRepository } from "../repositories/blogs.repository";
-import { NotFoundError } from "../../../core/errors/errorHandler";
+import { NotFoundError } from "../../../core/errors/error.handler";
 import { CreatePostByBlogInput, PostDb } from "../../posts/types/post";
-import { postsRepository } from "../../posts/repositories/postsRepository";
+import { postsRepository } from "../../posts/repositories/posts.repository";
 import { postsService } from "../../posts/application/posts.service";
 
 export const blogsService = {

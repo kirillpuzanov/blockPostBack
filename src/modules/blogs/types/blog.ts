@@ -1,4 +1,4 @@
-import { PageAndSort } from "../../../core/types/pageAndSort";
+import { PageAndSort } from "../../../core/types/page-and-sort";
 
 export type BlogViewModel = {
   id: string;

@@ -5,7 +5,7 @@ import { HTTP_STATUS } from "../../../core/const/statuses";
 import { routes } from "../../../core/const/routes";
 import { runDb, stopDb } from "../../../db/database";
 import { SETTINGS } from "../../../core/settings/settings";
-import { generateAuthHeader } from "../../../core/utils/generateAuthHeader";
+import { generateAuthHeader } from "../../../core/utils/generate-auth-header";
 import { createBlog } from "./blog-test.utils";
 
 const testAuthHeader = generateAuthHeader();
@@ -37,7 +37,7 @@ describe("Blogs API", () => {
       .get(routes.blogs)
       .query({ pageSize: 20 })
       .expect(HTTP_STATUS.ok);
-    console.log(allBlogs.body);
+
     expect(allBlogs.body.items[0].id).toBe(secondBlog.id);
     expect(allBlogs.body.items[1].id).toBe(firstBlog.id);
     expect(allBlogs.body.pageSize).toBe(20);

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { PostInput, PostViewModel } from "../../../posts/types/post";
-import { mapToPostView } from "../../../posts/routers/mappers/mapToPostView";
-import { errorHandler } from "../../../../core/errors/errorHandler";
+import { mapToPostView } from "../../../posts/routers/mappers/map-to-post-view";
+import { errorHandler } from "../../../../core/errors/error.handler";
 import { blogsService } from "../../application/blogs.service";
 
 export const createBlogPostHandler = async (

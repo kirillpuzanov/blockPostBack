@@ -1,7 +1,7 @@
 import { postCollection } from "../../../db/database";
 import { PostDb, PostInput, PostsQueryInput } from "../types/post";
 import { ObjectId, WithId } from "mongodb";
-import { NotFoundError } from "../../../core/errors/errorHandler";
+import { NotFoundError } from "../../../core/errors/error.handler";
 
 export const postsRepository = {
   async getAll(

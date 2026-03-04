@@ -1,5 +1,5 @@
 import { query } from "express-validator";
-import { SortDirection } from "../types/pageAndSort";
+import { SortDirection } from "../types/page-and-sort";
 
 const DEFAULT_PAGE_NUMBER = 1;
 const DEFAULT_PAGE_SIZE = 10;

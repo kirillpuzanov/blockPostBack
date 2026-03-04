@@ -4,7 +4,7 @@ import {
   blogsAuthRouter,
   blogsPublicRouter,
 } from "./modules/blogs/routers/blogs.router";
-import { clearDbRouter } from "./modules/testing/clearDb.router";
+import { clearDbRouter } from "./modules/testing/clear-db.router";
 import {
   postsAuthRouter,
   postsPublicRouter,

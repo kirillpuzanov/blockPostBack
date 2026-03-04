@@ -4,9 +4,9 @@ import {
   ValidationError,
   validationResult as validationExpressResult,
 } from "express-validator";
-import { BaseError } from "../types/baseError";
+import { BaseError } from "../types/base-error";
 import { HTTP_STATUS } from "../const/statuses";
-import { createErrorMessages } from "../errors/errorHandler";
+import { createErrorMessages } from "../errors/error.handler";
 
 const errorFormat = (error: ValidationError): BaseError => {
   const e = error as unknown as FieldValidationError;

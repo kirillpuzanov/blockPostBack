@@ -3,7 +3,7 @@ import { routes } from "../../../core/const/routes";
 import { HTTP_STATUS } from "../../../core/const/statuses";
 import { BlogInput, BlogViewModel } from "../types/blog";
 import { Express } from "express";
-import { generateAuthHeader } from "../../../core/utils/generateAuthHeader";
+import { generateAuthHeader } from "../../../core/utils/generate-auth-header";
 
 export const createBlog = async (
   app: Express,

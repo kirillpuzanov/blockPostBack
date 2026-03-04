@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { authAdminGuardMiddleware } from "../../../auth/authAdminGuardMiddleware";
-import { validationResult } from "../../../core/middlewares/validationResult";
-import { handleIdValidation } from "../../../core/middlewares/idValidation";
-import { getPostHandler } from "./handlers/getPostHandler";
-import { getPostsHandler } from "./handlers/getPostsHandler";
-import { createPostHandler } from "./handlers/createPostHandler";
-import { updatePostHandler } from "./handlers/updatePostHandler";
-import { deletePostHandler } from "./handlers/deletePostHandler";
-import { inputPostFieldValidation } from "../validation/inputPostValidation";
-import { pageSortValidation } from "../../../core/middlewares/pageSortValidation";
+import { validationResult } from "../../../core/middlewares/validation-result";
+import { handleIdValidation } from "../../../core/middlewares/id-validation";
+import { getPostHandler } from "./handlers/get-post.handler";
+import { getPostsHandler } from "./handlers/get-posts.handler";
+import { createPostHandler } from "./handlers/create-post.handler";
+import { updatePostHandler } from "./handlers/update-post.handler";
+import { deletePostHandler } from "./handlers/delete-post.handler";
+import { inputPostFieldValidation } from "../validation/input-post.validation";
+import { pageSortValidation } from "../../../core/middlewares/page-sort-validation";
 import { PostSortFields } from "../types/post";
 
 export const postsPublicRouter = Router({});

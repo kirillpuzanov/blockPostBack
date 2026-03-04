@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
-import { mapToPostView } from "../mappers/mapToPostView";
-import { errorHandler } from "../../../../core/errors/errorHandler";
+import { mapToPostView } from "../mappers/map-to-post-view";
+import { errorHandler } from "../../../../core/errors/error.handler";
 import { PostsQueryInput } from "../../types/post";
-import { getMatchedQuery } from "../../../../core/utils/getMatchedQuery";
-import { getPaginatedOutput } from "../../../../core/utils/getPaginatedOutput";
+import { getMatchedQuery } from "../../../../core/utils/get-matched-query";
+import { getPaginatedOutput } from "../../../../core/utils/get-paginated-output";
 import { postsService } from "../../application/posts.service";
 
 export const getPostsHandler = async (req: Request, res: Response) => {

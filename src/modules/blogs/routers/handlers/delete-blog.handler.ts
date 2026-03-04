@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
-import { errorHandler } from "../../../../core/errors/errorHandler";
+import { errorHandler } from "../../../../core/errors/error.handler";
 import { blogsService } from "../../application/blogs.service";
 
 export const deleteBlogHandler = async (

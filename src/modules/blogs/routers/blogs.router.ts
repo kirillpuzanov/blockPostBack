@@ -4,17 +4,17 @@ import { getBlogHandler } from "./handlers/get-blog.handler";
 import {
   handleBlogIdValidation,
   handleIdValidation,
-} from "../../../core/middlewares/idValidation";
-import { validationResult } from "../../../core/middlewares/validationResult";
+} from "../../../core/middlewares/id-validation";
+import { validationResult } from "../../../core/middlewares/validation-result";
 import { authAdminGuardMiddleware } from "../../../auth/authAdminGuardMiddleware";
 import { createBlogHandler } from "./handlers/create-blog.handler";
 import { updateBlogHandler } from "./handlers/update-blog.handler";
 import { deleteBlogHandler } from "./handlers/delete-blog.handler";
 import { getPostsByBlogHandler } from "./handlers/get-posts-by-blog.handler";
 import { inputBlogFieldValidation } from "../validation/input-blog.validation";
-import { inputPostByBlogFieldValidation } from "../../posts/validation/inputPostValidation";
+import { inputPostByBlogFieldValidation } from "../../posts/validation/input-post.validation";
 import { createBlogPostHandler } from "./handlers/create-blog-post.handler";
-import { pageSortValidation } from "../../../core/middlewares/pageSortValidation";
+import { pageSortValidation } from "../../../core/middlewares/page-sort-validation";
 import { BlogSortFields, PostsByBlogSortFields } from "../types/blog";
 
 export const blogsPublicRouter = Router({});

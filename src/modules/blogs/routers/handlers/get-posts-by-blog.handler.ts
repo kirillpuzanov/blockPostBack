@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { BlogViewModel, PostsByBlogQueryInput } from "../../types/blog";
-import { mapToPostView } from "../../../posts/routers/mappers/mapToPostView";
-import { errorHandler } from "../../../../core/errors/errorHandler";
-import { getMatchedQuery } from "../../../../core/utils/getMatchedQuery";
-import { getPaginatedOutput } from "../../../../core/utils/getPaginatedOutput";
-import { PageAndSort } from "../../../../core/types/pageAndSort";
+import { mapToPostView } from "../../../posts/routers/mappers/map-to-post-view";
+import { errorHandler } from "../../../../core/errors/error.handler";
+import { getMatchedQuery } from "../../../../core/utils/get-matched-query";
+import { getPaginatedOutput } from "../../../../core/utils/get-paginated-output";
+import { PageAndSort } from "../../../../core/types/page-and-sort";
 import { blogsService } from "../../application/blogs.service";
 
 export const getPostsByBlogHandler = async (
