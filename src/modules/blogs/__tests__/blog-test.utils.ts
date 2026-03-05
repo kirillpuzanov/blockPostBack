@@ -1,13 +1,13 @@
 import request from "supertest";
 import { routes } from "../../../core/const/routes";
 import { HTTP_STATUS } from "../../../core/const/statuses";
-import { BlogInput, BlogViewModel } from "../types/blog";
+import { BlogViewModel, CreateBlogInput } from "../types/blog.types";
 import { Express } from "express";
 import { generateAuthHeader } from "../../../core/utils/generate-auth-header";
 
 export const createBlog = async (
   app: Express,
-  blog: BlogInput,
+  blog: CreateBlogInput,
 ): Promise<BlogViewModel> => {
   const createdBlog = await request(app)
     .post(routes.blogs)

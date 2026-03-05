@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { BlogInput, BlogViewModel } from "../../types/blog";
+import { BlogViewModel, CreateBlogInput } from "../../types/blog.types";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { errorHandler } from "../../../../core/errors/error.handler";
 import { blogsService } from "../../application/blogs.service";
 
 export const updateBlogHandler = async (
-  req: Request<{ id: string }, BlogViewModel, BlogInput>,
+  req: Request<{ id: string }, BlogViewModel, CreateBlogInput>,
   res: Response,
 ) => {
   try {

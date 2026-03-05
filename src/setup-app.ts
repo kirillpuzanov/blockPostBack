@@ -7,6 +7,8 @@ import {
 import { clearDbRouter } from "./modules/testing/clear-db.router";
 import {
   postsAuthRouter,
+  postsBlogAuthRouter,
+  postsBlogPublicRouter,
   postsPublicRouter,
 } from "./modules/posts/routers/posts.router";
 
@@ -19,6 +21,9 @@ export const setupApp = (app: Application) => {
 
   app.use(routes.blogs, blogsPublicRouter);
   app.use(routes.blogs, blogsAuthRouter);
+
+  app.use(routes.blogs, postsBlogPublicRouter);
+  app.use(routes.blogs, postsBlogAuthRouter);
 
   app.use(routes.posts, postsPublicRouter);
   app.use(routes.posts, postsAuthRouter);

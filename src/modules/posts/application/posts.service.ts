@@ -1,29 +1,13 @@
-import { WithId } from "mongodb";
-import { PostDb, PostInput, PostsQueryInput } from "../types/post";
+import { CreatePostInput, PostDb } from "../types/post.types";
 import { postsRepository } from "../repositories/posts.repository";
 import { NotFoundError } from "../../../core/errors/error.handler";
-import { blogsRepository } from "../../blogs/repositories/blogs.repository";
 import { postCollection } from "../../../db/database";
+import { blogsQueryRepository } from "../../blogs/repositories/blogs.query.repository";
 
 export const postsService = {
-  async getAll(
-    query: PostsQueryInput,
-  ): Promise<{ posts: WithId<PostDb>[]; totalCount: number }> {
-    return postsRepository.getAll(query);
-  },
-
-  async getById(id: string): Promise<WithId<PostDb>> {
-    const post = await postsRepository.getById(id);
-
-    if (!post) {
-      throw new NotFoundError("post not found", "id");
-    }
-    return post;
-  },
-
-  async createPost(input: PostInput): Promise<WithId<PostDb>> {
+  async createPost(input: CreatePostInput): Promise<string> {
     const { blogId } = input;
-    const blog = await blogsRepository.getById(blogId);
+    const blog = await blogsQueryRepository.getById(blogId);
 
     if (!blog) {
       throw new NotFoundError("blog not found", "blogId");
@@ -40,28 +24,27 @@ export const postsService = {
     return postsRepository.create(newPost);
   },
 
-  async updatePost(updatedPost: PostInput, id: string): Promise<void> {
-    const post = await postsRepository.getById(id);
-
-    if (!post) {
-      throw new NotFoundError("post not found", "id");
-    }
-
+  async updatePost(updatedPost: CreatePostInput, id: string): Promise<void> {
     const { title, blogId, content, shortDescription } = updatedPost;
 
-    return postsRepository.update(
+    const updatedCount = await postsRepository.update(
       { title, blogId, content, shortDescription },
       id,
     );
+
+    if (updatedCount < 1) {
+      throw new NotFoundError("not found for update", "post");
+    }
+    return;
   },
 
   async deletePost(id: string): Promise<void> {
-    const post = await postsRepository.getById(id);
+    const deletedCount = await postsRepository.deleteById(id);
 
-    if (!post) {
-      throw new NotFoundError("post not found", "id");
+    if (deletedCount < 1) {
+      throw new NotFoundError("not found for delete", "post");
     }
-    return postsRepository.deleteById(id);
+    return;
   },
 
   async deleteManyPost(filter: Record<string, string>): Promise<void> {

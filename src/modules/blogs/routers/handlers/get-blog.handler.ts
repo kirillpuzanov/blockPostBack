@@ -1,18 +1,16 @@
 import { Request, Response } from "express";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
-import { BlogViewModel } from "../../types/blog";
-import { mapToBlogView } from "../mappers/map-to-blog-view";
+import { BlogViewModel } from "../../types/blog.types";
 import { errorHandler } from "../../../../core/errors/error.handler";
-import { blogsService } from "../../application/blogs.service";
+import { blogsQueryRepository } from "../../repositories/blogs.query.repository";
 
 export const getBlogHandler = async (
   req: Request<{ id: string }, BlogViewModel | null>,
   res: Response,
 ) => {
   try {
-    const blog = await blogsService.getById(req.params.id);
+    const blogView = await blogsQueryRepository.getById(req.params.id);
 
-    const blogView = mapToBlogView(blog);
     res.status(HTTP_STATUS.ok).send(blogView);
   } catch (error) {
     errorHandler(error, res);
