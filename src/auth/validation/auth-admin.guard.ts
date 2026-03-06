@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { HTTP_STATUS } from "../core/const/statuses";
+import { HTTP_STATUS } from "../../core/const/statuses";
 
 const AUTH_TYPE = "Basic";
 const ADMIN_USERNAME = "admin";
 const ADMIN_PASSWORD = "qwerty";
 
-export const authAdminGuardMiddleware = (
+export const authAdminGuard = (
   req: Request,
   res: Response,
   next: NextFunction,

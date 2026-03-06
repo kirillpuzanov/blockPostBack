@@ -11,6 +11,7 @@ import {
   postsBlogPublicRouter,
   postsPublicRouter,
 } from "./modules/posts/routers/posts.router";
+import { authRouter } from "./auth/routers/auth.router";
 
 export const setupApp = (app: Application) => {
   app.use(express.json());
@@ -18,6 +19,8 @@ export const setupApp = (app: Application) => {
   app.get("/", (_, res) => {
     res.status(200).send("Good luck!");
   });
+
+  app.use(routes.auth, authRouter);
 
   app.use(routes.blogs, blogsPublicRouter);
   app.use(routes.blogs, blogsAuthRouter);

@@ -1,5 +1,21 @@
 import { Router } from "express";
-import { authAdminGuardMiddleware } from "../../../auth/authAdminGuardMiddleware";
+import { Router } from "express";
+import { Router } from "express";
+import { Router } from "express";
+import { Router } from "express";
+import { Router } from "express";
+import { Router } from "express";
+import { Router } from "express";
+import { Router } from "express";
+import { Router } from "express";
+import { Router } from "express";
+import { Router } from "express";
+import { Router } from "express";
+import { Router } from "express";
+import { Router } from "express";
+import { Router } from "express";
+import { Router } from "express";
+import { authAdminGuard } from "../../../auth/validation/auth-admin.guard";
 import { validationResult } from "../../../core/middlewares/validation-result";
 import {
   handleBlogIdValidation,
@@ -37,14 +53,14 @@ postsPublicRouter
 postsAuthRouter
   .post(
     "",
-    authAdminGuardMiddleware,
+    authAdminGuard,
     inputPostFieldValidation,
     validationResult,
     createPostHandler,
   )
   .put(
     "/:id",
-    authAdminGuardMiddleware,
+    authAdminGuard,
     handleIdValidation,
     inputPostFieldValidation,
     validationResult,
@@ -52,7 +68,7 @@ postsAuthRouter
   )
   .delete(
     "/:id",
-    authAdminGuardMiddleware,
+    authAdminGuard,
     handleIdValidation,
     validationResult,
     deletePostHandler,
@@ -68,7 +84,7 @@ postsBlogPublicRouter.get(
 
 postsBlogAuthRouter.post(
   "/:blogId/posts",
-  authAdminGuardMiddleware,
+  authAdminGuard,
   handleBlogIdValidation,
   inputPostByBlogFieldValidation,
   validationResult,

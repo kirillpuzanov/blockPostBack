@@ -3,13 +3,13 @@ import { getBlogsHandler } from "./handlers/get-blogs.handler";
 import { getBlogHandler } from "./handlers/get-blog.handler";
 import { handleIdValidation } from "../../../core/middlewares/id-validation";
 import { validationResult } from "../../../core/middlewares/validation-result";
-import { authAdminGuardMiddleware } from "../../../auth/authAdminGuardMiddleware";
 import { createBlogHandler } from "./handlers/create-blog.handler";
 import { updateBlogHandler } from "./handlers/update-blog.handler";
 import { deleteBlogHandler } from "./handlers/delete-blog.handler";
 import { inputBlogFieldValidation } from "../validation/input-blog.validation";
 import { pageSortValidation } from "../../../core/middlewares/page-sort-validation";
 import { BlogSortFields } from "../types/blog.types";
+import { authAdminGuard } from "../../../auth/validation/auth-admin.guard";
 
 export const blogsPublicRouter = Router({});
 export const blogsAuthRouter = Router({});
@@ -26,7 +26,7 @@ blogsPublicRouter
 blogsAuthRouter
   .post(
     "",
-    authAdminGuardMiddleware,
+    authAdminGuard,
     inputBlogFieldValidation,
     validationResult,
     createBlogHandler,
@@ -34,7 +34,7 @@ blogsAuthRouter
 
   .put(
     "/:id",
-    authAdminGuardMiddleware,
+    authAdminGuard,
     handleIdValidation,
     inputBlogFieldValidation,
     validationResult,
@@ -42,7 +42,7 @@ blogsAuthRouter
   )
   .delete(
     "/:id",
-    authAdminGuardMiddleware,
+    authAdminGuard,
     handleIdValidation,
     validationResult,
     deleteBlogHandler,
