@@ -12,6 +12,7 @@ import {
   postsPublicRouter,
 } from "./modules/posts/routers/posts.router";
 import { authRouter } from "./auth/routers/auth.router";
+import { usersAuthRouter } from "./modules/users/routers/users.router";
 
 export const setupApp = (app: Application) => {
   app.use(express.json());
@@ -30,6 +31,8 @@ export const setupApp = (app: Application) => {
 
   app.use(routes.posts, postsPublicRouter);
   app.use(routes.posts, postsAuthRouter);
+
+  app.use(routes.users, usersAuthRouter);
 
   app.use(routes.testing, clearDbRouter);
 };

@@ -4,4 +4,6 @@ export const routes = {
   testing: "/testing/all-data",
 
   auth: "/auth",
+
+  users: "/users",
 } as const;

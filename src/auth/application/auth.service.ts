@@ -1,5 +1,6 @@
 import { LoginInput } from "../types/auth.types";
 import { bcryptService } from "../utils/bcrypt.service";
+import { usersQueryRepository } from "../../modules/users/repositories/users.query.repository";
 
 export const authService = {
   async login({ password, loginOrEmail }: LoginInput): Promise<boolean> {
@@ -10,9 +11,7 @@ export const authService = {
     password,
     loginOrEmail,
   }: LoginInput): Promise<boolean> {
-    // const user = userRepository.findByLoginOrEmail({ password, loginOrEmail });
-    // todo - userRepository
-    const user = { passwordHash: "123" };
+    const user = await usersQueryRepository.getByLoginOrEmail(loginOrEmail);
 
     if (!user) return false;
     return bcryptService.checkPass(password, user.passwordHash);

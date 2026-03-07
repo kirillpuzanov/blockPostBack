@@ -17,7 +17,14 @@ export type CreatePostInput = {
   blogId: string;
 };
 
-export type PostDb = Omit<PostViewModel, "id">;
+export type PostDb = {
+  title: string;
+  shortDescription: string;
+  content: string;
+  blogId: string;
+  blogName: string;
+  createdAt: string;
+};
 
 export type CreatePostByBlogInput = {
   title: string;
