@@ -18,17 +18,23 @@ export const usersQueryRepository = {
 
     const skip = (pageNumber - 1) * pageSize;
 
-    const filter: Record<"$or", object[]> = {
-      $or: [],
-    };
+    let filter = {};
+    const searchedFields: Array<object> = [];
 
     if (searchLoginTerm) {
-      filter.$or.push({ login: { $regex: searchLoginTerm, $options: "i" } });
+      searchedFields.push({
+        login: { $regex: searchLoginTerm, $options: "i" },
+      });
     }
     if (searchEmailTerm) {
-      filter.$or.push({ email: { $regex: searchEmailTerm, $options: "i" } });
+      searchedFields.push({
+        email: { $regex: searchEmailTerm, $options: "i" },
+      });
     }
 
+    if (!!searchedFields.length) {
+      filter = { $or: searchedFields };
+    }
     const users = await userCollection
       .find(filter)
       .sort([sortBy, sortDirection])
