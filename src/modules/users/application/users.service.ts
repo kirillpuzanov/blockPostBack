@@ -1,5 +1,5 @@
 import { CreateUserInput, UserDb } from "../types/user.types";
-import { DomainError } from "../../../core/errors/error.handler";
+import { DomainError, NotFoundError } from "../../../core/errors/error.handler";
 import { bcryptService } from "../../../auth/utils/bcrypt.service";
 import { usersRepository } from "../repositories/users.repository";
 
@@ -29,5 +29,14 @@ export const usersService = {
     };
 
     return usersRepository.create(user);
+  },
+
+  async deleteOne(id: string): Promise<void> {
+    const deletedCount = await usersRepository.deleteOne(id);
+
+    if (deletedCount < 1) {
+      throw new NotFoundError("user is not exists", "user");
+    }
+    return;
   },
 };

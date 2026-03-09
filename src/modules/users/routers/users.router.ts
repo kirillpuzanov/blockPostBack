@@ -7,6 +7,7 @@ import { authAdminGuard } from "../../../auth/validation/auth-admin.guard";
 import { handleIdValidation } from "../../../core/middlewares/id-validation";
 import { inputUserFieldValidation } from "../validations/input-user.validation";
 import { createUserHandler } from "./handlers/create-user.handler";
+import { deleteUserHandler } from "./handlers/delete-user.handler";
 
 export const usersAuthRouter = Router({});
 
@@ -31,5 +32,5 @@ usersAuthRouter
     authAdminGuard,
     handleIdValidation,
     validationResult,
-    // deleteUserHandler, todo
+    deleteUserHandler,
   );
