@@ -1,5 +1,9 @@
 import { Response, Router } from "express";
-import { blogCollection, postCollection } from "../../db/database";
+import {
+  blogCollection,
+  postCollection,
+  userCollection,
+} from "../../db/database";
 import { HTTP_STATUS } from "../../core/const/statuses";
 import { errorHandler } from "../../core/errors/error.handler";
 
@@ -10,6 +14,7 @@ clearDbRouter.delete("", async (_, res: Response) => {
     await Promise.all([
       blogCollection.deleteMany(),
       postCollection.deleteMany(),
+      userCollection.deleteMany(),
     ]);
     res.sendStatus(HTTP_STATUS.noContent);
   } catch (error) {
