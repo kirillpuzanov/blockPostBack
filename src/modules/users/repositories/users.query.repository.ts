@@ -3,6 +3,7 @@ import { PagedOutput } from "../../../core/types/page-and-sort";
 import { userCollection } from "../../../db/database";
 import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
 import { ObjectId, WithId } from "mongodb";
+import { NotFoundError } from "../../../core/errors/error.handler";
 
 export const usersQueryRepository = {
   async getAll(query: UsersQueryInput): Promise<PagedOutput<UserViewModel>> {
@@ -46,8 +47,13 @@ export const usersQueryRepository = {
     });
   },
 
-  async getById(id: string): Promise<WithId<UserDb> | null> {
-    return userCollection.findOne({ _id: new ObjectId(id) });
+  async getById(id: string): Promise<UserViewModel> {
+    const user = await userCollection.findOne({ _id: new ObjectId(id) });
+
+    if (!user) {
+      throw new NotFoundError("user does not exists", "userId");
+    }
+    return this._mapToUserView(user);
   },
 
   async getByLoginOrEmail(

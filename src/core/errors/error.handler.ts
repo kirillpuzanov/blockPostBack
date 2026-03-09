@@ -15,9 +15,29 @@ export class NotFoundError extends Error {
   }
 }
 
+export class DomainError extends Error {
+  public field: string;
+
+  constructor(message: string, field = "") {
+    super(message);
+    this.field = field;
+  }
+}
+
 export const errorHandler = (error: unknown, res: Response) => {
   if (error instanceof NotFoundError) {
     res.status(HTTP_STATUS.notFound).send(
+      createErrorMessages([
+        {
+          field: error.field,
+          message: error.message,
+        },
+      ]),
+    );
+  }
+
+  if (error instanceof DomainError) {
+    res.status(HTTP_STATUS.badRequest).send(
       createErrorMessages([
         {
           field: error.field,
