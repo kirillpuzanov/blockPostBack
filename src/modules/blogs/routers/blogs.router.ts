@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { getBlogsHandler } from "./handlers/get-blogs.handler";
 import { getBlogHandler } from "./handlers/get-blog.handler";
-import { handleIdValidation } from "../../../core/middlewares/id-validation";
+import {
+  handleBlogIdValidation,
+  handleIdValidation,
+} from "../../../core/middlewares/id-validation";
 import { validationResult } from "../../../core/middlewares/validation-result";
 import { createBlogHandler } from "./handlers/create-blog.handler";
 import { updateBlogHandler } from "./handlers/update-blog.handler";
@@ -10,6 +13,10 @@ import { inputBlogFieldValidation } from "../validation/input-blog.validation";
 import { pageSortValidation } from "../../../core/middlewares/page-sort-validation";
 import { BlogSortFields } from "../types/blog.types";
 import { authAdminGuard } from "../../../auth/validation/auth-admin.guard";
+import { PostsByBlogSortFields } from "../../posts/types/post.types";
+import { inputPostByBlogFieldValidation } from "../../posts/validation/input-post.validation";
+import { getPostsByBlogHandler } from "./handlers/get-posts-by-blog.handler";
+import { createPostByBlogHandler } from "./handlers/create-post-by-blog.handler";
 
 export const blogsPublicRouter = Router({});
 export const blogsAuthRouter = Router({});
@@ -21,7 +28,14 @@ blogsPublicRouter
     validationResult,
     getBlogsHandler,
   )
-  .get("/:id", handleIdValidation, validationResult, getBlogHandler);
+  .get("/:id", handleIdValidation, validationResult, getBlogHandler)
+  .get(
+    "/:blogId/posts",
+    handleBlogIdValidation,
+    pageSortValidation(PostsByBlogSortFields),
+    validationResult,
+    getPostsByBlogHandler,
+  );
 
 blogsAuthRouter
   .post(
@@ -46,4 +60,12 @@ blogsAuthRouter
     handleIdValidation,
     validationResult,
     deleteBlogHandler,
+  )
+  .post(
+    "/:blogId/posts",
+    authAdminGuard,
+    handleBlogIdValidation,
+    inputPostByBlogFieldValidation,
+    validationResult,
+    createPostByBlogHandler,
   );
