@@ -17,5 +17,8 @@
     "__tests__",
     "dist",
     "node_modules"
+  ],
+  "files": [
+    "./src/types.global/index.ts"
   ]
 }

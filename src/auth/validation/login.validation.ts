@@ -12,4 +12,4 @@ const passwordValidation = body("password")
   .isLength({ min: 6, max: 20 })
   .withMessage("incorrect password");
 
-export const loginGuard = [loginOrEmailValidation, passwordValidation];
+export const loginValidation = [loginOrEmailValidation, passwordValidation];

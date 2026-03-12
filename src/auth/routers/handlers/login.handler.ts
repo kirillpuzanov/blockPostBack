@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { LoginInput } from "../../types/auth.types";
 import { authService } from "../../application/auth.service";
 import { HTTP_STATUS } from "../../../core/const/statuses";
+import { ResultStatus } from "../../../core/types/result";
+import { mapResultToHttpStatus } from "../../../core/utils/map-result-to-http-status";
 
 export const loginHandler = async (
   req: Request<{}, {}, LoginInput>,
@@ -9,9 +11,14 @@ export const loginHandler = async (
 ) => {
   const { password, loginOrEmail } = req.body;
 
-  const isSuccess = await authService.login({ password, loginOrEmail });
-  if (isSuccess) {
-    return res.sendStatus(HTTP_STATUS.noContent);
+  const result = await authService.login({ password, loginOrEmail });
+
+  if (result.status === ResultStatus.Success) {
+    res
+      .status(mapResultToHttpStatus(result.status))
+      .send({ accessToken: result.data!.accessToken });
+    return;
   }
-  return res.sendStatus(HTTP_STATUS.unAuthorized);
+
+  res.sendStatus(HTTP_STATUS.unAuthorized);
 };
