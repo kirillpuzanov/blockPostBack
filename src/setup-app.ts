@@ -19,7 +19,7 @@ export const setupApp = (app: Application) => {
     res.status(200).send("Good luck!");
   });
 
-  app.use(routes.auth, authRouter);
+  app.use(routes.auth.root, authRouter);
 
   app.use(routes.blogs, blogsPublicRouter);
   app.use(routes.blogs, blogsAuthRouter);

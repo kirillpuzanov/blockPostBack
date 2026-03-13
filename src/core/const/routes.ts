@@ -3,7 +3,10 @@ export const routes = {
   posts: "/posts",
   testing: "/testing/all-data",
 
-  auth: "/auth",
+  auth: {
+    root: "/auth",
+    login: "/login",
+  },
 
   users: "/users",
 } as const;
