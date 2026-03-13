@@ -19,7 +19,7 @@ import { getPostsByBlogHandler } from "./handlers/get-posts-by-blog.handler";
 import { createPostByBlogHandler } from "./handlers/create-post-by-blog.handler";
 
 export const blogsPublicRouter = Router({});
-export const blogsAuthRouter = Router({});
+export const blogsAdminAuthRouter = Router({});
 
 blogsPublicRouter
   .get(
@@ -37,7 +37,7 @@ blogsPublicRouter
     getPostsByBlogHandler,
   );
 
-blogsAuthRouter
+blogsAdminAuthRouter
   .post(
     "",
     authAdminGuard,

@@ -1,16 +1,16 @@
 import express, { Application } from "express";
 import { routes } from "./core/const/routes";
 import {
-  blogsAuthRouter,
+  blogsAdminAuthRouter,
   blogsPublicRouter,
 } from "./modules/blogs/routers/blogs.router";
 import { clearDbRouter } from "./modules/testing/clear-db.router";
 import {
-  postsAuthRouter,
+  postsAdminAuthRouter,
   postsPublicRouter,
 } from "./modules/posts/routers/posts.router";
 import { authRouter } from "./auth/routers/auth.router";
-import { usersAuthRouter } from "./modules/users/routers/users.router";
+import { usersAdminAuthRouter } from "./modules/users/routers/users.router";
 
 export const setupApp = (app: Application) => {
   app.use(express.json());
@@ -22,12 +22,12 @@ export const setupApp = (app: Application) => {
   app.use(routes.auth.root, authRouter);
 
   app.use(routes.blogs, blogsPublicRouter);
-  app.use(routes.blogs, blogsAuthRouter);
+  app.use(routes.blogs, blogsAdminAuthRouter);
 
   app.use(routes.posts, postsPublicRouter);
-  app.use(routes.posts, postsAuthRouter);
+  app.use(routes.posts, postsAdminAuthRouter);
 
-  app.use(routes.users, usersAuthRouter);
+  app.use(routes.users, usersAdminAuthRouter);
 
   app.use(routes.testing, clearDbRouter);
 };

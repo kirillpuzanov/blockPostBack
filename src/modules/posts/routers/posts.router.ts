@@ -12,7 +12,7 @@ import { pageSortValidation } from "../../../core/middlewares/page-sort-validati
 import { PostSortFields } from "../types/post.types";
 
 export const postsPublicRouter = Router({});
-export const postsAuthRouter = Router({});
+export const postsAdminAuthRouter = Router({});
 
 postsPublicRouter
   .get(
@@ -23,7 +23,7 @@ postsPublicRouter
   )
   .get("/:id", handleIdValidation, validationResult, getPostHandler);
 
-postsAuthRouter
+postsAdminAuthRouter
   .post(
     "",
     authAdminGuard,

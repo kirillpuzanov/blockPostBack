@@ -9,9 +9,9 @@ import { inputUserFieldValidation } from "../validations/input-user.validation";
 import { createUserHandler } from "./handlers/create-user.handler";
 import { deleteUserHandler } from "./handlers/delete-user.handler";
 
-export const usersAuthRouter = Router({});
+export const usersAdminAuthRouter = Router({});
 
-usersAuthRouter
+usersAdminAuthRouter
   .get(
     "",
     authAdminGuard,
