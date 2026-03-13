@@ -12,9 +12,13 @@ import { pageSortValidation } from "../../../core/middlewares/page-sort-validati
 import { PostSortFields } from "../types/post.types";
 import { getCommentsByPostHandler } from "./handlers/get-comments-by-post.handler";
 import { CommentsSortFields } from "../../comments/types/comment.types";
+import { accessTokenGuard } from "../../../auth/validation/access-token.guard";
+import { inputCommentValidation } from "../../comments/validation/input-comment.validation";
+import { createCommentByPostHandler } from "./handlers/create-comment-by-post.handler";
 
 export const postsPublicRouter = Router({});
 export const postsAdminAuthRouter = Router({});
+export const postsAuthRouter = Router({});
 
 postsPublicRouter
   .get(
@@ -56,3 +60,11 @@ postsAdminAuthRouter
     validationResult,
     deletePostHandler,
   );
+
+postsAuthRouter.post(
+  "/id/comments",
+  accessTokenGuard,
+  inputCommentValidation,
+  validationResult,
+  createCommentByPostHandler,
+);

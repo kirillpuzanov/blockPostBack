@@ -1,6 +1,6 @@
 import { body } from "express-validator";
 
-const inputCommentValidation = body("content")
+export const inputCommentValidation = body("content")
   .isString()
   .withMessage("content must be string")
   .trim()

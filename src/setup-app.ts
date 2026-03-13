@@ -7,6 +7,7 @@ import {
 import { clearDbRouter } from "./modules/testing/clear-db.router";
 import {
   postsAdminAuthRouter,
+  postsAuthRouter,
   postsPublicRouter,
 } from "./modules/posts/routers/posts.router";
 import { authRouter } from "./auth/routers/auth.router";
@@ -26,6 +27,7 @@ export const setupApp = (app: Application) => {
 
   app.use(routes.posts, postsPublicRouter);
   app.use(routes.posts, postsAdminAuthRouter);
+  app.use(routes.posts, postsAuthRouter);
 
   app.use(routes.users, usersAdminAuthRouter);
 

@@ -17,6 +17,9 @@ export const mapResultToHttpStatus = (resStatus: ResultStatus): HttpStatus => {
     case ResultStatus.Success:
       return HTTP_STATUS.ok;
 
+    case ResultStatus.Created:
+      return HTTP_STATUS.created;
+
     case ResultStatus.Unauthorized:
       return HTTP_STATUS.unAuthorized;
 
