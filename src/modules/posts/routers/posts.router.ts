@@ -10,6 +10,8 @@ import { deletePostHandler } from "./handlers/delete-post.handler";
 import { inputPostFieldValidation } from "../validation/input-post.validation";
 import { pageSortValidation } from "../../../core/middlewares/page-sort-validation";
 import { PostSortFields } from "../types/post.types";
+import { getCommentsByPostHandler } from "./handlers/get-comments-by-post.handler";
+import { CommentsSortFields } from "../../comments/types/comment.types";
 
 export const postsPublicRouter = Router({});
 export const postsAdminAuthRouter = Router({});
@@ -21,7 +23,15 @@ postsPublicRouter
     validationResult,
     getPostsHandler,
   )
-  .get("/:id", handleIdValidation, validationResult, getPostHandler);
+  .get("/:id", handleIdValidation, validationResult, getPostHandler)
+
+  .get(
+    "/:id/comments",
+    handleIdValidation,
+    pageSortValidation(CommentsSortFields),
+    validationResult,
+    getCommentsByPostHandler,
+  );
 
 postsAdminAuthRouter
   .post(
