@@ -1,6 +1,7 @@
 import { Response, Router } from "express";
 import {
   blogCollection,
+  commentCollection,
   postCollection,
   userCollection,
 } from "../../db/database";
@@ -15,6 +16,7 @@ clearDbRouter.delete("", async (_, res: Response) => {
       blogCollection.deleteMany(),
       postCollection.deleteMany(),
       userCollection.deleteMany(),
+      commentCollection.deleteMany(),
     ]);
     res.sendStatus(HTTP_STATUS.noContent);
   } catch (error) {
