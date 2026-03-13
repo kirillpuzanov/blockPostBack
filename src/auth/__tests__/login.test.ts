@@ -54,7 +54,7 @@ describe("login API", () => {
   it("should return 400 badRequest, if invalid credentials", async () => {
     const loginResult = await request(app)
       .post(routes.auth.login)
-      .send({ loginOrEmail: "test_email@", password: newUserData.password })
+      .send({ loginOrEmail: "", password: newUserData.password })
       .expect(HTTP_STATUS.badRequest);
 
     expect(loginResult.body).toHaveProperty("errorsMessages");

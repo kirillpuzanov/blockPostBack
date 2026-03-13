@@ -4,9 +4,8 @@ export const routes = {
   testing: "/testing/all-data",
 
   auth: {
-    root: "/auth",
-    login: "/login",
-    me: "/me",
+    login: "/auth/login",
+    me: "/auth/me",
   },
 
   users: "/users",
