@@ -6,6 +6,7 @@ export const routes = {
   auth: {
     root: "/auth",
     login: "/login",
+    me: "/me",
   },
 
   users: "/users",

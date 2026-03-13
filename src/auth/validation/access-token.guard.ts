@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { usersQueryRepository } from "../../modules/users/repositories/users.query.repository";
 import { HTTP_STATUS } from "../../core/const/statuses";
 import { jwtService } from "../utils/jwt.service";
 
@@ -17,7 +16,7 @@ export const accessTokenGuard = async (
   const userId = await jwtService.verifyToken(token);
 
   if (userId) {
-    req.userMetaData = await usersQueryRepository.getById(userId);
+    req.userMetaData = { userId };
     next();
   }
   res.sendStatus(HTTP_STATUS.unAuthorized);
