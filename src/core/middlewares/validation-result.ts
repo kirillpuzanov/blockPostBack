@@ -26,7 +26,7 @@ export const validationResult = (
     .array({ onlyFirstError: true });
 
   if (!!errors?.length) {
-    res.status(HTTP_STATUS.badRequest).send(createErrorMessages(errors));
+    return res.status(HTTP_STATUS.badRequest).send(createErrorMessages(errors));
   }
   next();
 };

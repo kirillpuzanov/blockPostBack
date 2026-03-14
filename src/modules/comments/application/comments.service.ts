@@ -36,4 +36,17 @@ export const commentService = {
       data: { commentId },
     });
   },
+
+  async updateComment(
+    commentId: string,
+    content: string,
+  ): Promise<Result<null>> {
+    const updatedCount = await commentsRepository.update(commentId, content);
+
+    if (updatedCount < 1) {
+      return createResultObject({ status: ResultStatus.NotFound });
+    }
+
+    return createResultObject({ status: ResultStatus.NoContent });
+  },
 };

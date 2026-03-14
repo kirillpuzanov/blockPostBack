@@ -14,6 +14,10 @@ export type CreateCommentInput = {
   content: string;
 };
 
+export type UpdateCommentInput = {
+  content: string;
+};
+
 export type CommentDb = {
   postId: string;
   content: string;
