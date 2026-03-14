@@ -5,6 +5,7 @@ import { getCommentHandler } from "./handlers/get-comment.handler";
 import { inputCommentValidation } from "../validation/input-comment.validation";
 import { accessTokenGuard } from "../../../auth/validation/access-token.guard";
 import { updateCommentHandler } from "./handlers/update-comment.handler";
+import { deleteCommentHandler } from "./handlers/delete-comment.handler";
 
 export const commentsPublicRouter = Router({});
 export const commentsAuthRouter = Router({});
@@ -25,4 +26,10 @@ commentsAuthRouter
     validationResult,
     updateCommentHandler,
   )
-  .delete("/:id", handleIdValidation, validationResult);
+  .delete(
+    "/:id",
+    accessTokenGuard,
+    handleIdValidation,
+    validationResult,
+    deleteCommentHandler,
+  );

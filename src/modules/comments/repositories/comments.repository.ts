@@ -15,4 +15,11 @@ export const commentsRepository = {
     );
     return updatedComment.matchedCount;
   },
+
+  async deleteOne(commentId: string): Promise<number> {
+    const updatedComment = await commentCollection.deleteOne({
+      _id: new ObjectId(commentId),
+    });
+    return updatedComment.deletedCount;
+  },
 };

@@ -1,28 +1,18 @@
 import { Request, Response } from "express";
-import {
-  CommentViewModel,
-  UpdateCommentInput,
-} from "../../types/comment.types";
 import { errorHandler } from "../../../../core/errors/error.handler";
 import { commentService } from "../../application/comments.service";
-import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { ResultStatus } from "../../../../core/types/result";
 import { mapResultToHttpStatus } from "../../../../core/utils/map-result-to-http-status";
+import { HTTP_STATUS } from "../../../../core/const/statuses";
 
-export const updateCommentHandler = async (
-  req: Request<{ id: string }, CommentViewModel, UpdateCommentInput>,
+export const deleteCommentHandler = async (
+  req: Request<{ id: string }>,
   res: Response,
 ) => {
   try {
     const commentId = req.params.id;
     const userId = req.userMetaData!.id;
-    const content = req.body.content;
-
-    const result = await commentService.updateComment(
-      userId,
-      commentId,
-      content,
-    );
+    const result = await commentService.deleteComment(userId, commentId);
 
     if (result.status !== ResultStatus.NoContent) {
       return res.sendStatus(mapResultToHttpStatus(result.status));

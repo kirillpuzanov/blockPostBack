@@ -4,6 +4,8 @@ import { Result, ResultStatus } from "../../../core/types/result";
 import { UserViewModel } from "../../users/types/user.types";
 import { CommentDb } from "../types/comment.types";
 import { commentsRepository } from "../repositories/comments.repository";
+import { commentCollection } from "../../../db/database";
+import { ObjectId } from "mongodb";
 
 export const commentService = {
   async createComment(
@@ -38,9 +40,17 @@ export const commentService = {
   },
 
   async updateComment(
+    userId: string,
     commentId: string,
     content: string,
   ): Promise<Result<null>> {
+    const avaLiableResult = await this._availabilityCheck(userId, commentId);
+
+    if (avaLiableResult.status !== ResultStatus.Success) {
+      /** статус будет NotFound или Forbidden */
+      return avaLiableResult;
+    }
+
     const updatedCount = await commentsRepository.update(commentId, content);
 
     if (updatedCount < 1) {
@@ -48,5 +58,45 @@ export const commentService = {
     }
 
     return createResultObject({ status: ResultStatus.NoContent });
+  },
+
+  async deleteComment(
+    userId: string,
+    commentId: string,
+  ): Promise<Result<null>> {
+    const avaLiableResult = await this._availabilityCheck(userId, commentId);
+
+    if (avaLiableResult.status !== ResultStatus.Success) {
+      /** статус будет NotFound или Forbidden */
+      return avaLiableResult;
+    }
+
+    const deletedCount = await commentsRepository.deleteOne(commentId);
+    if (deletedCount < 1) {
+      return createResultObject({ status: ResultStatus.NotFound });
+    }
+
+    return createResultObject({ status: ResultStatus.NoContent });
+  },
+
+  async _availabilityCheck(
+    userId: string,
+    commentId: string,
+  ): Promise<Result<null>> {
+    const comment = await commentCollection.findOne({
+      _id: new ObjectId(commentId),
+    });
+
+    /** такого коммента нет в БД */
+    if (!comment) {
+      return createResultObject({ status: ResultStatus.NotFound });
+    }
+
+    /** комментарий был создан не этим пользователем */
+    if (comment.commentatorInfo?.userId !== userId) {
+      return createResultObject({ status: ResultStatus.Forbidden });
+    }
+
+    return createResultObject({ status: ResultStatus.Success });
   },
 };
