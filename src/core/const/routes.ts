@@ -9,4 +9,5 @@ export const routes = {
   },
 
   users: "/users",
+  comments: "/comments",
 } as const;

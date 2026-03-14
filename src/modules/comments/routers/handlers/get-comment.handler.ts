@@ -15,7 +15,7 @@ export const getCommentHandler = async (
     if (result.status === ResultStatus.Success) {
       return res.status(HTTP_STATUS.ok).send(result.data);
     }
-    return res.status(HTTP_STATUS.notFound);
+    return res.sendStatus(HTTP_STATUS.notFound);
   } catch (error) {
     errorHandler(error, res);
   }

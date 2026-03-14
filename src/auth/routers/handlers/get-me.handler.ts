@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { LoginInput } from "../../types/auth.types";
+import { LoginInput, MeViewModel } from "../../types/auth.types";
 import { HTTP_STATUS } from "../../../core/const/statuses";
 
 export const getMeHandler = async (
-  req: Request<{}, {}, LoginInput>,
+  req: Request<{}, MeViewModel, LoginInput>,
   res: Response,
 ) => {
   const user = req.userMetaData;
@@ -14,6 +14,7 @@ export const getMeHandler = async (
   }
 
   const { id, login, email } = user;
+  const meView: MeViewModel = { userId: id, login, email };
 
-  res.status(HTTP_STATUS.ok).send({ id, login, email });
+  res.status(HTTP_STATUS.ok).send(meView);
 };

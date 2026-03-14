@@ -47,6 +47,6 @@ export const errorHandler = (error: unknown, res: Response) => {
     );
   }
 
-  res.status(HTTP_STATUS.serverError);
+  res.sendStatus(HTTP_STATUS.serverError);
   return;
 };

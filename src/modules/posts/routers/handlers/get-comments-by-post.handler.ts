@@ -27,7 +27,7 @@ export const getCommentsByPostHandler = async (
       return res.status(HTTP_STATUS.ok).send(result.data);
     }
 
-    return res.status(mapResultToHttpStatus(result.status));
+    return res.sendStatus(mapResultToHttpStatus(result.status));
   } catch (e) {
     errorHandler(e, res);
   }

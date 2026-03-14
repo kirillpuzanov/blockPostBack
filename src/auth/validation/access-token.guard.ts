@@ -10,8 +10,7 @@ export const accessTokenGuard = async (
 ) => {
   try {
     if (!req.headers.authorization) {
-      res.sendStatus(HTTP_STATUS.unAuthorized);
-      return;
+      return res.sendStatus(HTTP_STATUS.unAuthorized);
     }
 
     const token = req.headers.authorization.split(" ")[1];
@@ -22,11 +21,10 @@ export const accessTokenGuard = async (
 
       if (user) {
         req.userMetaData = user;
-        next();
+        return next();
       }
     }
-    res.sendStatus(HTTP_STATUS.unAuthorized);
-    return;
+    return res.sendStatus(HTTP_STATUS.unAuthorized);
   } catch {
     res.sendStatus(HTTP_STATUS.unAuthorized);
   }

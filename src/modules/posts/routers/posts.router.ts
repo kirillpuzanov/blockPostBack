@@ -62,7 +62,7 @@ postsAdminAuthRouter
   );
 
 postsAuthRouter.post(
-  "/id/comments",
+  "/:id/comments",
   accessTokenGuard,
   inputCommentValidation,
   validationResult,

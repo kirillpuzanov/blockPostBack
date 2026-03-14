@@ -12,6 +12,7 @@ import {
 } from "./modules/posts/routers/posts.router";
 import { authRouter } from "./auth/routers/auth.router";
 import { usersAdminAuthRouter } from "./modules/users/routers/users.router";
+import { commentsPublicRouter } from "./modules/comments/routers/comments.router";
 
 export const setupApp = (app: Application) => {
   app.use(express.json());
@@ -27,6 +28,8 @@ export const setupApp = (app: Application) => {
   app.use(routes.posts, postsPublicRouter);
   app.use(routes.posts, postsAdminAuthRouter);
   app.use(routes.posts, postsAuthRouter);
+
+  app.use(routes.comments, commentsPublicRouter);
 
   app.use(routes.users, usersAdminAuthRouter);
 

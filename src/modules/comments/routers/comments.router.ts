@@ -7,7 +7,7 @@ export const commentsPublicRouter = Router({});
 export const commentsAuthRouter = Router({});
 
 commentsPublicRouter.get(
-  "/id",
+  "/:id",
   handleIdValidation,
   validationResult,
   getCommentHandler,

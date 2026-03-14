@@ -19,16 +19,21 @@ export const createCommentByPostHandler = async (
     const { content } = req.body;
     const user = req.userMetaData!;
 
-    const result = await commentService.createComment(user, postId, content);
+    const createResult = await commentService.createComment(
+      user,
+      postId,
+      content,
+    );
 
-    if (result.status === ResultStatus.Created && !!result.data?.commentId) {
-      const commentView = await commentsQueryRepository.getById(
-        result.data.commentId,
-      );
-      return res.status(HTTP_STATUS.created).send(commentView);
+    if (createResult.status !== ResultStatus.Created) {
+      return res.sendStatus(mapResultToHttpStatus(createResult.status));
     }
 
-    return res.status(mapResultToHttpStatus(result.status));
+    const commentResult = await commentsQueryRepository.getById(
+      createResult.data!.commentId,
+    );
+
+    return res.status(HTTP_STATUS.created).send(commentResult.data);
   } catch (e) {
     errorHandler(e, res);
   }
