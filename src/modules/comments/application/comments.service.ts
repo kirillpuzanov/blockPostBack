@@ -24,6 +24,7 @@ export const commentService = {
     const comment: CommentDb = {
       postId,
       content,
+      blogId: post.blogId,
       commentatorInfo: {
         userId: user.id,
         userLogin: user.login,
@@ -77,6 +78,11 @@ export const commentService = {
     }
 
     return createResultObject({ status: ResultStatus.NoContent });
+  },
+
+  async deleteManyComments(filter: Record<string, string>): Promise<void> {
+    await commentCollection.deleteMany(filter);
+    return;
   },
 
   async _availabilityCheck(

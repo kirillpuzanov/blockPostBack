@@ -2,6 +2,7 @@ import { BlogDb, CreateBlogInput } from "../types/blog.types";
 import { blogsRepository } from "../repositories/blogs.repository";
 import { NotFoundError } from "../../../core/errors/error.handler";
 import { postsService } from "../../posts/application/posts.service";
+import { commentService } from "../../comments/application/comments.service";
 
 export const blogsService = {
   async createBlog(input: CreateBlogInput): Promise<string> {
@@ -40,6 +41,9 @@ export const blogsService = {
 
     /** удаляем посты привязанные к этому блогу */
     await postsService.deleteManyPost({ blogId: id });
+
+    /** удаляем комментарии привязанные постам блога */
+    await commentService.deleteManyComments({ blogId: id });
     return;
   },
 };

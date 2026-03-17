@@ -19,6 +19,7 @@ export type UpdateCommentInput = {
 };
 
 export type CommentDb = {
+  blogId: string;
   postId: string;
   content: string;
   commentatorInfo: {

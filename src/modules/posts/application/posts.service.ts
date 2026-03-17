@@ -3,6 +3,7 @@ import { postsRepository } from "../repositories/posts.repository";
 import { NotFoundError } from "../../../core/errors/error.handler";
 import { postCollection } from "../../../db/database";
 import { blogsQueryRepository } from "../../blogs/repositories/blogs.query.repository";
+import { commentService } from "../../comments/application/comments.service";
 
 export const postsService = {
   async createPost(input: CreatePostInput): Promise<string> {
@@ -44,6 +45,9 @@ export const postsService = {
     if (deletedCount < 1) {
       throw new NotFoundError("not found for delete", "post");
     }
+
+    /** удаляем комментарии привязанные к этому посту */
+    await commentService.deleteManyComments({ postId: id });
     return;
   },
 
