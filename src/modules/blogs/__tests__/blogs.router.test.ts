@@ -4,9 +4,9 @@ import { setupApp } from "../../../setup-app";
 import { HTTP_STATUS } from "../../../core/const/statuses";
 import { routes } from "../../../core/const/routes";
 import { runDb, stopDb } from "../../../db/database";
-import { SETTINGS } from "../../../core/settings/settings";
 import { generateAuthHeader } from "../../../core/utils/generate-auth-header";
 import { createBlog } from "./blog-test.utils";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 const testAuthHeader = generateAuthHeader();
 
@@ -21,8 +21,10 @@ describe("Blogs API", () => {
   };
 
   beforeAll(async () => {
-    await runDb(SETTINGS.MONGO_URL);
-    await request(app).delete(routes.testing).expect(HTTP_STATUS.noContent);
+    const mongoServer = await MongoMemoryServer.create();
+
+    await runDb(mongoServer.getUri());
+    await request(app).delete(routes.testing);
   });
 
   afterAll(async () => {

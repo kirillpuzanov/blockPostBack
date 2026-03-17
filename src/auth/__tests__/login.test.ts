@@ -1,11 +1,11 @@
 import express from "express";
 import { setupApp } from "../../setup-app";
 import { runDb, stopDb } from "../../db/database";
-import { SETTINGS } from "../../core/settings/settings";
 import request from "supertest";
 import { routes } from "../../core/const/routes";
 import { HTTP_STATUS } from "../../core/const/statuses";
 import { generateAuthHeader } from "../../core/utils/generate-auth-header";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 const newUserData = {
   login: "test_login",
@@ -18,7 +18,9 @@ describe("login API", () => {
   setupApp(app);
 
   beforeAll(async () => {
-    await runDb(SETTINGS.MONGO_URL);
+    const mongoServer = await MongoMemoryServer.create();
+
+    await runDb(mongoServer.getUri());
     await request(app).delete(routes.testing);
 
     /** создаем пользователя для тестов логина */
