@@ -1,9 +1,12 @@
 import request from "supertest";
 import { routes } from "../../../core/const/routes";
 import { HTTP_STATUS } from "../../../core/const/statuses";
-import { BlogViewModel, CreateBlogInput } from "../types/blog.types";
 import { Express } from "express";
 import { generateAuthHeader } from "../../../core/utils/generate-auth-header";
+import {
+  BlogViewModel,
+  CreateBlogInput,
+} from "../../../modules/blogs/types/blog.types";
 
 export const createBlog = async (
   app: Express,

@@ -13,7 +13,7 @@ const newUserData = {
   password: "12345678",
 };
 
-describe("login API", () => {
+describe("login e2e test", () => {
   const app = express();
   setupApp(app);
 

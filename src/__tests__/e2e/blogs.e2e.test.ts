@@ -1,16 +1,16 @@
 import request from "supertest";
 import express from "express";
-import { setupApp } from "../../../setup-app";
-import { HTTP_STATUS } from "../../../core/const/statuses";
-import { routes } from "../../../core/const/routes";
-import { runDb, stopDb } from "../../../db/database";
-import { generateAuthHeader } from "../../../core/utils/generate-auth-header";
-import { createBlog } from "./blog-test.utils";
+import { setupApp } from "../../setup-app";
+import { HTTP_STATUS } from "../../core/const/statuses";
+import { routes } from "../../core/const/routes";
+import { runDb, stopDb } from "../../db/database";
+import { generateAuthHeader } from "../../core/utils/generate-auth-header";
+import { createBlog } from "./utils/blog-test.utils";
 import { MongoMemoryServer } from "mongodb-memory-server";
 
 const testAuthHeader = generateAuthHeader();
 
-describe("Blogs API", () => {
+describe("Blogs e2e test", () => {
   const app = express();
   setupApp(app);
 
