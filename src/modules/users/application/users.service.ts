@@ -26,6 +26,12 @@ export const usersService = {
       email,
       passwordHash,
       createdAt: new Date().toISOString(),
+      /** при создании админом подтверждение не требуется */
+      emailConfirmation: {
+        confirmationCode: "",
+        expirationDate: new Date(),
+        isConfirmed: true,
+      },
     };
 
     return usersRepository.create(user);

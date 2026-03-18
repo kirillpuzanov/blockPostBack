@@ -6,6 +6,11 @@ import { WithId } from "mongodb";
 import { UserDb } from "../../modules/users/types/user.types";
 import { createResultObject } from "../../core/utils/create-result-object";
 import { jwtService } from "../utils/jwt.service";
+import { v4 as idv4 } from "uuid";
+
+import { usersRepository } from "../../modules/users/repositories/users.repository";
+import { mailService } from "../utils/mail.service";
+import { mailTemplates } from "../utils/mail-templates";
 
 export const authService = {
   async login({
@@ -52,5 +57,49 @@ export const authService = {
       status: ResultStatus.Success,
       data: user,
     });
+  },
+
+  async registration(
+    password: string,
+    email: string,
+    login: string,
+  ): Promise<Result<null>> {
+    const userAlreadyExist = await usersRepository.checkUserIsAlreadyExist(
+      login,
+      email,
+    );
+
+    if (userAlreadyExist) {
+      return createResultObject({
+        status: ResultStatus.BadRequest,
+        extensions: [{ field: "loginOrEmail", message: "Already Registered" }],
+      });
+    }
+
+    const passwordHash = await bcryptService.generateHash(password);
+
+    const user: UserDb = {
+      login,
+      email,
+      createdAt: new Date().toISOString(),
+      passwordHash,
+      emailConfirmation: {
+        confirmationCode: idv4(),
+        expirationDate: new Date(new Date().getTime() + 10 * 60 * 1000),
+        isConfirmed: false,
+      },
+    };
+
+    await usersRepository.create(user);
+
+    mailService
+      .sendMail(
+        user.email,
+        user.emailConfirmation.confirmationCode,
+        mailTemplates.registration,
+      )
+      .catch((error) => console.error("error send email", error));
+
+    return createResultObject({ status: ResultStatus.Created });
   },
 };

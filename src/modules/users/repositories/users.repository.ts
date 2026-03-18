@@ -23,4 +23,14 @@ export const usersRepository = {
 
     return Boolean(user?.createdAt);
   },
+
+  async checkUserIsAlreadyExist(
+    login: string,
+    email: string,
+  ): Promise<boolean> {
+    const user = await userCollection.findOne({
+      $or: [{ login: { $regex: login } }, { email: { $regex: email } }],
+    });
+    return Boolean(user?.createdAt);
+  },
 };

@@ -4,6 +4,9 @@ export const routes = {
   testing: "/testing/all-data",
 
   auth: {
+    registration: "/auth/registration",
+    registrationConfirm: "/auth/registration-confirmation",
+    registrationResendCode: "/auth/registration-email-resending",
     login: "/auth/login",
     me: "/auth/me",
   },

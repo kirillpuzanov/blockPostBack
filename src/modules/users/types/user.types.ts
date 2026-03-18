@@ -18,6 +18,11 @@ export type UserDb = {
   email: string;
   createdAt: string;
   passwordHash: string;
+  emailConfirmation: {
+    confirmationCode: string;
+    expirationDate: Date;
+    isConfirmed: boolean;
+  };
 };
 
 export enum UsersSortFields {
