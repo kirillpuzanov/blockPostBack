@@ -73,6 +73,12 @@ export const usersQueryRepository = {
     });
   },
 
+  async getByConfirmCode(confirmCode: string): Promise<WithId<UserDb> | null> {
+    return userCollection.findOne({
+      "emailConfirmation.confirmationCode": confirmCode,
+    });
+  },
+
   _mapToUserView(user: WithId<UserDb>): UserViewModel {
     const { email, _id, createdAt, login } = user;
     return {

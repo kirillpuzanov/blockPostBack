@@ -29,3 +29,10 @@ export const registrationValidation = [
   passwordValidation,
   emailValidation,
 ];
+
+export const registrationConfirmValidation = body("code")
+  .isString()
+  .trim()
+  .isLength({ min: 1, max: 100 })
+  .isUUID(4) // todo - check
+  .withMessage("incorrect confirmation code");

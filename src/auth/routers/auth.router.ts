@@ -5,8 +5,12 @@ import { loginHandler } from "./handlers/login.handler";
 import { routes } from "../../core/const/routes";
 import { accessTokenGuard } from "../validation/access-token.guard";
 import { getMeHandler } from "./handlers/get-me.handler";
-import { registrationValidation } from "../validation/registration.validation";
+import {
+  registrationConfirmValidation,
+  registrationValidation,
+} from "../validation/registration.validation";
 import { registrationHandler } from "./handlers/registration.handler";
+import { registrationConfirmHandler } from "./handlers/registration-confirm.handler";
 
 export const authRouter = Router({});
 
@@ -18,6 +22,11 @@ authRouter
     registrationValidation,
     validationResult,
     registrationHandler,
+  )
+  .post(
+    routes.auth.registrationConfirm,
+    registrationConfirmValidation,
+    validationResult,
+    registrationConfirmHandler,
   );
-// .post(routes.auth.registrationConfirm)
 // .post(routes.auth.registrationResendCode);

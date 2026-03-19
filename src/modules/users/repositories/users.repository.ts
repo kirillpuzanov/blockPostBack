@@ -33,4 +33,12 @@ export const usersRepository = {
     });
     return Boolean(user?.createdAt);
   },
+
+  async updateToConfirmRegistration(_id: ObjectId): Promise<number> {
+    const result = await userCollection.updateOne(
+      { _id },
+      { "emailConfirmation.isConfirmed": true },
+    );
+    return result.modifiedCount;
+  },
 };

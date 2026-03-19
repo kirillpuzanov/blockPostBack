@@ -6,11 +6,11 @@ import { WithId } from "mongodb";
 import { UserDb } from "../../modules/users/types/user.types";
 import { createResultObject } from "../../core/utils/create-result-object";
 import { jwtService } from "../utils/jwt.service";
-import { v4 as idv4 } from "uuid";
 
 import { usersRepository } from "../../modules/users/repositories/users.repository";
 import { mailService } from "../utils/mail.service";
 import { mailTemplates } from "../utils/mail-templates";
+import { createUserDB } from "../../modules/users/application/utils";
 
 export const authService = {
   async login({
@@ -68,7 +68,7 @@ export const authService = {
       login,
       email,
     );
-
+    /** проверяем, что это новый пользователь */
     if (userAlreadyExist) {
       return createResultObject({
         status: ResultStatus.BadRequest,
@@ -78,17 +78,9 @@ export const authService = {
 
     const passwordHash = await bcryptService.generateHash(password);
 
-    const user: UserDb = {
-      login,
-      email,
-      createdAt: new Date().toISOString(),
-      passwordHash,
-      emailConfirmation: {
-        confirmationCode: idv4(),
-        expirationDate: new Date(new Date().getTime() + 10 * 60 * 1000),
-        isConfirmed: false,
-      },
-    };
+    /** сохраняем пользователя в БД, с флагом неподтвержденной регистрации
+     * и мета инф. для последующего подтверждения регистрации */
+    const user: UserDb = createUserDB(login, email, passwordHash);
 
     await usersRepository.create(user);
 
@@ -101,5 +93,44 @@ export const authService = {
       .catch((error) => console.error("error send email", error));
 
     return createResultObject({ status: ResultStatus.Created });
+  },
+
+  async registrationConfirm(code: string): Promise<Result<null>> {
+    const user = await usersQueryRepository.getByConfirmCode(code);
+
+    if (!user) {
+      return createResultObject({
+        status: ResultStatus.BadRequest,
+        extensions: [{ field: "user", message: "user does not exist" }],
+      });
+    }
+
+    if (user.emailConfirmation.isConfirmed) {
+      return createResultObject({
+        status: ResultStatus.BadRequest,
+        extensions: [{ field: "user", message: "user is already confirmed" }],
+      });
+    }
+
+    if (user.emailConfirmation.expirationDate > new Date()) {
+      return createResultObject({
+        status: ResultStatus.BadRequest,
+        extensions: [
+          { field: "code", message: "confirmation code is expired." },
+        ],
+      });
+    }
+
+    const updatedCount = await usersRepository.updateToConfirmRegistration(
+      user._id,
+    );
+
+    if (updatedCount < 1) {
+      return createResultObject({
+        status: ResultStatus.BadRequest,
+        extensions: [{ field: "user", message: "user does not exist" }],
+      });
+    }
+    return createResultObject({ status: ResultStatus.NoContent });
   },
 };
