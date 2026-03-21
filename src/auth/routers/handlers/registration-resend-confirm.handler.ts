@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { RegistrationInput } from "../../types/auth.types";
 import { HTTP_STATUS } from "../../../core/const/statuses";
 import {
   createErrorMessages,
@@ -9,14 +8,14 @@ import { authService } from "../../application/auth.service";
 import { ResultStatus } from "../../../core/types/result";
 import { mapResultToHttpStatus } from "../../../core/utils/map-result-to-http-status";
 
-export const registrationHandler = async (
-  req: Request<{}, {}, RegistrationInput>,
+export const registrationResendConfirmHandler = async (
+  req: Request<{}, {}, { email: string }>,
   res: Response,
 ) => {
   try {
-    const { password, email, login } = req.body;
+    const { email } = req.body;
 
-    const result = await authService.registration(password, email, login);
+    const result = await authService.registrationResendConfirm(email);
 
     if (result.status === ResultStatus.NoContent) {
       return res.sendStatus(HTTP_STATUS.noContent);

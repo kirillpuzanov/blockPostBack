@@ -13,7 +13,7 @@ const passwordValidation = body("password")
   .isLength({ min: 6, max: 20 })
   .withMessage("incorrect password");
 
-const emailValidation = body("email")
+export const emailValidation = body("email")
   .isString()
   .withMessage("email must be string")
   .trim()

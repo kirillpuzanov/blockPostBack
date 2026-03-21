@@ -1,6 +1,6 @@
 import { UserDb } from "../types/user.types";
 import { userCollection } from "../../../db/database";
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 
 export const usersRepository = {
   async create(user: UserDb): Promise<string> {
@@ -13,32 +13,30 @@ export const usersRepository = {
     return res.deletedCount;
   },
 
+  async update(_id: ObjectId, data: object): Promise<number> {
+    const result = await userCollection.updateOne({ _id }, { $set: data });
+    return result.modifiedCount;
+  },
+
   async checkUniqueEmailOrLogin(loginOrEmail: string): Promise<boolean> {
     const user = await userCollection.findOne({
-      $or: [
-        { login: { $regex: loginOrEmail } },
-        { email: { $regex: loginOrEmail } },
-      ],
+      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });
 
     return Boolean(user?.createdAt);
   },
 
-  async checkUserIsAlreadyExist(
-    login: string,
-    email: string,
-  ): Promise<boolean> {
-    const user = await userCollection.findOne({
-      $or: [{ login: { $regex: login } }, { email: { $regex: email } }],
+  async getByLoginOrEmail(
+    loginOrEmail: string,
+  ): Promise<WithId<UserDb> | null> {
+    return userCollection.findOne({
+      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });
-    return Boolean(user?.createdAt);
   },
 
-  async updateToConfirmRegistration(_id: ObjectId): Promise<number> {
-    const result = await userCollection.updateOne(
-      { _id },
-      { "emailConfirmation.isConfirmed": true },
-    );
-    return result.modifiedCount;
+  async getByConfirmCode(confirmCode: string): Promise<WithId<UserDb> | null> {
+    return userCollection.findOne({
+      "emailConfirmation.confirmationCode": confirmCode,
+    });
   },
 };

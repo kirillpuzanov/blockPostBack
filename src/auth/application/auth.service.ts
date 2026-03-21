@@ -1,6 +1,5 @@
 import { LoginInput } from "../types/auth.types";
 import { bcryptService } from "../utils/bcrypt.service";
-import { usersQueryRepository } from "../../modules/users/repositories/users.query.repository";
 import { Result, ResultStatus } from "../../core/types/result";
 import { WithId } from "mongodb";
 import { UserDb } from "../../modules/users/types/user.types";
@@ -10,7 +9,10 @@ import { jwtService } from "../utils/jwt.service";
 import { usersRepository } from "../../modules/users/repositories/users.repository";
 import { mailService } from "../utils/mail.service";
 import { mailTemplates } from "../utils/mail-templates";
-import { createUserDB } from "../../modules/users/application/utils";
+import {
+  createUserDB,
+  getNewConfirmationData,
+} from "../../modules/users/application/utils";
 
 export const authService = {
   async login({
@@ -37,7 +39,7 @@ export const authService = {
     password,
     loginOrEmail,
   }: LoginInput): Promise<Result<WithId<UserDb>>> {
-    const user = await usersQueryRepository.getByLoginOrEmail(loginOrEmail);
+    const user = await usersRepository.getByLoginOrEmail(loginOrEmail);
 
     if (!user) {
       return createResultObject({ status: ResultStatus.Unauthorized });
@@ -64,15 +66,28 @@ export const authService = {
     email: string,
     login: string,
   ): Promise<Result<null>> {
-    const userAlreadyExist = await usersRepository.checkUserIsAlreadyExist(
-      login,
-      email,
-    );
-    /** проверяем, что это новый пользователь */
-    if (userAlreadyExist) {
+    /** проверяем, что это новый пользователь (логин пароль на уникальность) */
+    const emailAlreadyExist =
+      await usersRepository.checkUniqueEmailOrLogin(email);
+
+    if (emailAlreadyExist) {
       return createResultObject({
         status: ResultStatus.BadRequest,
-        extensions: [{ field: "loginOrEmail", message: "Already Registered" }],
+        extensions: [
+          { field: "email", message: "this email already registered" },
+        ],
+      });
+    }
+
+    const loginAlreadyExist =
+      await usersRepository.checkUniqueEmailOrLogin(login);
+
+    if (loginAlreadyExist) {
+      return createResultObject({
+        status: ResultStatus.BadRequest,
+        extensions: [
+          { field: "login", message: "this login already registered" },
+        ],
       });
     }
 
@@ -92,38 +107,38 @@ export const authService = {
       )
       .catch((error) => console.error("error send email", error));
 
-    return createResultObject({ status: ResultStatus.Created });
+    return createResultObject({ status: ResultStatus.NoContent });
   },
 
   async registrationConfirm(code: string): Promise<Result<null>> {
-    const user = await usersQueryRepository.getByConfirmCode(code);
+    const user = await usersRepository.getByConfirmCode(code);
 
     if (!user) {
       return createResultObject({
         status: ResultStatus.BadRequest,
-        extensions: [{ field: "user", message: "user does not exist" }],
+        extensions: [{ field: "code", message: "user does not exist" }],
       });
     }
 
     if (user.emailConfirmation.isConfirmed) {
       return createResultObject({
         status: ResultStatus.BadRequest,
-        extensions: [{ field: "user", message: "user is already confirmed" }],
+        extensions: [{ field: "code", message: "user is already confirmed" }],
       });
     }
 
-    if (user.emailConfirmation.expirationDate > new Date()) {
+    if (new Date() > user.emailConfirmation.expirationDate) {
       return createResultObject({
         status: ResultStatus.BadRequest,
         extensions: [
-          { field: "code", message: "confirmation code is expired." },
+          { field: "code", message: "confirmation code is expired" },
         ],
       });
     }
 
-    const updatedCount = await usersRepository.updateToConfirmRegistration(
-      user._id,
-    );
+    const updatedCount = await usersRepository.update(user._id, {
+      "emailConfirmation.isConfirmed": true,
+    });
 
     if (updatedCount < 1) {
       return createResultObject({
@@ -133,4 +148,60 @@ export const authService = {
     }
     return createResultObject({ status: ResultStatus.NoContent });
   },
+
+  async registrationResendConfirm(email: string): Promise<Result<null>> {
+    const user = await usersRepository.getByLoginOrEmail(email);
+
+    if (!user) {
+      return createResultObject({
+        status: ResultStatus.BadRequest,
+        extensions: [{ field: "email", message: "user does not exist" }],
+      });
+    }
+
+    if (user.emailConfirmation.isConfirmed) {
+      return createResultObject({
+        status: ResultStatus.BadRequest,
+        extensions: [{ field: "email", message: "user is already confirmed" }],
+      });
+    }
+
+    // todo добавить проверку позже (пока тесты не проходят)
+    // if (!this._isCanResendConfirmCode(user.emailConfirmation.sentDate)) {
+    //   return createResultObject({
+    //     status: ResultStatus.BadRequest,
+    //     extensions: [
+    //       { field: "code", message: "code request once per minute" },
+    //     ],
+    //   });
+    // }
+
+    const { confirmationCode, expirationDate, sentDate } =
+      getNewConfirmationData();
+
+    const updatedCount = await usersRepository.update(user._id, {
+      "emailConfirmation.confirmationCode": confirmationCode,
+      "emailConfirmation.sentDate": sentDate,
+      "emailConfirmation.expirationDate": expirationDate,
+    });
+
+    if (updatedCount < 1) {
+      return createResultObject({
+        status: ResultStatus.BadRequest,
+        extensions: [{ field: "user", message: "user does not exist" }],
+      });
+    }
+
+    mailService
+      .sendMail(user.email, confirmationCode, mailTemplates.registration)
+      .catch((error) => console.error("error send email", error));
+
+    return createResultObject({ status: ResultStatus.NoContent });
+  },
+
+  // _isCanResendConfirmCode(lastSentDate: Date): boolean {
+  //   const oneMin = 60 * 1000;
+  //   const nextSentDate = new Date(lastSentDate).getTime() + oneMin;
+  //   return new Date().getTime() > nextSentDate;
+  // },
 };

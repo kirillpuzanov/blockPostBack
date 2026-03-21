@@ -1,7 +1,8 @@
-import { CreateUserInput, UserDb } from "../types/user.types";
+import { CreateUserInput } from "../types/user.types";
 import { DomainError, NotFoundError } from "../../../core/errors/error.handler";
 import { bcryptService } from "../../../auth/utils/bcrypt.service";
 import { usersRepository } from "../repositories/users.repository";
+import { createUserDB } from "./utils";
 
 export const usersService = {
   async createUser(input: CreateUserInput): Promise<string> {
@@ -21,18 +22,8 @@ export const usersService = {
 
     const passwordHash = await bcryptService.generateHash(password);
 
-    const user: UserDb = {
-      login,
-      email,
-      passwordHash,
-      createdAt: new Date().toISOString(),
-      /** при создании админом подтверждение не требуется */
-      emailConfirmation: {
-        confirmationCode: "",
-        expirationDate: new Date(),
-        isConfirmed: true,
-      },
-    };
+    /** при создании админом подтверждение не требуется */
+    const user = createUserDB(login, email, passwordHash, true);
 
     return usersRepository.create(user);
   },

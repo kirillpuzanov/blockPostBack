@@ -6,17 +6,23 @@ import { routes } from "../../core/const/routes";
 import { accessTokenGuard } from "../validation/access-token.guard";
 import { getMeHandler } from "./handlers/get-me.handler";
 import {
+  emailValidation,
   registrationConfirmValidation,
   registrationValidation,
 } from "../validation/registration.validation";
 import { registrationHandler } from "./handlers/registration.handler";
 import { registrationConfirmHandler } from "./handlers/registration-confirm.handler";
+import { registrationResendConfirmHandler } from "./handlers/registration-resend-confirm.handler";
 
 export const authRouter = Router({});
 
 authRouter
+  /** login */
   .post(routes.auth.login, loginValidation, validationResult, loginHandler)
+  /** me */
   .get(routes.auth.me, accessTokenGuard, getMeHandler)
+
+  /** registration */
   .post(
     routes.auth.registration,
     registrationValidation,
@@ -28,5 +34,10 @@ authRouter
     registrationConfirmValidation,
     validationResult,
     registrationConfirmHandler,
+  )
+  .post(
+    routes.auth.registrationResendCode,
+    emailValidation,
+    validationResult,
+    registrationResendConfirmHandler,
   );
-// .post(routes.auth.registrationResendCode);

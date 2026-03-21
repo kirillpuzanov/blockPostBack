@@ -62,23 +62,6 @@ export const usersQueryRepository = {
     return this._mapToUserView(user);
   },
 
-  async getByLoginOrEmail(
-    loginOrEmail: string,
-  ): Promise<WithId<UserDb> | null> {
-    return userCollection.findOne({
-      $or: [
-        { login: { $regex: loginOrEmail } },
-        { email: { $regex: loginOrEmail } },
-      ],
-    });
-  },
-
-  async getByConfirmCode(confirmCode: string): Promise<WithId<UserDb> | null> {
-    return userCollection.findOne({
-      "emailConfirmation.confirmationCode": confirmCode,
-    });
-  },
-
   _mapToUserView(user: WithId<UserDb>): UserViewModel {
     const { email, _id, createdAt, login } = user;
     return {
