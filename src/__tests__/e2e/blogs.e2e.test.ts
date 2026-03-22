@@ -1,16 +1,18 @@
 import request from "supertest";
-import express from "express";
-import { setupApp } from "../../setup-app";
 import { HTTP_STATUS } from "../../core/const/statuses";
 import { routes } from "../../core/const/routes";
-import { runDb, stopDb } from "../../db/database";
 import { generateAuthHeader } from "../../core/utils/generate-auth-header";
 import { createBlog } from "./utils/blog-test.utils";
 import { MongoMemoryServer } from "mongodb-memory-server";
+import express from "express";
+import { setupApp } from "../../setup-app";
+import { runDb, stopDb } from "../../db/database";
 
 const testAuthHeader = generateAuthHeader();
 
 describe("Blogs e2e test", () => {
+  let mongoServer: MongoMemoryServer;
+
   const app = express();
   setupApp(app);
 
@@ -21,7 +23,7 @@ describe("Blogs e2e test", () => {
   };
 
   beforeAll(async () => {
-    const mongoServer = await MongoMemoryServer.create();
+    mongoServer = await MongoMemoryServer.create();
 
     await runDb(mongoServer.getUri());
     await request(app).delete(routes.testing);
@@ -29,6 +31,7 @@ describe("Blogs e2e test", () => {
 
   afterAll(async () => {
     await stopDb();
+    await mongoServer.stop();
   });
 
   it("should get all blogs + paginated meta", async () => {

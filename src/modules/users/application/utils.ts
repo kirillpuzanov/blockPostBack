@@ -1,11 +1,11 @@
 import { UserDb } from "../types/user.types";
-import { v4 as idv4 } from "uuid";
+import { randomUUID } from "crypto";
 
 const expirationConfirmCodeTimeLimit = 20 * 60 * 1000; // 20 min
 
 export const getNewConfirmationData = () => {
   return {
-    confirmationCode: idv4(),
+    confirmationCode: randomUUID(),
     sentDate: new Date(),
     expirationDate: new Date(
       new Date().getTime() + expirationConfirmCodeTimeLimit,

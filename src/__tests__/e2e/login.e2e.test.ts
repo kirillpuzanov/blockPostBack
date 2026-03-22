@@ -14,11 +14,12 @@ const newUserData = {
 };
 
 describe("login e2e test", () => {
+  let mongoServer: MongoMemoryServer;
   const app = express();
   setupApp(app);
 
   beforeAll(async () => {
-    const mongoServer = await MongoMemoryServer.create();
+    mongoServer = await MongoMemoryServer.create();
 
     await runDb(mongoServer.getUri());
     await request(app).delete(routes.testing);
@@ -33,6 +34,7 @@ describe("login e2e test", () => {
 
   afterAll(async () => {
     await stopDb();
+    await mongoServer.stop();
   });
 
   it("should return access token, if success login with login name", async () => {
