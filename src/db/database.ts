@@ -38,3 +38,16 @@ export const runDb = async (dbUrl: string) => {
 export const stopDb = async () => {
   await client.close();
 };
+
+export const testClearDB = async () => {
+  try {
+    await Promise.all([
+      blogCollection.deleteMany(),
+      postCollection.deleteMany(),
+      userCollection.deleteMany(),
+      commentCollection.deleteMany(),
+    ]);
+  } catch {
+    console.log("!!! error clear test DB !!");
+  }
+};

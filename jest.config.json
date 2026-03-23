@@ -2,7 +2,7 @@
   "preset": "ts-jest",
   "testTimeout": 100000,
   "testEnvironment": "node",
-  "testRegex": ".e2e.test.ts$",
+  "testRegex": ".test.ts$",
   "moduleFileExtensions": [
     "ts",
     "js",
