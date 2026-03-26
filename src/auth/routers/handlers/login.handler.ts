@@ -15,6 +15,10 @@ export const loginHandler = async (
 
   if (result.status === ResultStatus.Success) {
     res
+      .cookie("refreshToken", result.data!.accessToken, {
+        httpOnly: true,
+        secure: true,
+      })
       .status(mapResultToHttpStatus(result.status))
       .send({ accessToken: result.data!.accessToken });
     return;

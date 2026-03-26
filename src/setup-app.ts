@@ -16,9 +16,11 @@ import {
   commentsAuthRouter,
   commentsPublicRouter,
 } from "./modules/comments/routers/comments.router";
+import cookieParser from "cookie-parser";
 
 export const setupApp = (app: Application) => {
   app.use(express.json());
+  app.use(cookieParser());
 
   app.get("/", (_, res) => {
     res.status(200).send("Good luck!");

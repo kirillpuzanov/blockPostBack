@@ -27,11 +27,13 @@ export const authService = {
     }
 
     /** если пользователь есть в системе и пароль верный, генерим токен и отдаем его */
-    const accessToken = await jwtService.createToken(res.data!._id.toString());
+    const { accessToken, refreshToken } = await jwtService.createTokens(
+      res.data!._id.toString(),
+    );
 
     return createResultObject({
       status: ResultStatus.Success,
-      data: { accessToken },
+      data: { accessToken, refreshToken },
     });
   },
 
