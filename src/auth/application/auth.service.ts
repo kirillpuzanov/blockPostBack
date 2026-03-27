@@ -1,4 +1,4 @@
-import { LoginInput } from "../types/auth.types";
+import { BlackListToken, LoginInput } from "../types/auth.types";
 import { bcryptService } from "../utils/bcrypt.service";
 import { Result, ResultStatus } from "../../core/types/result";
 import { WithId } from "mongodb";
@@ -13,12 +13,15 @@ import {
   createUserDB,
   getNewConfirmationData,
 } from "../../modules/users/application/utils";
+import { authRepository } from "../repositories/auth.repository";
 
 export const authService = {
   async login({
     password,
     loginOrEmail,
-  }: LoginInput): Promise<Result<{ accessToken: string }>> {
+  }: LoginInput): Promise<
+    Result<{ accessToken: string; refreshToken: string }>
+  > {
     /** находим пользователя по логину или емаил, проверяем валидность пароля */
     const res = await this.checkCredentials({ password, loginOrEmail });
 
@@ -26,7 +29,7 @@ export const authService = {
       return createResultObject({ status: res.status });
     }
 
-    /** если пользователь есть в системе и пароль верный, генерим токен и отдаем его */
+    /** если пользователь есть в системе и пароль верный, генерим токены и отдаем их */
     const { accessToken, refreshToken } = await jwtService.createTokens(
       res.data!._id.toString(),
     );
@@ -199,6 +202,35 @@ export const authService = {
       .catch((error) => console.error("error send email", error));
 
     return createResultObject({ status: ResultStatus.NoContent });
+  },
+
+  async refreshTokens(
+    oldRefreshToken: string,
+    userId: string,
+  ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
+    const isNotValidToken =
+      await authRepository.isExistInBlackList(oldRefreshToken);
+
+    if (isNotValidToken) {
+      return createResultObject({
+        status: ResultStatus.Unauthorized,
+      });
+    }
+
+    /** создаем новую пару токенов */
+    const { accessToken, refreshToken } = await jwtService.createTokens(userId);
+
+    /** записываем старый refreshToken в блэклист */
+    const blackToken: BlackListToken = {
+      token: oldRefreshToken,
+      expireDate: new Date().toISOString(),
+    };
+    await authRepository.addToBlackList(blackToken);
+
+    return createResultObject({
+      status: ResultStatus.Success,
+      data: { accessToken, refreshToken },
+    });
   },
 
   // _isCanResendConfirmCode(lastSentDate: Date): boolean {

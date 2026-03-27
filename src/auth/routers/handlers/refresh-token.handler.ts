@@ -1,17 +1,14 @@
 import { Request, Response } from "express";
-import { LoginInput } from "../../types/auth.types";
 import { authService } from "../../application/auth.service";
-import { HTTP_STATUS } from "../../../core/const/statuses";
 import { ResultStatus } from "../../../core/types/result";
 import { mapResultToHttpStatus } from "../../../core/utils/map-result-to-http-status";
+import { HTTP_STATUS } from "../../../core/const/statuses";
 
-export const loginHandler = async (
-  req: Request<{}, {}, LoginInput>,
-  res: Response,
-) => {
-  const { password, loginOrEmail } = req.body;
+export const refreshTokenHandler = async (req: Request, res: Response) => {
+  const { refreshToken } = req.cookies;
+  const userId = req.userMetaData?.id;
 
-  const result = await authService.login({ password, loginOrEmail });
+  const result = await authService.refreshTokens(refreshToken, userId!);
 
   if (result.status === ResultStatus.Success) {
     return res

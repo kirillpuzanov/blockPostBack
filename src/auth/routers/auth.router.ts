@@ -13,12 +13,18 @@ import {
 import { registrationHandler } from "./handlers/registration.handler";
 import { registrationConfirmHandler } from "./handlers/registration-confirm.handler";
 import { registrationResendConfirmHandler } from "./handlers/registration-resend-confirm.handler";
+import { refreshTokenGuard } from "../validation/refresh-token.guard";
+import { refreshTokenHandler } from "./handlers/refresh-token.handler";
 
 export const authRouter = Router({});
 
 authRouter
   /** login */
   .post(routes.auth.login, loginValidation, validationResult, loginHandler)
+
+  /** refresh token */
+  .post(routes.auth.refreshToken, refreshTokenGuard, refreshTokenHandler)
+
   /** me */
   .get(routes.auth.me, accessTokenGuard, getMeHandler)
 

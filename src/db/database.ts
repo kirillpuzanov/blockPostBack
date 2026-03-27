@@ -4,17 +4,20 @@ import { SETTINGS } from "../core/settings/settings";
 import { PostDb } from "../modules/posts/types/post.types";
 import { UserDb } from "../modules/users/types/user.types";
 import { CommentDb } from "../modules/comments/types/comment.types";
+import { BlackListToken } from "../auth/types/auth.types";
 
 const BLOGS_COLLECTION_NAME = "blogs";
 const POSTS_COLLECTION_NAME = "posts";
 const USERS_COLLECTION_NAME = "users";
 const COMMENTS_COLLECTION_NAME = "users";
+const TOKENS_BLACK_LIST = "tokensBlackList";
 
 export let client: MongoClient;
 export let blogCollection: Collection<BlogDb>;
 export let postCollection: Collection<PostDb>;
 export let userCollection: Collection<UserDb>;
 export let commentCollection: Collection<CommentDb>;
+export let blackListCollection: Collection<BlackListToken>;
 
 export const runDb = async (dbUrl: string) => {
   client = new MongoClient(dbUrl);
@@ -24,6 +27,7 @@ export const runDb = async (dbUrl: string) => {
   postCollection = db.collection<PostDb>(POSTS_COLLECTION_NAME);
   userCollection = db.collection<UserDb>(USERS_COLLECTION_NAME);
   commentCollection = db.collection<CommentDb>(COMMENTS_COLLECTION_NAME);
+  blackListCollection = db.collection<BlackListToken>(TOKENS_BLACK_LIST);
 
   try {
     await client.connect();
@@ -46,6 +50,7 @@ export const testClearDB = async () => {
       postCollection.deleteMany(),
       userCollection.deleteMany(),
       commentCollection.deleteMany(),
+      blackListCollection.deleteMany(),
     ]);
   } catch {
     console.log("!!! error clear test DB !!");

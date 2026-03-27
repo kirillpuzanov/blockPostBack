@@ -1,21 +1,23 @@
 import { postsQueryRepository } from "../../posts/repositories/posts.query.repository";
 import { createResultObject } from "../../../core/utils/create-result-object";
 import { Result, ResultStatus } from "../../../core/types/result";
-import { UserViewModel } from "../../users/types/user.types";
 import { CommentDb } from "../types/comment.types";
 import { commentsRepository } from "../repositories/comments.repository";
 import { commentCollection } from "../../../db/database";
 import { ObjectId } from "mongodb";
+import { usersQueryRepository } from "../../users/repositories/users.query.repository";
 
 export const commentService = {
   async createComment(
-    user: UserViewModel,
+    userId: string,
     postId: string,
     content: string,
   ): Promise<Result<{ commentId: string }>> {
+    // todo переписать обращение к QueryRepo
     const post = await postsQueryRepository.getById(postId);
+    const user = await usersQueryRepository.getById(userId);
 
-    if (!post) {
+    if (!post || !user) {
       return createResultObject({
         status: ResultStatus.NotFound,
       });

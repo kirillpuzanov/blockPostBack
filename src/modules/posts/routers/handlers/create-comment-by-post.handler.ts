@@ -17,10 +17,10 @@ export const createCommentByPostHandler = async (
   try {
     const postId = req.params.id;
     const { content } = req.body;
-    const user = req.userMetaData!;
+    const userId = req.userMetaData?.id;
 
     const createResult = await commentService.createComment(
-      user,
+      userId!,
       postId,
       content,
     );

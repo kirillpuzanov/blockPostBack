@@ -13,3 +13,8 @@ export type MeViewModel = {
   login: string;
   email: string;
 };
+
+export type BlackListToken = {
+  token: string;
+  expireDate: string;
+};
