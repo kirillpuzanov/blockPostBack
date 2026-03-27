@@ -8,6 +8,7 @@ export const routes = {
     registrationConfirm: "/auth/registration-confirmation",
     registrationResendCode: "/auth/registration-email-resending",
     login: "/auth/login",
+    logout: "/auth/logout",
     me: "/auth/me",
     refreshToken: "refresh-token",
   },

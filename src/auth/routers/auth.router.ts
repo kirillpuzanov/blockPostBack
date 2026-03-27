@@ -15,12 +15,16 @@ import { registrationConfirmHandler } from "./handlers/registration-confirm.hand
 import { registrationResendConfirmHandler } from "./handlers/registration-resend-confirm.handler";
 import { refreshTokenGuard } from "../validation/refresh-token.guard";
 import { refreshTokenHandler } from "./handlers/refresh-token.handler";
+import { logoutHandler } from "./handlers/logout.handler";
 
 export const authRouter = Router({});
 
 authRouter
   /** login */
   .post(routes.auth.login, loginValidation, validationResult, loginHandler)
+
+  /** logout */
+  .post(routes.auth.logout, refreshTokenGuard, logoutHandler)
 
   /** refresh token */
   .post(routes.auth.refreshToken, refreshTokenGuard, refreshTokenHandler)

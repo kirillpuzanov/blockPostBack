@@ -40,32 +40,6 @@ export const authService = {
     });
   },
 
-  async checkCredentials({
-    password,
-    loginOrEmail,
-  }: LoginInput): Promise<Result<WithId<UserDb>>> {
-    const user = await usersRepository.getByLoginOrEmail(loginOrEmail);
-
-    if (!user) {
-      return createResultObject({ status: ResultStatus.Unauthorized });
-    }
-
-    /** сравнение хэша из БД, с хешом логина переданным при аутентификации */
-    const isCorrectPass = await bcryptService.checkPass(
-      password,
-      user.passwordHash,
-    );
-
-    if (!isCorrectPass) {
-      return createResultObject({ status: ResultStatus.Unauthorized });
-    }
-
-    return createResultObject({
-      status: ResultStatus.Success,
-      data: user,
-    });
-  },
-
   async registration(
     password: string,
     email: string,
@@ -221,15 +195,55 @@ export const authService = {
     const { accessToken, refreshToken } = await jwtService.createTokens(userId);
 
     /** записываем старый refreshToken в блэклист */
-    const blackToken: BlackListToken = {
-      token: oldRefreshToken,
-      expireDate: new Date().toISOString(),
-    };
+    const blackToken = this.createBlackListToken(oldRefreshToken);
     await authRepository.addToBlackList(blackToken);
 
     return createResultObject({
       status: ResultStatus.Success,
       data: { accessToken, refreshToken },
+    });
+  },
+
+  async logout(refreshToken: string): Promise<Result<null>> {
+    /** записываем старый refreshToken в блэклист */
+    const blackToken = this.createBlackListToken(refreshToken);
+    await authRepository.addToBlackList(blackToken);
+
+    return createResultObject({
+      status: ResultStatus.NoContent,
+    });
+  },
+
+  createBlackListToken(token: string): BlackListToken {
+    return {
+      token,
+      expireDate: jwtService.getTokenExpDate(token).toISOString(),
+    };
+  },
+
+  async checkCredentials({
+    password,
+    loginOrEmail,
+  }: LoginInput): Promise<Result<WithId<UserDb>>> {
+    const user = await usersRepository.getByLoginOrEmail(loginOrEmail);
+
+    if (!user) {
+      return createResultObject({ status: ResultStatus.Unauthorized });
+    }
+
+    /** сравнение хэша из БД, с хешом логина переданным при аутентификации */
+    const isCorrectPass = await bcryptService.checkPass(
+      password,
+      user.passwordHash,
+    );
+
+    if (!isCorrectPass) {
+      return createResultObject({ status: ResultStatus.Unauthorized });
+    }
+
+    return createResultObject({
+      status: ResultStatus.Success,
+      data: user,
     });
   },
 
