@@ -205,6 +205,15 @@ export const authService = {
   },
 
   async logout(refreshToken: string): Promise<Result<null>> {
+    const isNotValidToken =
+      await authRepository.isExistInBlackList(refreshToken);
+
+    if (isNotValidToken) {
+      return createResultObject({
+        status: ResultStatus.Unauthorized,
+      });
+    }
+
     /** записываем старый refreshToken в блэклист */
     const blackToken = this.createBlackListToken(refreshToken);
     await authRepository.addToBlackList(blackToken);

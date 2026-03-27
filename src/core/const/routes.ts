@@ -10,7 +10,7 @@ export const routes = {
     login: "/auth/login",
     logout: "/auth/logout",
     me: "/auth/me",
-    refreshToken: "refresh-token",
+    refreshToken: "/auth/refresh-token",
   },
 
   users: "/users",

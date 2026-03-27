@@ -10,7 +10,7 @@ export const refreshTokenGuard = async (
   try {
     const refreshToken = req.cookies?.refreshToken;
 
-    if (refreshToken) {
+    if (!refreshToken) {
       return res.sendStatus(HTTP_STATUS.unAuthorized);
     }
 
