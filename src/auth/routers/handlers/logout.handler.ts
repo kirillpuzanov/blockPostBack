@@ -11,7 +11,9 @@ export const logoutHandler = async (req: Request, res: Response) => {
     const result = await authService.logout(refreshToken);
 
     if (result.status === ResultStatus.NoContent) {
-      return res.sendStatus(HTTP_STATUS.noContent);
+      return res
+        .clearCookie("refreshToken", { path: "/" })
+        .sendStatus(HTTP_STATUS.noContent);
     }
 
     return res.sendStatus(HTTP_STATUS.unAuthorized);

@@ -42,6 +42,14 @@ describe("login e2e test", () => {
       .post(routes.auth.login)
       .send({ loginOrEmail: newUserData.login, password: newUserData.password })
       .expect(HTTP_STATUS.ok);
+
+    const cookies = loginResult.headers["set-cookie"];
+    expect(cookies).toBeDefined();
+    const refreshTokenCookie = [...cookies].find((el) =>
+      el.startsWith("refreshToken="),
+    );
+    expect(refreshTokenCookie).toBeDefined();
+
     expect(loginResult.body).toHaveProperty("accessToken");
     expect(loginResult.body.accessToken.split(".")).toHaveLength(3);
   });
