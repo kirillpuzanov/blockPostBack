@@ -7,9 +7,8 @@ import { errorHandler } from "../../../core/errors/error.handler";
 export const refreshTokenHandler = async (req: Request, res: Response) => {
   try {
     const { refreshToken } = req.cookies;
-    const userId = req.userMetaData?.id;
 
-    const result = await authService.refreshTokens(refreshToken, userId!);
+    const result = await authService.refreshTokens(refreshToken);
 
     if (result.status === ResultStatus.Success) {
       return res

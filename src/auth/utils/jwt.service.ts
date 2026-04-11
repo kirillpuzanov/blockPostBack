@@ -1,38 +1,50 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { SETTINGS } from "../../core/settings/settings";
-import { StringValue } from "ms";
+import { DecodedToken } from "../types/auth.types";
 
 export const jwtService = {
-  async createToken(userId: string, expTime: StringValue = "30 days") {
-    return jwt.sign({ userId }, SETTINGS.JWT_SECRET, { expiresIn: expTime });
-  },
-
-  async createTokens(userId: string): Promise<{
-    accessToken: string;
-    refreshToken: string;
-  }> {
-    const accessToken = await this.createToken(userId, "10 Sec");
-    const refreshToken = await this.createToken(userId, "20 Sec");
+  createTokens(
+    userId: string,
+    deviceId: string,
+  ): { accessToken: string; refreshToken: string } {
+    const accessToken = jwt.sign({ userId }, SETTINGS.JWT_SECRET, {
+      expiresIn: "10 Sec",
+    });
+    const refreshToken = jwt.sign({ userId, deviceId }, SETTINGS.JWT_SECRET, {
+      expiresIn: "20 Sec",
+    });
 
     return { accessToken, refreshToken };
   },
 
-  getTokenExpDate(token: string): Date {
+  decodeRefreshToken(token: string): DecodedToken {
     const decoded = jwt.decode(token) as JwtPayload;
-    if (decoded?.exp) {
-      return new Date(decoded?.exp * 1000);
-    }
-    return new Date();
+    return {
+      userId: decoded.userId,
+      deviceId: decoded.deviceId,
+      exp: decoded?.exp
+        ? new Date(decoded?.exp * 1000).toISOString()
+        : new Date().toISOString(),
+      iat: decoded?.iat
+        ? new Date(decoded?.iat * 1000).toISOString()
+        : new Date().toISOString(),
+    };
   },
 
-  async verifyToken(token: string): Promise<string | null> {
+  async verifyToken(
+    token: string,
+  ): Promise<{ userId: string | null; deviceId: string | null }> {
     try {
       const verify = jwt.verify(token, SETTINGS.JWT_SECRET) as {
         userId: string;
+        deviceId: string;
       };
-      return verify.userId ?? null;
+      return {
+        userId: verify.userId ?? null,
+        deviceId: verify.deviceId ?? null,
+      };
     } catch {
-      return null;
+      return { userId: null, deviceId: null };
     }
   },
 };

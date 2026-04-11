@@ -1,10 +1,11 @@
-import { BlackListToken, LoginInput } from "../types/auth.types";
+import { AuthSessionDb, LoginInputWithMeta } from "../types/auth.types";
 import { bcryptService } from "../utils/bcrypt.service";
 import { Result, ResultStatus } from "../../core/types/result";
 import { WithId } from "mongodb";
 import { UserDb } from "../../modules/users/types/user.types";
 import { createResultObject } from "../../core/utils/create-result-object";
 import { jwtService } from "../utils/jwt.service";
+import { randomUUID } from "crypto";
 
 import { usersRepository } from "../../modules/users/repositories/users.repository";
 import { mailService } from "../utils/mail.service";
@@ -19,7 +20,9 @@ export const authService = {
   async login({
     password,
     loginOrEmail,
-  }: LoginInput): Promise<
+    ip,
+    deviceName,
+  }: LoginInputWithMeta): Promise<
     Result<{ accessToken: string; refreshToken: string }>
   > {
     /** находим пользователя по логину или емаил, проверяем валидность пароля */
@@ -29,10 +32,27 @@ export const authService = {
       return createResultObject({ status: res.status });
     }
 
-    /** если пользователь есть в системе и пароль верный, генерим токены и отдаем их */
-    const { accessToken, refreshToken } = await jwtService.createTokens(
-      res.data!._id.toString(),
+    const deviceId = randomUUID();
+    const userId = res.data!._id.toString();
+
+    /** если пользователь есть в системе и пароль верный, генерим токены и отдаем их, в refresh добавляем deviceId */
+    const { accessToken, refreshToken } = jwtService.createTokens(
+      userId,
+      deviceId,
     );
+
+    /** создаем сессию для этого утстройства */
+    const { exp, iat } = jwtService.decodeRefreshToken(refreshToken);
+    const session: AuthSessionDb = {
+      ip,
+      exp,
+      iat,
+      userId,
+      deviceId,
+      deviceName,
+    };
+
+    await authRepository.createSession(session);
 
     return createResultObject({
       status: ResultStatus.Success,
@@ -180,60 +200,57 @@ export const authService = {
 
   async refreshTokens(
     oldRefreshToken: string,
-    userId: string,
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
-    const isNotValidToken =
-      await authRepository.isExistInBlackList(oldRefreshToken);
+    /** проверка валидности текущего токена уже сделана в refreshTokenGuard */
 
-    if (isNotValidToken) {
+    const { userId, deviceId } = jwtService.decodeRefreshToken(oldRefreshToken);
+    /** создаем новую пару токенов */
+    const { accessToken, refreshToken } = jwtService.createTokens(
+      userId,
+      deviceId,
+    );
+
+    /** берем новые дынне жизни токена */
+    const { iat, exp } = jwtService.decodeRefreshToken(refreshToken);
+
+    /** обновляем данные жизни текущей сессии */
+    const updatedCount = await authRepository.updateSession(
+      userId,
+      deviceId,
+      iat,
+      exp,
+    );
+    if (updatedCount > 0) {
+      return createResultObject({
+        status: ResultStatus.Success,
+        data: { accessToken, refreshToken },
+      });
+    } else {
       return createResultObject({
         status: ResultStatus.Unauthorized,
       });
     }
-
-    /** создаем новую пару токенов */
-    const { accessToken, refreshToken } = await jwtService.createTokens(userId);
-
-    /** записываем старый refreshToken в блэклист */
-    const blackToken = this.createBlackListToken(oldRefreshToken);
-    await authRepository.addToBlackList(blackToken);
-
-    return createResultObject({
-      status: ResultStatus.Success,
-      data: { accessToken, refreshToken },
-    });
   },
 
   async logout(refreshToken: string): Promise<Result<null>> {
-    const isNotValidToken =
-      await authRepository.isExistInBlackList(refreshToken);
+    /** проверка валидности текущего токена уже сделана в refreshTokenGuard */
+    const { userId, deviceId } = jwtService.decodeRefreshToken(refreshToken);
 
-    if (isNotValidToken) {
-      return createResultObject({
-        status: ResultStatus.Unauthorized,
-      });
-    }
-
-    /** записываем старый refreshToken в блэклист */
-    const blackToken = this.createBlackListToken(refreshToken);
-    await authRepository.addToBlackList(blackToken);
+    /** удаляем текущую сессию */
+    await authRepository.deleteSession(userId, deviceId);
 
     return createResultObject({
       status: ResultStatus.NoContent,
     });
   },
 
-  createBlackListToken(token: string): BlackListToken {
-    return {
-      token,
-      expireDate: jwtService.getTokenExpDate(token).toISOString(),
-    };
-  },
-
   async checkCredentials({
     password,
     loginOrEmail,
-  }: LoginInput): Promise<Result<WithId<UserDb>>> {
+  }: {
+    password: string;
+    loginOrEmail: string;
+  }): Promise<Result<WithId<UserDb>>> {
     const user = await usersRepository.getByLoginOrEmail(loginOrEmail);
 
     if (!user) {

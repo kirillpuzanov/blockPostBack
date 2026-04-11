@@ -13,7 +13,7 @@ export const accessTokenGuard = async (
     }
 
     const token = req.headers.authorization.split(" ")[1];
-    const userId = await jwtService.verifyToken(token);
+    const { userId } = await jwtService.verifyToken(token);
 
     if (userId) {
       req.userMetaData = { id: userId };

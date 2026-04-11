@@ -17,10 +17,13 @@ import {
   commentsPublicRouter,
 } from "./modules/comments/routers/comments.router";
 import cookieParser from "cookie-parser";
+import { express as useragent } from "express-useragent";
 
 export const setupApp = (app: Application) => {
   app.use(express.json());
   app.use(cookieParser());
+  app.use(useragent());
+  app.set("trust proxy", true); // для корректного опрееления ip
 
   app.get("/", (_, res) => {
     res.status(200).send("Good luck!");

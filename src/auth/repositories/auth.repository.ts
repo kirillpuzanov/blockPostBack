@@ -1,14 +1,33 @@
-import { blackListCollection } from "../../db/database";
-import { BlackListToken } from "../types/auth.types";
+import { authSessionsCollection } from "../../db/database";
+import { AuthSessionDb } from "../types/auth.types";
+import { WithId } from "mongodb";
 
 export const authRepository = {
-  async isExistInBlackList(token: string): Promise<boolean> {
-    const res = await blackListCollection.findOne({ token });
-    return Boolean(res?.token);
+  async getSession(
+    userId: string,
+    deviceId: string,
+  ): Promise<WithId<AuthSessionDb> | null> {
+    return await authSessionsCollection.findOne({ deviceId, userId });
   },
 
-  async addToBlackList(blackToken: BlackListToken): Promise<string> {
-    const res = await blackListCollection.insertOne(blackToken);
-    return res.insertedId.toString();
+  async deleteSession(userId: string, deviceId: string): Promise<void> {
+    await authSessionsCollection.deleteOne({ deviceId, userId });
+  },
+
+  async createSession(userSession: AuthSessionDb): Promise<void> {
+    await authSessionsCollection.insertOne(userSession);
+  },
+
+  async updateSession(
+    userId: string,
+    deviceId: string,
+    iat: string,
+    exp: string,
+  ): Promise<number> {
+    const res = await authSessionsCollection.updateOne(
+      { userId, deviceId },
+      { $set: { iat, exp } },
+    );
+    return res.modifiedCount;
   },
 };
