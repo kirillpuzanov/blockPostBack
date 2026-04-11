@@ -4,7 +4,7 @@ import { SETTINGS } from "../core/settings/settings";
 import { PostDb } from "../modules/posts/types/post.types";
 import { UserDb } from "../modules/users/types/user.types";
 import { CommentDb } from "../modules/comments/types/comment.types";
-import { AuthSessionDb } from "../auth/types/auth.types";
+import { AuthSessionDb } from "../modules/sessions/types/session.types";
 
 const BLOGS_COLLECTION_NAME = "blogs";
 const POSTS_COLLECTION_NAME = "posts";
@@ -27,7 +27,6 @@ export const runDb = async (dbUrl: string) => {
   postCollection = db.collection<PostDb>(POSTS_COLLECTION_NAME);
   userCollection = db.collection<UserDb>(USERS_COLLECTION_NAME);
   commentCollection = db.collection<CommentDb>(COMMENTS_COLLECTION_NAME);
-
   authSessionsCollection = db.collection<AuthSessionDb>(
     SESSIONS_COLLECTION_NAME,
   );

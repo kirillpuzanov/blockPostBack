@@ -18,6 +18,7 @@ import {
 } from "./modules/comments/routers/comments.router";
 import cookieParser from "cookie-parser";
 import { express as useragent } from "express-useragent";
+import { sessionsRouter } from "./modules/sessions/routers/sessions.router";
 
 export const setupApp = (app: Application) => {
   app.use(express.json());
@@ -30,6 +31,7 @@ export const setupApp = (app: Application) => {
   });
 
   app.use("", authRouter);
+  app.use(routes.deviceSessions, sessionsRouter);
   app.use(routes.blogs, blogsPublicRouter);
   app.use(routes.blogs, blogsAdminAuthRouter);
 

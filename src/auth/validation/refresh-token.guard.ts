@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { HTTP_STATUS } from "../../core/const/statuses";
 import { jwtService } from "../utils/jwt.service";
-import { authRepository } from "../repositories/auth.repository";
+
+import { sessionsRepository } from "../../modules/sessions/repositories/sessions.repository";
 
 export const refreshTokenGuard = async (
   req: Request,
@@ -21,7 +22,10 @@ export const refreshTokenGuard = async (
       return res.sendStatus(HTTP_STATUS.unAuthorized);
     }
 
-    const currentSession = await authRepository.getSession(userId, deviceId);
+    const currentSession = await sessionsRepository.getSession(
+      userId,
+      deviceId,
+    );
 
     /** проверяем валидность полученного refreshToken по метке exp в BD в активной сесии девайса */
     if (currentSession) {
@@ -31,7 +35,7 @@ export const refreshTokenGuard = async (
         return next();
       } else {
         /** если сессия есть, но токен протух --> удаляем сессию, кидаем 401 */
-        await authRepository.deleteSession(userId, deviceId);
+        await sessionsRepository.deleteSession(userId, deviceId);
         return res.sendStatus(HTTP_STATUS.unAuthorized);
       }
     }

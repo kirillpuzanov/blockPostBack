@@ -13,6 +13,8 @@ export const routes = {
     refreshToken: "/auth/refresh-token",
   },
 
+  deviceSessions: "/security/devices",
+
   users: "/users",
   comments: "/comments",
 } as const;

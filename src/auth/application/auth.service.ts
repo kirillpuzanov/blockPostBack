@@ -1,4 +1,4 @@
-import { AuthSessionDb, LoginInputWithMeta } from "../types/auth.types";
+import { LoginInputWithMeta } from "../types/auth.types";
 import { bcryptService } from "../utils/bcrypt.service";
 import { Result, ResultStatus } from "../../core/types/result";
 import { WithId } from "mongodb";
@@ -14,7 +14,8 @@ import {
   createUserDB,
   getNewConfirmationData,
 } from "../../modules/users/application/utils";
-import { authRepository } from "../repositories/auth.repository";
+import { AuthSessionDb } from "../../modules/sessions/types/session.types";
+import { sessionsRepository } from "../../modules/sessions/repositories/sessions.repository";
 
 export const authService = {
   async login({
@@ -52,7 +53,7 @@ export const authService = {
       deviceName,
     };
 
-    await authRepository.createSession(session);
+    await sessionsRepository.createSession(session);
 
     return createResultObject({
       status: ResultStatus.Success,
@@ -214,7 +215,7 @@ export const authService = {
     const { iat, exp } = jwtService.decodeRefreshToken(refreshToken);
 
     /** обновляем данные жизни текущей сессии */
-    const updatedCount = await authRepository.updateSession(
+    const updatedCount = await sessionsRepository.updateSession(
       userId,
       deviceId,
       iat,
@@ -237,7 +238,7 @@ export const authService = {
     const { userId, deviceId } = jwtService.decodeRefreshToken(refreshToken);
 
     /** удаляем текущую сессию */
-    await authRepository.deleteSession(userId, deviceId);
+    await sessionsRepository.deleteSession(userId, deviceId);
 
     return createResultObject({
       status: ResultStatus.NoContent,
