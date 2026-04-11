@@ -19,7 +19,7 @@ export const sessionsService = {
   async deleteAllMySessions(refreshToken: string): Promise<Result<null>> {
     const { userId, deviceId } = jwtService.decodeRefreshToken(refreshToken);
 
-    await sessionsRepository.deleteAllMySessions(userId, deviceId);
+    await sessionsRepository.deleteOtherMySessions(userId, deviceId);
 
     return createResultObject({
       status: ResultStatus.NoContent,

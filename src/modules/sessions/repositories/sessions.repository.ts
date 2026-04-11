@@ -26,11 +26,16 @@ export const sessionsRepository = {
     }));
   },
 
-  async deleteAllMySessions(userId: string, deviceId: string): Promise<void> {
+  async deleteOtherMySessions(userId: string, deviceId: string): Promise<void> {
     await authSessionsCollection.deleteMany({
       userId: userId,
       deviceId: { $ne: deviceId },
     });
+  },
+
+  async deleteAllUserSessions(userId: string): Promise<void> {
+    /** при удалении юзера */
+    await authSessionsCollection.deleteMany({ userId: userId });
   },
 
   async deleteSession(userId: string, deviceId: string): Promise<number> {
