@@ -16,12 +16,19 @@ import { registrationResendConfirmHandler } from "./handlers/registration-resend
 import { refreshTokenGuard } from "../validation/refresh-token.guard";
 import { refreshTokenHandler } from "./handlers/refresh-token.handler";
 import { logoutHandler } from "./handlers/logout.handler";
+import { rateLimitGuard } from "../validation/rate-limit.guard";
 
 export const authRouter = Router({});
 
 authRouter
   /** login */
-  .post(routes.auth.login, loginValidation, validationResult, loginHandler)
+  .post(
+    routes.auth.login,
+    rateLimitGuard,
+    loginValidation,
+    validationResult,
+    loginHandler,
+  )
 
   /** logout */
   .post(routes.auth.logout, refreshTokenGuard, logoutHandler)
@@ -35,18 +42,21 @@ authRouter
   /** registration */
   .post(
     routes.auth.registration,
+    rateLimitGuard,
     registrationValidation,
     validationResult,
     registrationHandler,
   )
   .post(
     routes.auth.registrationConfirm,
+    rateLimitGuard,
     registrationConfirmValidation,
     validationResult,
     registrationConfirmHandler,
   )
   .post(
     routes.auth.registrationResendCode,
+    rateLimitGuard,
     emailValidation,
     validationResult,
     registrationResendConfirmHandler,

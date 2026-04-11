@@ -8,5 +8,7 @@ export const HTTP_STATUS = {
   forbidden: 403,
   notFound: 404,
 
+  rateLimit: 429,
+
   serverError: 500,
 } as const;

@@ -28,3 +28,9 @@ export type DecodedToken = {
   exp: string;
   iat: string;
 };
+
+export type RateLimitItem = {
+  ip: string;
+  url: string;
+  lastRequestDate: number;
+};
