@@ -30,15 +30,14 @@ export const sessionsService = {
     userId: string,
     deletedDeviceId: string,
   ): Promise<Result<null>> {
-    const deletedSession = await sessionsRepository.getSession(
-      userId,
-      deletedDeviceId,
-    );
+    const deletedSession = await sessionsRepository.getSession(deletedDeviceId);
+
     if (!deletedSession) {
       return createResultObject({
         status: ResultStatus.NotFound,
       });
     }
+
     if (deletedSession.userId !== userId) {
       return createResultObject({
         status: ResultStatus.Forbidden,

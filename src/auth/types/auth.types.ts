@@ -25,8 +25,8 @@ export type MeViewModel = {
 export type DecodedToken = {
   userId: string;
   deviceId: string;
-  exp: string;
-  iat: string;
+  exp: number;
+  iat: number;
 };
 
 export type RateLimitItem = {

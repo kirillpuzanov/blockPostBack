@@ -3,18 +3,15 @@ import { AuthSessionDb, AuthSessionViewModel } from "../types/session.types";
 import { authSessionsCollection } from "../../../db/database";
 
 export const sessionsRepository = {
-  async getSession(
-    userId: string,
-    deviceId: string,
-  ): Promise<WithId<AuthSessionDb> | null> {
-    return await authSessionsCollection.findOne({ deviceId, userId });
+  async getSession(deviceId: string): Promise<WithId<AuthSessionDb> | null> {
+    return await authSessionsCollection.findOne({ deviceId });
   },
 
   async getAllActiveSessions(userId: string): Promise<AuthSessionViewModel[]> {
     const sessions = await authSessionsCollection
       .find({
         userId: userId,
-        exp: { $gt: new Date().toISOString() },
+        exp: { $gt: Date.now() },
       })
       .toArray();
 
@@ -22,7 +19,7 @@ export const sessionsRepository = {
       ip: el.ip,
       title: el.deviceName,
       deviceId: el.deviceId,
-      lastActiveDate: el.iat,
+      lastActiveDate: new Date(el.iat).toISOString(),
     }));
   },
 
@@ -50,8 +47,8 @@ export const sessionsRepository = {
   async updateSession(
     userId: string,
     deviceId: string,
-    iat: string,
-    exp: string,
+    iat: number,
+    exp: number,
   ): Promise<number> {
     const res = await authSessionsCollection.updateOne(
       { userId, deviceId },

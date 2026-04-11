@@ -22,29 +22,28 @@ export const jwtService = {
     return {
       userId: decoded.userId,
       deviceId: decoded.deviceId,
-      exp: decoded?.exp
-        ? new Date(decoded?.exp * 1000).toISOString()
-        : new Date().toISOString(),
-      iat: decoded?.iat
-        ? new Date(decoded?.iat * 1000).toISOString()
-        : new Date().toISOString(),
+      /**  переводим в миллисеунды, для удобства сравнения дальше */
+      exp: decoded?.exp ? decoded.exp * 1000 : Date.now(),
+      iat: decoded?.iat ? decoded.iat * 1000 : Date.now(),
     };
   },
 
   async verifyToken(
     token: string,
-  ): Promise<{ userId: string | null; deviceId: string | null }> {
+  ): Promise<{ userId: string | null; deviceId: string | null; iat: number }> {
     try {
       const verify = jwt.verify(token, SETTINGS.JWT_SECRET) as {
         userId: string;
         deviceId: string;
+        iat: number;
       };
       return {
         userId: verify.userId ?? null,
         deviceId: verify.deviceId ?? null,
+        iat: verify?.iat ? verify?.iat * 1000 : Date.now(),
       };
     } catch {
-      return { userId: null, deviceId: null };
+      return { userId: null, deviceId: null, iat: Date.now() };
     }
   },
 };

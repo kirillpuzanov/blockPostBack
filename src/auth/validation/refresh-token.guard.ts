@@ -16,30 +16,31 @@ export const refreshTokenGuard = async (
       return res.sendStatus(HTTP_STATUS.unAuthorized);
     }
 
-    const { userId, deviceId } = await jwtService.verifyToken(refreshToken);
+    const { userId, deviceId, iat } =
+      await jwtService.verifyToken(refreshToken);
 
     if (!userId || !deviceId) {
       return res.sendStatus(HTTP_STATUS.unAuthorized);
     }
 
-    const currentSession = await sessionsRepository.getSession(
-      userId,
-      deviceId,
-    );
+    const currentSession = await sessionsRepository.getSession(deviceId);
 
     /** проверяем валидность полученного refreshToken по метке exp в BD в активной сесии девайса */
     if (currentSession) {
-      /** если переданный токен еще не протух, пропускаем дальше */
-      if (new Date(currentSession.exp) > new Date()) {
+      /** если переданный токен еще не протух, пренадлежит текущему пользователю, с той же дадой выпуска -> пропускаем дальше */
+      if (
+        currentSession.exp > Date.now() &&
+        currentSession.iat === iat &&
+        userId === currentSession.userId
+      ) {
         req.userMetaData = { id: userId };
         return next();
       } else {
-        /** если сессия есть, но токен протух --> удаляем сессию, кидаем 401 */
-        await sessionsRepository.deleteSession(userId, deviceId);
+        /** Просто не пускаем, нельзя удалять сессию, не знаем какое из условий не прошло.
+         * можно удалить чужую сессию, если как то получили чужой userId */
         return res.sendStatus(HTTP_STATUS.unAuthorized);
       }
     }
-
     return res.sendStatus(HTTP_STATUS.unAuthorized);
   } catch {
     res.sendStatus(HTTP_STATUS.unAuthorized);

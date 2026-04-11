@@ -16,10 +16,8 @@ export const handleBlogIdValidation = param("blogId")
   .isMongoId()
   .withMessage("incorrect format of ObjectId");
 
-export const handleUuidValidation = param("id")
+export const handleExistIdValidation = param("id")
   .exists()
   .withMessage(`id is required`)
   .isString()
-  .withMessage(`id is not valid type`)
-  .isUUID()
-  .withMessage("incorrect format of id");
+  .withMessage(`id is not valid type`);

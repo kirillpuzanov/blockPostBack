@@ -211,7 +211,7 @@ export const authService = {
       deviceId,
     );
 
-    /** берем новые дынне жизни токена */
+    /** берем новые данные жизни токена */
     const { iat, exp } = jwtService.decodeRefreshToken(refreshToken);
 
     /** обновляем данные жизни текущей сессии */
