@@ -101,6 +101,18 @@ describe("login e2e test", () => {
         loginOrEmail: "NF_test_email@gmail.com",
         password: newUserData.password,
       })
+      .set("X-Forwarded-For", "203.0.113.5")
+      .set("X-Real-IP", "203.0.113.5")
       .expect(HTTP_STATUS.unAuthorized);
+  });
+
+  it("should return 429, if too more 5 Requests within 5 seconds", async () => {
+    await request(app)
+      .post(routes.auth.login)
+      .send({
+        loginOrEmail: "NF_test_email@gmail.com",
+        password: newUserData.password,
+      })
+      .expect(HTTP_STATUS.rateLimit);
   });
 });

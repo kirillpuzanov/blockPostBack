@@ -1,13 +1,7 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import express from "express";
 import { setupApp } from "../../setup-app";
-import {
-  blackListCollection,
-  runDb,
-  stopDb,
-  testClearDB,
-  userCollection,
-} from "../../db/database";
+import { runDb, stopDb, testClearDB, userCollection } from "../../db/database";
 import { authService } from "../../auth/application/auth.service";
 import { createUserDB } from "../../modules/users/application/utils";
 import { bcryptService } from "../../auth/utils/bcrypt.service";
@@ -46,54 +40,27 @@ describe("refreshTokens", () => {
     jest.restoreAllMocks();
   });
 
-  it("should return error 401, if token in blackList", async () => {
+  it("should success refresh and mark old token as invalid", async () => {
     /** логиним тестового пользователя */
     const loginRes = await authService.login({
       password: userPass,
       loginOrEmail: user.login,
+      deviceName: "testDeviceName",
+      ip: "testIp",
     });
 
     const { refreshToken } = loginRes.data!;
     expect(refreshToken).toBeTruthy();
 
-    /** добавляем его токен в blackList */
-    await blackListCollection.insertOne({
-      token: refreshToken,
-      expireDate: new Date().toISOString(),
-    });
-
-    const resRefresh = await authService.refreshTokens(
-      refreshToken,
-      user.userId!,
-    );
-
-    expect(resRefresh.status).toBe(ResultStatus.Unauthorized);
-  });
-
-  it("should success refresh and add old token to blackList", async () => {
-    /** логиним тестового пользователя */
-    const loginRes = await authService.login({
-      password: userPass,
-      loginOrEmail: user.login,
-    });
-
-    const { refreshToken } = loginRes.data!;
-    expect(refreshToken).toBeTruthy();
-
-    const resRefresh = await authService.refreshTokens(
-      refreshToken,
-      user.userId!,
-    );
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const resRefresh = await authService.refreshTokens(refreshToken);
 
     expect(resRefresh.status).toBe(ResultStatus.Success);
     expect(resRefresh.data?.refreshToken).toBeTruthy();
     expect(resRefresh.data?.accessToken).toBeTruthy();
 
     /** проверяем, что старый refreshToken отмечен как не валидный */
-    const resSecondRefresh = await authService.refreshTokens(
-      refreshToken,
-      user.userId!,
-    );
+    const resSecondRefresh = await authService.refreshTokens(refreshToken);
     expect(resSecondRefresh.status).toBe(ResultStatus.Unauthorized);
   });
 });
