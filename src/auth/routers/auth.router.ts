@@ -17,6 +17,7 @@ import { refreshTokenGuard } from "../validation/refresh-token.guard";
 import { refreshTokenHandler } from "./handlers/refresh-token.handler";
 import { logoutHandler } from "./handlers/logout.handler";
 import { rateLimitGuard } from "../validation/rate-limit.guard";
+import { recoveryPassHandler } from "./handlers/recovery-pass.handler";
 
 export const authRouter = Router({});
 
@@ -60,4 +61,13 @@ authRouter
     emailValidation,
     validationResult,
     registrationResendConfirmHandler,
+  )
+
+  /** recovery pass */
+  .post(
+    routes.auth.passwordRecovery,
+    rateLimitGuard,
+    emailValidation,
+    validationResult,
+    recoveryPassHandler,
   );

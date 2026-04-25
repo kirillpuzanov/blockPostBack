@@ -7,13 +7,7 @@ export const mailService = {
     code: string,
     template: (code: string) => string,
   ): Promise<boolean> {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: SETTINGS.EMAIL,
-        pass: SETTINGS.EMAIL_PASS,
-      },
-    });
+    const transporter = this._getTransporter();
 
     const sendRes = await transporter.sendMail({
       from: "Hi <man>",
@@ -22,5 +16,31 @@ export const mailService = {
       html: template(code),
     });
     return Boolean(sendRes);
+  },
+
+  async sendRecoveryPassMail(
+    email: string,
+    code: string,
+    template: (code: string) => string,
+  ) {
+    const transporter = this._getTransporter();
+
+    const sendRes = await transporter.sendMail({
+      from: "Hi <man>",
+      to: email,
+      subject: "Подтвердите изменение пароля",
+      html: template(code),
+    });
+    return Boolean(sendRes);
+  },
+
+  _getTransporter() {
+    return nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: SETTINGS.EMAIL,
+        pass: SETTINGS.EMAIL_PASS,
+      },
+    });
   },
 };

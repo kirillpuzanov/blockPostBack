@@ -24,6 +24,11 @@ export type UserDb = {
     sentDate: Date;
     isConfirmed: boolean;
   };
+  recoveryPassInfo?: {
+    recoveryPassCode: string;
+    expirationCodeDate: Date;
+    sentCodeDate: Date;
+  };
 };
 
 export enum UsersSortFields {

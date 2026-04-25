@@ -166,16 +166,6 @@ export const authService = {
       });
     }
 
-    // todo добавить проверку позже (пока тесты не проходят)
-    // if (!this._isCanResendConfirmCode(user.emailConfirmation.sentDate)) {
-    //   return createResultObject({
-    //     status: ResultStatus.BadRequest,
-    //     extensions: [
-    //       { field: "code", message: "code request once per minute" },
-    //     ],
-    //   });
-    // }
-
     const { confirmationCode, expirationDate, sentDate } =
       getNewConfirmationData();
 
@@ -274,9 +264,31 @@ export const authService = {
     });
   },
 
-  // _isCanResendConfirmCode(lastSentDate: Date): boolean {
-  //   const oneMin = 60 * 1000;
-  //   const nextSentDate = new Date(lastSentDate).getTime() + oneMin;
-  //   return new Date().getTime() > nextSentDate;
-  // },
+  async recoveryPassword(email: string): Promise<Result<null>> {
+    const user = await usersRepository.getByLoginOrEmail(email);
+
+    /** если такого пользователя нет все-равно вернем 204, чтобы не раскрывать существование email */
+    if (!user) {
+      return createResultObject({ status: ResultStatus.NoContent });
+    }
+
+    const { confirmationCode, expirationDate, sentDate } =
+      getNewConfirmationData();
+
+    const recoveryPassData = {
+      recoveryPassCode: confirmationCode,
+      expirationCodeDate: expirationDate,
+      sentCodeDate: sentDate,
+    };
+
+    await usersRepository.update(user._id, {
+      recoveryPassData,
+    });
+
+    mailService
+      .sendRecoveryPassMail(email, confirmationCode, mailTemplates.recoveryPass)
+      .catch((error) => console.error("error recovery pass email", error));
+
+    return createResultObject({ status: ResultStatus.NoContent });
+  },
 };
