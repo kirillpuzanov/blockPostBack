@@ -1,11 +1,11 @@
-import { postsQueryRepository } from "../../posts/repositories/posts.query.repository";
 import { createResultObject } from "../../../core/utils/create-result-object";
 import { Result, ResultStatus } from "../../../core/types/result";
 import { CommentDb } from "../types/comment.types";
 import { commentsRepository } from "../repositories/comments.repository";
 import { commentCollection } from "../../../db/database";
 import { ObjectId } from "mongodb";
-import { usersQueryRepository } from "../../users/repositories/users.query.repository";
+import { postsRepository } from "../../posts/repositories/posts.repository";
+import { usersRepository } from "../../users/repositories/users.repository";
 
 export const commentService = {
   async createComment(
@@ -13,9 +13,8 @@ export const commentService = {
     postId: string,
     content: string,
   ): Promise<Result<{ commentId: string }>> {
-    // todo переписать обращение к QueryRepo
-    const post = await postsQueryRepository.getById(postId);
-    const user = await usersQueryRepository.getById(userId);
+    const post = await postsRepository.getById(postId);
+    const user = await usersRepository.getById(userId);
 
     if (!post || !user) {
       return createResultObject({

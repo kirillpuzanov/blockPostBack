@@ -1,4 +1,4 @@
-import { UserDb } from "../types/user.types";
+import { UserDb, UserViewModel } from "../types/user.types";
 import { userCollection } from "../../../db/database";
 import { ObjectId, WithId } from "mongodb";
 
@@ -38,5 +38,19 @@ export const usersRepository = {
     return userCollection.findOne({
       "emailConfirmation.confirmationCode": confirmCode,
     });
+  },
+
+  async getById(id: string): Promise<UserViewModel | null> {
+    const user = await userCollection.findOne({ _id: new ObjectId(id) });
+
+    if (!user) {
+      return null;
+    }
+    return {
+      id: user._id.toString(),
+      email: user.email,
+      login: user.login,
+      createdAt: user.createdAt,
+    };
   },
 };
