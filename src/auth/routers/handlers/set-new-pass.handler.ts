@@ -8,14 +8,14 @@ import { authService } from "../../application/auth.service";
 import { ResultStatus } from "../../../core/types/result";
 import { mapResultToHttpStatus } from "../../../core/utils/map-result-to-http-status";
 
-export const recoveryPassHandler = async (
-  req: Request<{}, {}, { email: string }>,
+export const setNewPasswordHandler = async (
+  req: Request<{}, {}, { newPassword: string; recoveryCode: string }>,
   res: Response,
 ) => {
   try {
-    const { email } = req.body;
+    const { newPassword, recoveryCode } = req.body;
 
-    const result = await authService.recoveryPassword(email);
+    const result = await authService.setNewPassword(newPassword, recoveryCode);
 
     if (result.status === ResultStatus.NoContent) {
       return res.sendStatus(HTTP_STATUS.noContent);

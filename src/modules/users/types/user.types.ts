@@ -24,7 +24,7 @@ export type UserDb = {
     sentDate: Date;
     isConfirmed: boolean;
   };
-  recoveryPassInfo?: {
+  recoveryPassData?: {
     recoveryPassCode: string;
     expirationCodeDate: Date;
     sentCodeDate: Date;

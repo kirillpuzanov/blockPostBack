@@ -34,5 +34,23 @@ export const registrationConfirmValidation = body("code")
   .isString()
   .trim()
   .isLength({ min: 1, max: 100 })
-  .isUUID(4) // todo - check
+  .isUUID(4)
   .withMessage("incorrect confirmation code");
+
+const newPasswordCodeValidation = body("recoveryCode")
+  .isString()
+  .trim()
+  .isLength({ min: 1, max: 100 })
+  .isUUID(4)
+  .withMessage("incorrect confirmation code");
+
+const newPasswordValidation = body("newPassword")
+  .isString()
+  .trim()
+  .isLength({ min: 6, max: 20 })
+  .withMessage("incorrect new password");
+
+export const recoveryPasswordValidation = [
+  newPasswordCodeValidation,
+  newPasswordValidation,
+];

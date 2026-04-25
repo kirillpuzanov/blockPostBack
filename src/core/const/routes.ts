@@ -12,6 +12,7 @@ export const routes = {
     me: "/auth/me",
     refreshToken: "/auth/refresh-token",
     passwordRecovery: "/auth/password-recovery",
+    newPassword: "/auth/new-password",
   },
 
   deviceSessions: "/security/devices",

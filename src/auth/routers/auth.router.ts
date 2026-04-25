@@ -7,6 +7,7 @@ import { accessTokenGuard } from "../validation/access-token.guard";
 import { getMeHandler } from "./handlers/get-me.handler";
 import {
   emailValidation,
+  recoveryPasswordValidation,
   registrationConfirmValidation,
   registrationValidation,
 } from "../validation/registration.validation";
@@ -18,6 +19,7 @@ import { refreshTokenHandler } from "./handlers/refresh-token.handler";
 import { logoutHandler } from "./handlers/logout.handler";
 import { rateLimitGuard } from "../validation/rate-limit.guard";
 import { recoveryPassHandler } from "./handlers/recovery-pass.handler";
+import { setNewPasswordHandler } from "./handlers/set-new-pass.handler";
 
 export const authRouter = Router({});
 
@@ -70,4 +72,12 @@ authRouter
     emailValidation,
     validationResult,
     recoveryPassHandler,
+  )
+
+  .post(
+    routes.auth.newPassword,
+    rateLimitGuard,
+    recoveryPasswordValidation,
+    validationResult,
+    setNewPasswordHandler,
   );

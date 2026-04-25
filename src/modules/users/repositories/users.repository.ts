@@ -40,6 +40,14 @@ export const usersRepository = {
     });
   },
 
+  async getByRecoveryPassCode(
+    confirmCode: string,
+  ): Promise<WithId<UserDb> | null> {
+    return userCollection.findOne({
+      "recoveryPassData.recoveryPassCode": confirmCode,
+    });
+  },
+
   async getById(id: string): Promise<UserViewModel | null> {
     const user = await userCollection.findOne({ _id: new ObjectId(id) });
 

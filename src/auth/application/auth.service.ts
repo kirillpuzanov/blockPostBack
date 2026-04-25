@@ -291,4 +291,47 @@ export const authService = {
 
     return createResultObject({ status: ResultStatus.NoContent });
   },
+
+  async setNewPassword(
+    newPassword: string,
+    recoveryCode: string,
+  ): Promise<Result<null>> {
+    const user = await usersRepository.getByRecoveryPassCode(recoveryCode);
+
+    if (!user) {
+      return createResultObject({
+        status: ResultStatus.BadRequest,
+        extensions: [{ field: "recoveryCode", message: "user does not exist" }],
+      });
+    }
+
+    const expirationCodeDate = user.recoveryPassData?.expirationCodeDate;
+
+    if (!expirationCodeDate || new Date() > expirationCodeDate) {
+      return createResultObject({
+        status: ResultStatus.BadRequest,
+        extensions: [
+          {
+            field: "recoveryCode",
+            message: "recovery password code does not exist or is expired",
+          },
+        ],
+      });
+    }
+
+    const newPasswordHash = await bcryptService.generateHash(newPassword);
+
+    const updatedCount = await usersRepository.update(user._id, {
+      passwordHash: newPasswordHash,
+    });
+
+    if (updatedCount > 0) {
+      return createResultObject({ status: ResultStatus.NoContent });
+    } else {
+      return createResultObject({
+        status: ResultStatus.BadRequest,
+        extensions: [{ field: "user", message: "user does not exist" }],
+      });
+    }
+  },
 };
