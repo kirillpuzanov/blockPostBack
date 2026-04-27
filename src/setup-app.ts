@@ -1,9 +1,6 @@
 import express, { Application } from "express";
 import { routes } from "./core/const/routes";
-import {
-  blogsAdminAuthRouter,
-  blogsPublicRouter,
-} from "./modules/blogs/routers/blogs.router";
+import { blogsRouter } from "./modules/blogs/routers/blogs.router";
 import { clearDbRouter } from "./modules/testing/clear-db.router";
 import { postsRouter } from "./modules/posts/routers/posts.router";
 import { authRouter } from "./auth/routers/auth.router";
@@ -25,8 +22,8 @@ export const setupApp = (app: Application) => {
 
   app.use("", authRouter);
   app.use(routes.deviceSessions, sessionsRouter);
-  app.use(routes.blogs, blogsPublicRouter);
-  app.use(routes.blogs, blogsAdminAuthRouter);
+
+  app.use(routes.blogs, blogsRouter);
 
   app.use(routes.posts, postsRouter);
 

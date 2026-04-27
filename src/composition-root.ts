@@ -8,6 +8,9 @@ import { PostsQueryRepository } from "./modules/posts/repositories/posts.query.r
 import { PostsController } from "./modules/posts/routers/posts.controller";
 import { PostsService } from "./modules/posts/application/posts.service";
 import { BlogsQueryRepository } from "./modules/blogs/repositories/blogs.query.repository";
+import { BlogsController } from "./modules/blogs/routers/blogs.controller";
+import { BlogsService } from "./modules/blogs/application/blogs.service";
+import { BlogsRepository } from "./modules/blogs/repositories/blogs.repository";
 
 export const postsQueryRepository = new PostsQueryRepository();
 export const commentsQueryRepository = new CommentsQueryRepository();
@@ -16,6 +19,7 @@ export const blogsQueryRepository = new BlogsQueryRepository();
 export const usersRepository = new UsersRepository();
 export const commentsRepository = new CommentsRepository();
 export const postsRepository = new PostsRepository();
+export const blogsRepository = new BlogsRepository();
 
 export const commentService = new CommentService(
   usersRepository,
@@ -39,4 +43,17 @@ export const postsController = new PostsController(
 export const commentsController = new CommentsController(
   commentsQueryRepository,
   commentService,
+);
+
+export const blogsService = new BlogsService(
+  blogsRepository,
+  commentService,
+  postsService,
+);
+
+export const blogsController = new BlogsController(
+  blogsQueryRepository,
+  postsQueryRepository,
+  blogsService,
+  postsService,
 );
