@@ -4,9 +4,9 @@ import { setupApp } from "../../setup-app";
 import { runDb, stopDb, testClearDB, userCollection } from "../../db/database";
 import { authService } from "../../auth/application/auth.service";
 import { createUserDB } from "../../modules/users/application/utils";
-import { bcryptService } from "../../auth/utils/bcrypt.service";
 import { UserDb } from "../../modules/users/types/user.types";
 import { ResultStatus } from "../../core/types/result";
+import { bcryptService } from "../../composition-root";
 
 let user: UserDb & { userId?: string };
 const userPass = "12345678";

@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { LoginInput, MeViewModel } from "../../types/auth.types";
 import { HTTP_STATUS } from "../../../core/const/statuses";
-import { usersQueryRepository } from "../../../modules/users/repositories/users.query.repository";
+
+import { usersQueryRepository } from "../../../composition-root";
 
 export const getMeHandler = async (
   req: Request<{}, MeViewModel, LoginInput>,

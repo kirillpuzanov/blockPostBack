@@ -1,8 +1,8 @@
 import { AuthSessionViewModel } from "../types/session.types";
 import { Result, ResultStatus } from "../../../core/types/result";
 import { createResultObject } from "../../../core/utils/create-result-object";
-import { sessionsRepository } from "../repositories/sessions.repository";
 import { jwtService } from "../../../auth/utils/jwt.service";
+import { sessionsRepository } from "../../../composition-root";
 
 export const sessionsService = {
   async getAllSessions(

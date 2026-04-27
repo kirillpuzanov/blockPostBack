@@ -4,7 +4,7 @@ import { userCollection } from "../../../db/database";
 import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
 import { ObjectId, WithId } from "mongodb";
 
-export const usersQueryRepository = {
+export class UsersQueryRepository {
   async getAll(query: UsersQueryInput): Promise<PagedOutput<UserViewModel>> {
     const {
       pageNumber,
@@ -50,7 +50,7 @@ export const usersQueryRepository = {
       pageSize,
       totalCount,
     });
-  },
+  }
 
   async getById(id: string): Promise<UserViewModel | null> {
     const user = await userCollection.findOne({ _id: new ObjectId(id) });
@@ -59,7 +59,7 @@ export const usersQueryRepository = {
       return null;
     }
     return this._mapToUserView(user);
-  },
+  }
 
   _mapToUserView(user: WithId<UserDb>): UserViewModel {
     const { email, _id, createdAt, login } = user;
@@ -69,5 +69,5 @@ export const usersQueryRepository = {
       login,
       createdAt,
     };
-  },
-};
+  }
+}

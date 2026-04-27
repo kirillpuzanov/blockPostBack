@@ -1,42 +1,48 @@
 import { CreateUserInput } from "../types/user.types";
 import { DomainError, NotFoundError } from "../../../core/errors/error.handler";
-import { bcryptService } from "../../../auth/utils/bcrypt.service";
 import { createUserDB } from "./utils";
-import { sessionsRepository } from "../../sessions/repositories/sessions.repository";
-import { usersRepository } from "../../../composition-root";
+import { UsersRepository } from "../repositories/users.repository";
+import { SessionsRepository } from "../../sessions/repositories/sessions.repository";
+import { BcryptService } from "../../../auth/utils/bcrypt.service";
 
-export const usersService = {
+export class UsersService {
+  constructor(
+    public usersRepository: UsersRepository,
+    public sessionsRepository: SessionsRepository,
+    public bcryptService: BcryptService,
+  ) {}
+
   async createUser(input: CreateUserInput): Promise<string> {
     const { login, email, password } = input;
 
     const emailAlreadyExist =
-      await usersRepository.checkUniqueEmailOrLogin(email);
+      await this.usersRepository.checkUniqueEmailOrLogin(email);
     if (emailAlreadyExist) {
       throw new DomainError("user with this email already exists", "email");
     }
 
     const loginAlreadyExist =
-      await usersRepository.checkUniqueEmailOrLogin(login);
+      await this.usersRepository.checkUniqueEmailOrLogin(login);
     if (loginAlreadyExist) {
       throw new DomainError("user with this login already exists", "login");
     }
 
-    const passwordHash = await bcryptService.generateHash(password);
+    const passwordHash = await this.bcryptService.generateHash(password);
 
     /** при создании админом подтверждение не требуется */
     const user = createUserDB(login, email, passwordHash, true);
 
-    return usersRepository.create(user);
-  },
+    return this.usersRepository.create(user);
+  }
 
   async deleteOne(id: string): Promise<void> {
-    const deletedCount = await usersRepository.deleteOne(id);
+    const deletedCount = await this.usersRepository.deleteOne(id);
 
     if (deletedCount < 1) {
       throw new NotFoundError("user is not exists", "user");
     }
-    await sessionsRepository.deleteAllUserSessions(id);
+    await this.sessionsRepository.deleteAllUserSessions(id);
 
     return;
-  },
-};
+  }
+}

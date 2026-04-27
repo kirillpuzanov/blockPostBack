@@ -1,5 +1,4 @@
 import { LoginInputWithMeta } from "../types/auth.types";
-import { bcryptService } from "../utils/bcrypt.service";
 import { Result, ResultStatus } from "../../core/types/result";
 import { WithId } from "mongodb";
 import { UserDb } from "../../modules/users/types/user.types";
@@ -14,8 +13,11 @@ import {
   getNewConfirmationData,
 } from "../../modules/users/application/utils";
 import { AuthSessionDb } from "../../modules/sessions/types/session.types";
-import { sessionsRepository } from "../../modules/sessions/repositories/sessions.repository";
-import { usersRepository } from "../../composition-root";
+import {
+  bcryptService,
+  sessionsRepository,
+  usersRepository,
+} from "../../composition-root";
 
 export const authService = {
   async login({

@@ -11,15 +11,24 @@ import { BlogsQueryRepository } from "./modules/blogs/repositories/blogs.query.r
 import { BlogsController } from "./modules/blogs/routers/blogs.controller";
 import { BlogsService } from "./modules/blogs/application/blogs.service";
 import { BlogsRepository } from "./modules/blogs/repositories/blogs.repository";
+import { UsersController } from "./modules/users/routers/users.controller";
+import { UsersQueryRepository } from "./modules/users/repositories/users.query.repository";
+import { UsersService } from "./modules/users/application/users.service";
+import { SessionsRepository } from "./modules/sessions/repositories/sessions.repository";
+import { BcryptService } from "./auth/utils/bcrypt.service";
+
+export const bcryptService = new BcryptService();
 
 export const postsQueryRepository = new PostsQueryRepository();
 export const commentsQueryRepository = new CommentsQueryRepository();
 export const blogsQueryRepository = new BlogsQueryRepository();
+export const usersQueryRepository = new UsersQueryRepository();
 
 export const usersRepository = new UsersRepository();
 export const commentsRepository = new CommentsRepository();
 export const postsRepository = new PostsRepository();
 export const blogsRepository = new BlogsRepository();
+export const sessionsRepository = new SessionsRepository();
 
 export const commentService = new CommentService(
   usersRepository,
@@ -40,6 +49,12 @@ export const postsController = new PostsController(
   commentService,
 );
 
+export const usersService = new UsersService(
+  usersRepository,
+  sessionsRepository,
+  bcryptService,
+);
+
 export const commentsController = new CommentsController(
   commentsQueryRepository,
   commentService,
@@ -56,4 +71,9 @@ export const blogsController = new BlogsController(
   postsQueryRepository,
   blogsService,
   postsService,
+);
+
+export const usersController = new UsersController(
+  usersQueryRepository,
+  usersService,
 );

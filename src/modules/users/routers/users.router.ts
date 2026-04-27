@@ -2,35 +2,33 @@ import { Router } from "express";
 import { pageSortValidation } from "../../../core/middlewares/page-sort-validation";
 import { UsersSortFields } from "../types/user.types";
 import { validationResult } from "../../../core/middlewares/validation-result";
-import { getUsersHandler } from "./handlers/get-users.handler";
 import { authAdminGuard } from "../../../auth/validation/auth-admin.guard";
 import { handleIdValidation } from "../../../core/middlewares/id-validation";
 import { inputUserFieldValidation } from "../validations/input-user.validation";
-import { createUserHandler } from "./handlers/create-user.handler";
-import { deleteUserHandler } from "./handlers/delete-user.handler";
+import { usersController } from "../../../composition-root";
 
-export const usersAdminAuthRouter = Router({});
+export const usersRouter = Router({});
 
-usersAdminAuthRouter
-  .get(
-    "",
-    authAdminGuard,
-    pageSortValidation(UsersSortFields),
-    validationResult,
-    getUsersHandler,
-  )
+usersRouter.get(
+  "",
+  authAdminGuard,
+  pageSortValidation(UsersSortFields),
+  validationResult,
+  usersController.getUsers.bind(usersController),
+);
 
-  .post(
-    "",
-    authAdminGuard,
-    inputUserFieldValidation,
-    validationResult,
-    createUserHandler,
-  )
-  .delete(
-    "/:id",
-    authAdminGuard,
-    handleIdValidation,
-    validationResult,
-    deleteUserHandler,
-  );
+usersRouter.post(
+  "",
+  authAdminGuard,
+  inputUserFieldValidation,
+  validationResult,
+  usersController.createUser.bind(usersController),
+);
+
+usersRouter.delete(
+  "/:id",
+  authAdminGuard,
+  handleIdValidation,
+  validationResult,
+  usersController.deleteUser.bind(usersController),
+);
