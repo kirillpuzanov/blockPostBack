@@ -11,7 +11,7 @@ import { PagedOutput } from "../../../core/types/page-and-sort";
 import { postsQueryRepository } from "../../posts/repositories/posts.query.repository";
 import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
 
-export const commentsQueryRepository = {
+export class CommentsQueryRepository {
   async getById(id: string): Promise<Result<CommentViewModel>> {
     const comment = await commentCollection.findOne({ _id: new ObjectId(id) });
 
@@ -25,7 +25,7 @@ export const commentsQueryRepository = {
       status: ResultStatus.Success,
       data: this._mapToCommentView(comment),
     });
-  },
+  }
 
   async getCommentsByPost(
     postId: string,
@@ -62,7 +62,7 @@ export const commentsQueryRepository = {
       status: ResultStatus.Success,
       data: paginatedOutput,
     });
-  },
+  }
 
   _mapToCommentView(comment: WithId<CommentDb>): CommentViewModel {
     return {
@@ -71,5 +71,5 @@ export const commentsQueryRepository = {
       createdAt: comment.createdAt,
       commentatorInfo: comment.commentatorInfo,
     };
-  },
-};
+  }
+}

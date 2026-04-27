@@ -1,35 +1,32 @@
 import { Router } from "express";
 import { handleIdValidation } from "../../../core/middlewares/id-validation";
 import { validationResult } from "../../../core/middlewares/validation-result";
-import { getCommentHandler } from "./handlers/get-comment.handler";
 import { inputCommentValidation } from "../validation/input-comment.validation";
 import { accessTokenGuard } from "../../../auth/validation/access-token.guard";
-import { updateCommentHandler } from "./handlers/update-comment.handler";
-import { deleteCommentHandler } from "./handlers/delete-comment.handler";
+import { commentsController } from "../../../composition-root";
 
-export const commentsPublicRouter = Router({});
-export const commentsAuthRouter = Router({});
+export const commentsRouter = Router({});
 
-commentsPublicRouter.get(
+commentsRouter.get(
   "/:id",
   handleIdValidation,
   validationResult,
-  getCommentHandler,
+  commentsController.getComment.bind(commentsController),
 );
 
-commentsAuthRouter
-  .put(
-    "/:id",
-    accessTokenGuard,
-    handleIdValidation,
-    inputCommentValidation,
-    validationResult,
-    updateCommentHandler,
-  )
-  .delete(
-    "/:id",
-    accessTokenGuard,
-    handleIdValidation,
-    validationResult,
-    deleteCommentHandler,
-  );
+commentsRouter.put(
+  "/:id",
+  accessTokenGuard,
+  handleIdValidation,
+  inputCommentValidation,
+  validationResult,
+  commentsController.updateComment.bind(commentsController),
+);
+
+commentsRouter.delete(
+  "/:id",
+  accessTokenGuard,
+  handleIdValidation,
+  validationResult,
+  commentsController.deleteComment.bind(commentsController),
+);

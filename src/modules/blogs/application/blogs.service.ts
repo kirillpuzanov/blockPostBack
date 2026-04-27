@@ -2,7 +2,8 @@ import { BlogDb, CreateBlogInput } from "../types/blog.types";
 import { blogsRepository } from "../repositories/blogs.repository";
 import { NotFoundError } from "../../../core/errors/error.handler";
 import { postsService } from "../../posts/application/posts.service";
-import { commentService } from "../../comments/application/comments.service";
+
+import { commentService } from "../../../composition-root";
 
 export const blogsService = {
   async createBlog(input: CreateBlogInput): Promise<string> {

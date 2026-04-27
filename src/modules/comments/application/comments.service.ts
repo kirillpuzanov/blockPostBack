@@ -1,20 +1,34 @@
 import { createResultObject } from "../../../core/utils/create-result-object";
 import { Result, ResultStatus } from "../../../core/types/result";
 import { CommentDb } from "../types/comment.types";
-import { commentsRepository } from "../repositories/comments.repository";
+import { CommentsRepository } from "../repositories/comments.repository";
 import { commentCollection } from "../../../db/database";
 import { ObjectId } from "mongodb";
-import { postsRepository } from "../../posts/repositories/posts.repository";
-import { usersRepository } from "../../users/repositories/users.repository";
+import { PostsRepository } from "../../posts/repositories/posts.repository";
+import { UsersRepository } from "../../users/repositories/users.repository";
 
-export const commentService = {
+export class CommentService {
+  usersRepository: UsersRepository;
+  postsRepository: PostsRepository;
+  commentsRepository: CommentsRepository;
+
+  constructor(
+    usersRepository: UsersRepository,
+    postsRepository: PostsRepository,
+    commentsRepository: CommentsRepository,
+  ) {
+    this.usersRepository = usersRepository;
+    this.postsRepository = postsRepository;
+    this.commentsRepository = commentsRepository;
+  }
+
   async createComment(
     userId: string,
     postId: string,
     content: string,
   ): Promise<Result<{ commentId: string }>> {
-    const post = await postsRepository.getById(postId);
-    const user = await usersRepository.getById(userId);
+    const post = await this.postsRepository.getById(postId);
+    const user = await this.usersRepository.getById(userId);
 
     if (!post || !user) {
       return createResultObject({
@@ -33,13 +47,13 @@ export const commentService = {
       createdAt: new Date().toISOString(),
     };
 
-    const commentId = await commentsRepository.create(comment);
+    const commentId = await this.commentsRepository.create(comment);
 
     return createResultObject({
       status: ResultStatus.Created,
       data: { commentId },
     });
-  },
+  }
 
   async updateComment(
     userId: string,
@@ -53,14 +67,17 @@ export const commentService = {
       return avaLiableResult;
     }
 
-    const updatedCount = await commentsRepository.update(commentId, content);
+    const updatedCount = await this.commentsRepository.update(
+      commentId,
+      content,
+    );
 
     if (updatedCount < 1) {
       return createResultObject({ status: ResultStatus.NotFound });
     }
 
     return createResultObject({ status: ResultStatus.NoContent });
-  },
+  }
 
   async deleteComment(
     userId: string,
@@ -73,18 +90,18 @@ export const commentService = {
       return avaLiableResult;
     }
 
-    const deletedCount = await commentsRepository.deleteOne(commentId);
+    const deletedCount = await this.commentsRepository.deleteOne(commentId);
     if (deletedCount < 1) {
       return createResultObject({ status: ResultStatus.NotFound });
     }
 
     return createResultObject({ status: ResultStatus.NoContent });
-  },
+  }
 
   async deleteManyComments(filter: Record<string, string>): Promise<void> {
     await commentCollection.deleteMany(filter);
     return;
-  },
+  }
 
   async _availabilityCheck(
     userId: string,
@@ -105,5 +122,5 @@ export const commentService = {
     }
 
     return createResultObject({ status: ResultStatus.Success });
-  },
-};
+  }
+}

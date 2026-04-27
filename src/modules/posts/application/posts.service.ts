@@ -1,9 +1,9 @@
 import { CreatePostInput, PostDb } from "../types/post.types";
-import { postsRepository } from "../repositories/posts.repository";
 import { NotFoundError } from "../../../core/errors/error.handler";
 import { postCollection } from "../../../db/database";
 import { blogsQueryRepository } from "../../blogs/repositories/blogs.query.repository";
-import { commentService } from "../../comments/application/comments.service";
+
+import { commentService, postsRepository } from "../../../composition-root";
 
 export const postsService = {
   async createPost(input: CreatePostInput): Promise<string> {

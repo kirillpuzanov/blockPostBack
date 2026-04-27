@@ -1,9 +1,9 @@
 import { CreateUserInput } from "../types/user.types";
 import { DomainError, NotFoundError } from "../../../core/errors/error.handler";
 import { bcryptService } from "../../../auth/utils/bcrypt.service";
-import { usersRepository } from "../repositories/users.repository";
 import { createUserDB } from "./utils";
 import { sessionsRepository } from "../../sessions/repositories/sessions.repository";
+import { usersRepository } from "../../../composition-root";
 
 export const usersService = {
   async createUser(input: CreateUserInput): Promise<string> {

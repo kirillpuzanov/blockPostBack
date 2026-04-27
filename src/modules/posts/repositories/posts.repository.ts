@@ -3,11 +3,11 @@ import { CreatePostInput, PostDb, PostViewModel } from "../types/post.types";
 import { ObjectId } from "mongodb";
 import { NotFoundError } from "../../../core/errors/error.handler";
 
-export const postsRepository = {
+export class PostsRepository {
   async create(newPost: PostDb): Promise<string> {
     const createdPost = await postCollection.insertOne(newPost);
     return createdPost.insertedId.toString();
-  },
+  }
 
   async update(updatedPost: CreatePostInput, id: string): Promise<number> {
     const { title, content, blogId, shortDescription } = updatedPost;
@@ -17,12 +17,12 @@ export const postsRepository = {
       { $set: { title, content, blogId, shortDescription } },
     );
     return res.matchedCount;
-  },
+  }
 
   async deleteById(id: string): Promise<number> {
     const res = await postCollection.deleteOne({ _id: new ObjectId(id) });
     return res.deletedCount;
-  },
+  }
 
   async getById(id: string): Promise<PostViewModel> {
     const post = await postCollection.findOne({ _id: new ObjectId(id) });
@@ -39,5 +39,5 @@ export const postsRepository = {
       blogName: post.blogName,
       createdAt: post.createdAt,
     };
-  },
-};
+  }
+}

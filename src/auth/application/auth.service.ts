@@ -7,7 +7,6 @@ import { createResultObject } from "../../core/utils/create-result-object";
 import { jwtService } from "../utils/jwt.service";
 import { randomUUID } from "crypto";
 
-import { usersRepository } from "../../modules/users/repositories/users.repository";
 import { mailService } from "../utils/mail.service";
 import { mailTemplates } from "../utils/mail-templates";
 import {
@@ -16,6 +15,7 @@ import {
 } from "../../modules/users/application/utils";
 import { AuthSessionDb } from "../../modules/sessions/types/session.types";
 import { sessionsRepository } from "../../modules/sessions/repositories/sessions.repository";
+import { usersRepository } from "../../composition-root";
 
 export const authService = {
   async login({

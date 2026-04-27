@@ -3,12 +3,14 @@ import {
   CommentViewModel,
   CreateCommentInput,
 } from "../../../comments/types/comment.types";
-import { commentService } from "../../../comments/application/comments.service";
 import { ResultStatus } from "../../../../core/types/result";
-import { commentsQueryRepository } from "../../../comments/repositories/comments.query.repository";
 import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { mapResultToHttpStatus } from "../../../../core/utils/map-result-to-http-status";
 import { errorHandler } from "../../../../core/errors/error.handler";
+import {
+  commentService,
+  commentsQueryRepository,
+} from "../../../../composition-root";
 
 export const createCommentByPostHandler = async (
   req: Request<{ id: string }, CommentViewModel, CreateCommentInput>,
