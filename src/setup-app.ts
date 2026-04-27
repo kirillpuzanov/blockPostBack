@@ -5,11 +5,7 @@ import {
   blogsPublicRouter,
 } from "./modules/blogs/routers/blogs.router";
 import { clearDbRouter } from "./modules/testing/clear-db.router";
-import {
-  postsAdminAuthRouter,
-  postsAuthRouter,
-  postsPublicRouter,
-} from "./modules/posts/routers/posts.router";
+import { postsRouter } from "./modules/posts/routers/posts.router";
 import { authRouter } from "./auth/routers/auth.router";
 import { usersAdminAuthRouter } from "./modules/users/routers/users.router";
 import { commentsRouter } from "./modules/comments/routers/comments.router";
@@ -32,9 +28,7 @@ export const setupApp = (app: Application) => {
   app.use(routes.blogs, blogsPublicRouter);
   app.use(routes.blogs, blogsAdminAuthRouter);
 
-  app.use(routes.posts, postsPublicRouter);
-  app.use(routes.posts, postsAdminAuthRouter);
-  app.use(routes.posts, postsAuthRouter);
+  app.use(routes.posts, postsRouter);
 
   app.use(routes.comments, commentsRouter);
 

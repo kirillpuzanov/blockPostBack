@@ -8,8 +8,8 @@ import { commentCollection } from "../../../db/database";
 import { createResultObject } from "../../../core/utils/create-result-object";
 import { Result, ResultStatus } from "../../../core/types/result";
 import { PagedOutput } from "../../../core/types/page-and-sort";
-import { postsQueryRepository } from "../../posts/repositories/posts.query.repository";
 import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
+import { postsQueryRepository } from "../../../composition-root";
 
 export class CommentsQueryRepository {
   async getById(id: string): Promise<Result<CommentViewModel>> {

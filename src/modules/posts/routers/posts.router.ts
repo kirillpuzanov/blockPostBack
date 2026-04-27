@@ -2,69 +2,66 @@ import { Router } from "express";
 import { authAdminGuard } from "../../../auth/validation/auth-admin.guard";
 import { validationResult } from "../../../core/middlewares/validation-result";
 import { handleIdValidation } from "../../../core/middlewares/id-validation";
-import { getPostHandler } from "./handlers/get-post.handler";
-import { getPostsHandler } from "./handlers/get-posts.handler";
-import { createPostHandler } from "./handlers/create-post.handler";
-import { updatePostHandler } from "./handlers/update-post.handler";
-import { deletePostHandler } from "./handlers/delete-post.handler";
 import { inputPostFieldValidation } from "../validation/input-post.validation";
 import { pageSortValidation } from "../../../core/middlewares/page-sort-validation";
 import { PostSortFields } from "../types/post.types";
-import { getCommentsByPostHandler } from "./handlers/get-comments-by-post.handler";
 import { CommentsSortFields } from "../../comments/types/comment.types";
 import { accessTokenGuard } from "../../../auth/validation/access-token.guard";
 import { inputCommentValidation } from "../../comments/validation/input-comment.validation";
-import { createCommentByPostHandler } from "./handlers/create-comment-by-post.handler";
+import { postsController } from "../../../composition-root";
 
-export const postsPublicRouter = Router({});
-export const postsAdminAuthRouter = Router({});
-export const postsAuthRouter = Router({});
+export const postsRouter = Router({});
 
-postsPublicRouter
-  .get(
-    "",
-    pageSortValidation(PostSortFields),
-    validationResult,
-    getPostsHandler,
-  )
-  .get("/:id", handleIdValidation, validationResult, getPostHandler)
+postsRouter.get(
+  "",
+  pageSortValidation(PostSortFields),
+  validationResult,
+  postsController.getPosts.bind(postsController),
+);
 
-  .get(
-    "/:id/comments",
-    handleIdValidation,
-    pageSortValidation(CommentsSortFields),
-    validationResult,
-    getCommentsByPostHandler,
-  );
+postsRouter.get(
+  "/:id",
+  handleIdValidation,
+  validationResult,
+  postsController.getPost.bind(postsController),
+);
 
-postsAdminAuthRouter
-  .post(
-    "",
-    authAdminGuard,
-    inputPostFieldValidation,
-    validationResult,
-    createPostHandler,
-  )
-  .put(
-    "/:id",
-    authAdminGuard,
-    handleIdValidation,
-    inputPostFieldValidation,
-    validationResult,
-    updatePostHandler,
-  )
-  .delete(
-    "/:id",
-    authAdminGuard,
-    handleIdValidation,
-    validationResult,
-    deletePostHandler,
-  );
+postsRouter.get(
+  "/:id/comments",
+  handleIdValidation,
+  pageSortValidation(CommentsSortFields),
+  validationResult,
+  postsController.getCommentsByPost.bind(postsController),
+);
 
-postsAuthRouter.post(
+postsRouter.post(
+  "",
+  authAdminGuard,
+  inputPostFieldValidation,
+  validationResult,
+  postsController.createPost.bind(postsController),
+);
+
+postsRouter.put(
+  "/:id",
+  authAdminGuard,
+  handleIdValidation,
+  inputPostFieldValidation,
+  validationResult,
+  postsController.updatePost.bind(postsController),
+);
+postsRouter.delete(
+  "/:id",
+  authAdminGuard,
+  handleIdValidation,
+  validationResult,
+  postsController.deletePost.bind(postsController),
+);
+
+postsRouter.post(
   "/:id/comments",
   accessTokenGuard,
   inputCommentValidation,
   validationResult,
-  createCommentByPostHandler,
+  postsController.createCommentByPost.bind(postsController),
 );

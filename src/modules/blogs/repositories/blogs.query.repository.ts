@@ -5,7 +5,7 @@ import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
 import { PagedOutput } from "../../../core/types/page-and-sort";
 import { NotFoundError } from "../../../core/errors/error.handler";
 
-export const blogsQueryRepository = {
+export class BlogsQueryRepository {
   async getAll(query: BlogQueryInput): Promise<PagedOutput<BlogViewModel>> {
     const { pageNumber, pageSize, sortBy, sortDirection, searchNameTerm } =
       query;
@@ -33,7 +33,7 @@ export const blogsQueryRepository = {
       pageSize,
       totalCount,
     });
-  },
+  }
 
   async getById(id: string): Promise<BlogViewModel> {
     const blog = await blogCollection.findOne({ _id: new ObjectId(id) });
@@ -42,7 +42,7 @@ export const blogsQueryRepository = {
       throw new NotFoundError("blog does not exists", "blogId");
     }
     return this._mapToBlogView(blog);
-  },
+  }
 
   _mapToBlogView(blog: WithId<BlogDb>): BlogViewModel {
     const { _id, createdAt, websiteUrl, description, name, isMembership } =
@@ -55,5 +55,7 @@ export const blogsQueryRepository = {
       createdAt,
       isMembership,
     };
-  },
-};
+  }
+}
+
+export const blogsQueryRepository = new BlogsQueryRepository();

@@ -5,8 +5,10 @@ import {
   PostViewModel,
 } from "../../../posts/types/post.types";
 import { errorHandler } from "../../../../core/errors/error.handler";
-import { postsService } from "../../../posts/application/posts.service";
-import { postsQueryRepository } from "../../../posts/repositories/posts.query.repository";
+import {
+  postsQueryRepository,
+  postsService,
+} from "../../../../composition-root";
 
 export const createPostByBlogHandler = async (
   req: Request<{ blogId: string }, PostViewModel, CreatePostByBlogInput>,

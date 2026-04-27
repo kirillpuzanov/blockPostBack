@@ -9,9 +9,9 @@ import {
 import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
 import { PagedOutput } from "../../../core/types/page-and-sort";
 import { NotFoundError } from "../../../core/errors/error.handler";
-import { blogsQueryRepository } from "../../blogs/repositories/blogs.query.repository";
+import { blogsQueryRepository } from "../../../composition-root";
 
-export const postsQueryRepository = {
+export class PostsQueryRepository {
   async getAll(query: PostsQueryInput): Promise<PagedOutput<PostViewModel>> {
     const { pageNumber, pageSize, sortBy, sortDirection } = query;
 
@@ -32,7 +32,7 @@ export const postsQueryRepository = {
       pageSize,
       totalCount,
     });
-  },
+  }
 
   async getById(id: string): Promise<PostViewModel> {
     const post = await postCollection.findOne({ _id: new ObjectId(id) });
@@ -41,7 +41,7 @@ export const postsQueryRepository = {
       throw new NotFoundError("post not found", "id");
     }
     return this._mapToPostView(post);
-  },
+  }
 
   async getPostsByBlog(
     blogId: string,
@@ -71,7 +71,7 @@ export const postsQueryRepository = {
       pageSize,
       totalCount,
     });
-  },
+  }
 
   _mapToPostView(post: WithId<PostDb>): PostViewModel {
     const {
@@ -92,5 +92,5 @@ export const postsQueryRepository = {
       blogName,
       createdAt,
     };
-  },
-};
+  }
+}

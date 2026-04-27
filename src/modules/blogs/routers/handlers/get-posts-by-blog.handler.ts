@@ -3,11 +3,11 @@ import { HTTP_STATUS } from "../../../../core/const/statuses";
 import { errorHandler } from "../../../../core/errors/error.handler";
 import { getMatchedQuery } from "../../../../core/utils/get-matched-query";
 import { PagedOutput } from "../../../../core/types/page-and-sort";
-import { postsQueryRepository } from "../../../posts/repositories/posts.query.repository";
 import {
   PostsByBlogQueryInput,
   PostViewModel,
 } from "../../../posts/types/post.types";
+import { postsQueryRepository } from "../../../../composition-root";
 
 export const getPostsByBlogHandler = async (
   req: Request<{ blogId: string }, PagedOutput<PostViewModel>>,

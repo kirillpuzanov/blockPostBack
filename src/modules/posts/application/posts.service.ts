@@ -1,14 +1,20 @@
 import { CreatePostInput, PostDb } from "../types/post.types";
 import { NotFoundError } from "../../../core/errors/error.handler";
 import { postCollection } from "../../../db/database";
-import { blogsQueryRepository } from "../../blogs/repositories/blogs.query.repository";
+import { CommentService } from "../../comments/application/comments.service";
+import { PostsRepository } from "../repositories/posts.repository";
+import { BlogsQueryRepository } from "../../blogs/repositories/blogs.query.repository";
 
-import { commentService, postsRepository } from "../../../composition-root";
+export class PostsService {
+  constructor(
+    public blogsQueryRepository: BlogsQueryRepository,
+    public postsRepository: PostsRepository,
+    public commentService: CommentService,
+  ) {}
 
-export const postsService = {
   async createPost(input: CreatePostInput): Promise<string> {
     const { blogId } = input;
-    const blog = await blogsQueryRepository.getById(blogId);
+    const blog = await this.blogsQueryRepository.getById(blogId);
 
     if (!blog) {
       throw new NotFoundError("blog not found", "blogId");
@@ -22,13 +28,13 @@ export const postsService = {
       blogName: blog.name,
       createdAt: new Date().toISOString(),
     };
-    return postsRepository.create(newPost);
-  },
+    return this.postsRepository.create(newPost);
+  }
 
   async updatePost(updatedPost: CreatePostInput, id: string): Promise<void> {
     const { title, blogId, content, shortDescription } = updatedPost;
 
-    const updatedCount = await postsRepository.update(
+    const updatedCount = await this.postsRepository.update(
       { title, blogId, content, shortDescription },
       id,
     );
@@ -37,24 +43,24 @@ export const postsService = {
       throw new NotFoundError("not found for update", "post");
     }
     return;
-  },
+  }
 
   async deletePost(id: string): Promise<void> {
-    const deletedCount = await postsRepository.deleteById(id);
+    const deletedCount = await this.postsRepository.deleteById(id);
 
     if (deletedCount < 1) {
       throw new NotFoundError("not found for delete", "post");
     }
 
     /** удаляем комментарии привязанные к этому посту */
-    await commentService.deleteManyComments({ postId: id });
+    await this.commentService.deleteManyComments({ postId: id });
     return;
-  },
+  }
 
   async deleteManyPost(filter: Record<string, string>): Promise<void> {
     await postCollection.deleteMany(filter);
     return;
-  },
+  }
 
   async updateManyPost(
     filter: Record<string, string>,
@@ -62,5 +68,5 @@ export const postsService = {
   ): Promise<void> {
     await postCollection.updateMany(filter, { $set: data });
     return;
-  },
-};
+  }
+}
