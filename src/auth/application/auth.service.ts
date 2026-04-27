@@ -5,21 +5,28 @@ import { UserDb } from "../../modules/users/types/user.types";
 import { createResultObject } from "../../core/utils/create-result-object";
 import { randomUUID } from "crypto";
 
-import { mailService } from "../utils/mail.service";
-import { mailTemplates } from "../utils/mail-templates";
 import {
   createUserDB,
   getNewConfirmationData,
 } from "../../modules/users/application/utils";
 import { AuthSessionDb } from "../../modules/sessions/types/session.types";
-import {
-  bcryptService,
-  jwtService,
-  sessionsRepository,
-  usersRepository,
-} from "../../composition-root";
+import { BcryptService } from "../utils/bcrypt.service";
+import { JwtService } from "../utils/jwt.service";
+import { MailService } from "../utils/mail.service";
+import { MailTemplates } from "../utils/mail-templates";
+import { SessionsRepository } from "../../modules/sessions/repositories/sessions.repository";
+import { UsersRepository } from "../../modules/users/repositories/users.repository";
 
-export const authService = {
+export class AuthService {
+  constructor(
+    public bcryptService: BcryptService,
+    public jwtService: JwtService,
+    public mailService: MailService,
+    public mailTemplates: MailTemplates,
+    public sessionsRepository: SessionsRepository,
+    public usersRepository: UsersRepository,
+  ) {}
+
   async login({
     password,
     loginOrEmail,
@@ -39,13 +46,13 @@ export const authService = {
     const userId = res.data!._id.toString();
 
     /** если пользователь есть в системе и пароль верный, генерим токены и отдаем их, в refresh добавляем deviceId */
-    const { accessToken, refreshToken } = jwtService.createTokens(
+    const { accessToken, refreshToken } = this.jwtService.createTokens(
       userId,
       deviceId,
     );
 
     /** создаем сессию для этого утстройства */
-    const { exp, iat } = jwtService.decodeRefreshToken(refreshToken);
+    const { exp, iat } = this.jwtService.decodeRefreshToken(refreshToken);
     const session: AuthSessionDb = {
       ip,
       exp,
@@ -55,13 +62,13 @@ export const authService = {
       deviceName,
     };
 
-    await sessionsRepository.createSession(session);
+    await this.sessionsRepository.createSession(session);
 
     return createResultObject({
       status: ResultStatus.Success,
       data: { accessToken, refreshToken },
     });
-  },
+  }
 
   async registration(
     password: string,
@@ -70,7 +77,7 @@ export const authService = {
   ): Promise<Result<null>> {
     /** проверяем, что это новый пользователь (логин пароль на уникальность) */
     const emailAlreadyExist =
-      await usersRepository.checkUniqueEmailOrLogin(email);
+      await this.usersRepository.checkUniqueEmailOrLogin(email);
 
     if (emailAlreadyExist) {
       return createResultObject({
@@ -82,7 +89,7 @@ export const authService = {
     }
 
     const loginAlreadyExist =
-      await usersRepository.checkUniqueEmailOrLogin(login);
+      await this.usersRepository.checkUniqueEmailOrLogin(login);
 
     if (loginAlreadyExist) {
       return createResultObject({
@@ -93,27 +100,27 @@ export const authService = {
       });
     }
 
-    const passwordHash = await bcryptService.generateHash(password);
+    const passwordHash = await this.bcryptService.generateHash(password);
 
     /** сохраняем пользователя в БД, с флагом неподтвержденной регистрации
      * и мета инф. для последующего подтверждения регистрации */
     const user: UserDb = createUserDB(login, email, passwordHash);
 
-    await usersRepository.create(user);
+    await this.usersRepository.create(user);
 
-    mailService
+    this.mailService
       .sendMail(
         user.email,
         user.emailConfirmation.confirmationCode,
-        mailTemplates.registration,
+        this.mailTemplates.registration,
       )
       .catch((error) => console.error("error send email", error));
 
     return createResultObject({ status: ResultStatus.NoContent });
-  },
+  }
 
   async registrationConfirm(code: string): Promise<Result<null>> {
-    const user = await usersRepository.getByConfirmCode(code);
+    const user = await this.usersRepository.getByConfirmCode(code);
 
     if (!user) {
       return createResultObject({
@@ -138,7 +145,7 @@ export const authService = {
       });
     }
 
-    const updatedCount = await usersRepository.update(user._id, {
+    const updatedCount = await this.usersRepository.update(user._id, {
       "emailConfirmation.isConfirmed": true,
     });
 
@@ -149,10 +156,10 @@ export const authService = {
       });
     }
     return createResultObject({ status: ResultStatus.NoContent });
-  },
+  }
 
   async registrationResendConfirm(email: string): Promise<Result<null>> {
-    const user = await usersRepository.getByLoginOrEmail(email);
+    const user = await this.usersRepository.getByLoginOrEmail(email);
 
     if (!user) {
       return createResultObject({
@@ -171,7 +178,7 @@ export const authService = {
     const { confirmationCode, expirationDate, sentDate } =
       getNewConfirmationData();
 
-    const updatedCount = await usersRepository.update(user._id, {
+    const updatedCount = await this.usersRepository.update(user._id, {
       "emailConfirmation.confirmationCode": confirmationCode,
       "emailConfirmation.sentDate": sentDate,
       "emailConfirmation.expirationDate": expirationDate,
@@ -184,30 +191,31 @@ export const authService = {
       });
     }
 
-    mailService
-      .sendMail(user.email, confirmationCode, mailTemplates.registration)
+    this.mailService
+      .sendMail(user.email, confirmationCode, this.mailTemplates.registration)
       .catch((error) => console.error("error send email", error));
 
     return createResultObject({ status: ResultStatus.NoContent });
-  },
+  }
 
   async refreshTokens(
     oldRefreshToken: string,
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
     /** проверка валидности текущего токена уже сделана в refreshTokenGuard */
 
-    const { userId, deviceId } = jwtService.decodeRefreshToken(oldRefreshToken);
+    const { userId, deviceId } =
+      this.jwtService.decodeRefreshToken(oldRefreshToken);
     /** создаем новую пару токенов */
-    const { accessToken, refreshToken } = jwtService.createTokens(
+    const { accessToken, refreshToken } = this.jwtService.createTokens(
       userId,
       deviceId,
     );
 
     /** берем новые данные жизни токена */
-    const { iat, exp } = jwtService.decodeRefreshToken(refreshToken);
+    const { iat, exp } = this.jwtService.decodeRefreshToken(refreshToken);
 
     /** обновляем данные жизни текущей сессии */
-    const updatedCount = await sessionsRepository.updateSession(
+    const updatedCount = await this.sessionsRepository.updateSession(
       userId,
       deviceId,
       iat,
@@ -223,19 +231,20 @@ export const authService = {
         status: ResultStatus.Unauthorized,
       });
     }
-  },
+  }
 
   async logout(refreshToken: string): Promise<Result<null>> {
     /** проверка валидности текущего токена уже сделана в refreshTokenGuard */
-    const { userId, deviceId } = jwtService.decodeRefreshToken(refreshToken);
+    const { userId, deviceId } =
+      this.jwtService.decodeRefreshToken(refreshToken);
 
     /** удаляем текущую сессию */
-    await sessionsRepository.deleteSession(userId, deviceId);
+    await this.sessionsRepository.deleteSession(userId, deviceId);
 
     return createResultObject({
       status: ResultStatus.NoContent,
     });
-  },
+  }
 
   async checkCredentials({
     password,
@@ -244,14 +253,14 @@ export const authService = {
     password: string;
     loginOrEmail: string;
   }): Promise<Result<WithId<UserDb>>> {
-    const user = await usersRepository.getByLoginOrEmail(loginOrEmail);
+    const user = await this.usersRepository.getByLoginOrEmail(loginOrEmail);
 
     if (!user) {
       return createResultObject({ status: ResultStatus.Unauthorized });
     }
 
     /** сравнение хэша из БД, с хешом логина переданным при аутентификации */
-    const isCorrectPass = await bcryptService.checkPass(
+    const isCorrectPass = await this.bcryptService.checkPass(
       password,
       user.passwordHash,
     );
@@ -264,10 +273,10 @@ export const authService = {
       status: ResultStatus.Success,
       data: user,
     });
-  },
+  }
 
   async recoveryPassword(email: string): Promise<Result<null>> {
-    const user = await usersRepository.getByLoginOrEmail(email);
+    const user = await this.usersRepository.getByLoginOrEmail(email);
 
     /** если такого пользователя нет все-равно вернем 204, чтобы не раскрывать существование email */
     if (!user) {
@@ -283,22 +292,26 @@ export const authService = {
       sentCodeDate: sentDate,
     };
 
-    await usersRepository.update(user._id, {
+    await this.usersRepository.update(user._id, {
       recoveryPassData,
     });
 
-    mailService
-      .sendRecoveryPassMail(email, confirmationCode, mailTemplates.recoveryPass)
+    this.mailService
+      .sendRecoveryPassMail(
+        email,
+        confirmationCode,
+        this.mailTemplates.recoveryPass,
+      )
       .catch((error) => console.error("error recovery pass email", error));
 
     return createResultObject({ status: ResultStatus.NoContent });
-  },
+  }
 
   async setNewPassword(
     newPassword: string,
     recoveryCode: string,
   ): Promise<Result<null>> {
-    const user = await usersRepository.getByRecoveryPassCode(recoveryCode);
+    const user = await this.usersRepository.getByRecoveryPassCode(recoveryCode);
 
     if (!user) {
       return createResultObject({
@@ -321,9 +334,9 @@ export const authService = {
       });
     }
 
-    const newPasswordHash = await bcryptService.generateHash(newPassword);
+    const newPasswordHash = await this.bcryptService.generateHash(newPassword);
 
-    const updatedCount = await usersRepository.update(user._id, {
+    const updatedCount = await this.usersRepository.update(user._id, {
       passwordHash: newPasswordHash,
     });
 
@@ -335,5 +348,5 @@ export const authService = {
         extensions: [{ field: "user", message: "user does not exist" }],
       });
     }
-  },
-};
+  }
+}

@@ -19,9 +19,19 @@ import { BcryptService } from "./auth/utils/bcrypt.service";
 import { SessionsController } from "./modules/sessions/routers/sessions.controller";
 import { SessionsService } from "./modules/sessions/application/sessions.service";
 import { JwtService } from "./auth/utils/jwt.service";
+import { AuthController } from "./auth/routers/auth.controller";
+import { MailTemplates } from "./auth/utils/mail-templates";
+import { MailService } from "./auth/utils/mail.service";
+import { AuthService } from "./auth/application/auth.service";
+
+// --- utils
 
 export const bcryptService = new BcryptService();
 export const jwtService = new JwtService();
+export const mailTemplates = new MailTemplates();
+export const mailService = new MailService();
+
+// --- repositories
 
 export const postsQueryRepository = new PostsQueryRepository();
 export const commentsQueryRepository = new CommentsQueryRepository();
@@ -33,6 +43,8 @@ export const commentsRepository = new CommentsRepository();
 export const postsRepository = new PostsRepository();
 export const blogsRepository = new BlogsRepository();
 export const sessionsRepository = new SessionsRepository();
+
+// --- services
 
 export const commentService = new CommentService(
   usersRepository,
@@ -46,22 +58,10 @@ export const postsService = new PostsService(
   commentService,
 );
 
-export const postsController = new PostsController(
-  postsQueryRepository,
-  commentsQueryRepository,
-  postsService,
-  commentService,
-);
-
 export const usersService = new UsersService(
   usersRepository,
   sessionsRepository,
   bcryptService,
-);
-
-export const commentsController = new CommentsController(
-  commentsQueryRepository,
-  commentService,
 );
 
 export const blogsService = new BlogsService(
@@ -75,6 +75,29 @@ export const sessionsService = new SessionsService(
   jwtService,
 );
 
+export const authService = new AuthService(
+  bcryptService,
+  jwtService,
+  mailService,
+  mailTemplates,
+  sessionsRepository,
+  usersRepository,
+);
+
+// --- controllers
+
+export const postsController = new PostsController(
+  postsQueryRepository,
+  commentsQueryRepository,
+  postsService,
+  commentService,
+);
+
+export const commentsController = new CommentsController(
+  commentsQueryRepository,
+  commentService,
+);
+
 export const blogsController = new BlogsController(
   blogsQueryRepository,
   postsQueryRepository,
@@ -85,6 +108,11 @@ export const blogsController = new BlogsController(
 export const usersController = new UsersController(
   usersQueryRepository,
   usersService,
+);
+
+export const authController = new AuthController(
+  authService,
+  usersQueryRepository,
 );
 
 export const sessionsController = new SessionsController(sessionsService);

@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import { SETTINGS } from "../../core/settings/settings";
 
-export const mailService = {
+export class MailService {
   async sendMail(
     email: string,
     code: string,
@@ -16,7 +16,7 @@ export const mailService = {
       html: template(code),
     });
     return Boolean(sendRes);
-  },
+  }
 
   async sendRecoveryPassMail(
     email: string,
@@ -32,7 +32,7 @@ export const mailService = {
       html: template(code),
     });
     return Boolean(sendRes);
-  },
+  }
 
   _getTransporter() {
     return nodemailer.createTransport({
@@ -42,5 +42,5 @@ export const mailService = {
         pass: SETTINGS.EMAIL_PASS,
       },
     });
-  },
-};
+  }
+}

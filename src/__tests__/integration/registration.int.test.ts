@@ -3,10 +3,9 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 
 import { setupApp } from "../../setup-app";
 import { runDb, stopDb, testClearDB, userCollection } from "../../db/database";
-import { mailService } from "../../auth/utils/mail.service";
-import { authService } from "../../auth/application/auth.service";
 import { ResultStatus } from "../../core/types/result";
 import { createUserDB } from "../../modules/users/application/utils";
+import { authService, mailService } from "../../composition-root";
 
 describe("registration", () => {
   let mongoServer: MongoMemoryServer;
@@ -33,7 +32,7 @@ describe("registration", () => {
   });
 
   describe("user registration", () => {
-    const registerUserCase = authService.registration;
+    const registerUserCase = authService.registration.bind(authService);
 
     it("should return BadRequest, if email or login not unique", async () => {
       /** создаем пользователя в БД */
@@ -102,7 +101,8 @@ describe("registration", () => {
   });
 
   describe("user confirm registration", () => {
-    const registrationConfirmCase = authService.registrationConfirm;
+    const registrationConfirmCase =
+      authService.registrationConfirm.bind(authService);
 
     it("should return error badRequest, if user with specific code does not exist", async () => {
       const result = await registrationConfirmCase("any confirm code");
@@ -181,7 +181,8 @@ describe("registration", () => {
   });
 
   describe("resend confirm code", () => {
-    const registrationResendCase = authService.registrationResendConfirm;
+    const registrationResendCase =
+      authService.registrationResendConfirm.bind(authService);
     it("should return error badRequest, if user with email does not exist", async () => {
       const result = await registrationResendCase("some_email@gmail.com");
 

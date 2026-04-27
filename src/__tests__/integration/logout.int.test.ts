@@ -2,10 +2,10 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import express from "express";
 import { setupApp } from "../../setup-app";
 import { runDb, stopDb, testClearDB } from "../../db/database";
-import { authService } from "../../auth/application/auth.service";
 import { ResultStatus } from "../../core/types/result";
 import { SETTINGS } from "../../core/settings/settings";
 import jwt from "jsonwebtoken";
+import { authService } from "../../composition-root";
 
 describe("logout", () => {
   let mongoServer: MongoMemoryServer;

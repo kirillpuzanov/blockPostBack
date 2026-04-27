@@ -1,4 +1,4 @@
-export const mailTemplates = {
+export class MailTemplates {
   registration(code: string): string {
     return `
         <h1>Thank for your registration</h1>
@@ -6,7 +6,7 @@ export const mailTemplates = {
              <a href='https://somesite.com/confirm-email?code=${code}'>complete registration</a>
         </p>
     `;
-  },
+  }
 
   recoveryPass(code: string): string {
     return `
@@ -15,5 +15,5 @@ export const mailTemplates = {
           <a href='https://somesite.com/password-recovery?recoveryCode=${code}'>recovery password</a>
       </p>
     `;
-  },
-};
+  }
+}
