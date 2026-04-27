@@ -39,7 +39,7 @@
   "scripts": {
     "watch": "tsc -w",
     "dev": "nodemon --inspect dist/index.js",
-    "jest": "jest -i",
+    "test": "jest -i",
     "jest-clear": "jest --clearCache",
     "lint": "eslint --fix .",
     "lint:ts": "tsc --project tsconfig.json --noEmit",

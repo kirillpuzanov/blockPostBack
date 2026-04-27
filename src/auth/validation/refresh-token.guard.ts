@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { HTTP_STATUS } from "../../core/const/statuses";
-import { jwtService } from "../utils/jwt.service";
 
-import { sessionsRepository } from "../../composition-root";
+import { jwtService, sessionsRepository } from "../../composition-root";
 
 export const refreshTokenGuard = async (
   req: Request,

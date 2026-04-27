@@ -16,8 +16,12 @@ import { UsersQueryRepository } from "./modules/users/repositories/users.query.r
 import { UsersService } from "./modules/users/application/users.service";
 import { SessionsRepository } from "./modules/sessions/repositories/sessions.repository";
 import { BcryptService } from "./auth/utils/bcrypt.service";
+import { SessionsController } from "./modules/sessions/routers/sessions.controller";
+import { SessionsService } from "./modules/sessions/application/sessions.service";
+import { JwtService } from "./auth/utils/jwt.service";
 
 export const bcryptService = new BcryptService();
+export const jwtService = new JwtService();
 
 export const postsQueryRepository = new PostsQueryRepository();
 export const commentsQueryRepository = new CommentsQueryRepository();
@@ -66,6 +70,11 @@ export const blogsService = new BlogsService(
   postsService,
 );
 
+export const sessionsService = new SessionsService(
+  sessionsRepository,
+  jwtService,
+);
+
 export const blogsController = new BlogsController(
   blogsQueryRepository,
   postsQueryRepository,
@@ -77,3 +86,5 @@ export const usersController = new UsersController(
   usersQueryRepository,
   usersService,
 );
+
+export const sessionsController = new SessionsController(sessionsService);

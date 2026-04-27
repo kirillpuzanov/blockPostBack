@@ -6,7 +6,8 @@ import { routes } from "../../core/const/routes";
 import { HTTP_STATUS } from "../../core/const/statuses";
 import { generateAuthHeader } from "../../core/utils/generate-auth-header";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import { jwtService } from "../../auth/utils/jwt.service";
+
+import { jwtService } from "../../composition-root";
 
 /** отключаем  rateLimitGuard */
 jest.mock("../../auth/validation/rate-limit.guard", () => ({

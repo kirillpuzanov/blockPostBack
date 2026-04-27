@@ -3,7 +3,6 @@ import { Result, ResultStatus } from "../../core/types/result";
 import { WithId } from "mongodb";
 import { UserDb } from "../../modules/users/types/user.types";
 import { createResultObject } from "../../core/utils/create-result-object";
-import { jwtService } from "../utils/jwt.service";
 import { randomUUID } from "crypto";
 
 import { mailService } from "../utils/mail.service";
@@ -15,6 +14,7 @@ import {
 import { AuthSessionDb } from "../../modules/sessions/types/session.types";
 import {
   bcryptService,
+  jwtService,
   sessionsRepository,
   usersRepository,
 } from "../../composition-root";

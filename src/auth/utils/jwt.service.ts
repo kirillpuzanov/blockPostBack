@@ -2,7 +2,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { SETTINGS } from "../../core/settings/settings";
 import { DecodedToken } from "../types/auth.types";
 
-export const jwtService = {
+export class JwtService {
   createTokens(
     userId: string,
     deviceId: string,
@@ -15,7 +15,7 @@ export const jwtService = {
     });
 
     return { accessToken, refreshToken };
-  },
+  }
 
   decodeRefreshToken(token: string): DecodedToken {
     const decoded = jwt.decode(token) as JwtPayload;
@@ -26,7 +26,7 @@ export const jwtService = {
       exp: decoded?.exp ? decoded.exp * 1000 : Date.now(),
       iat: decoded?.iat ? decoded.iat * 1000 : Date.now(),
     };
-  },
+  }
 
   async verifyToken(
     token: string,
@@ -45,5 +45,5 @@ export const jwtService = {
     } catch {
       return { userId: null, deviceId: null, iat: Date.now() };
     }
-  },
-};
+  }
+}

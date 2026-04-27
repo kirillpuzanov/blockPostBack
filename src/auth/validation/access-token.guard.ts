@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { HTTP_STATUS } from "../../core/const/statuses";
-import { jwtService } from "../utils/jwt.service";
+
+import { jwtService } from "../../composition-root";
 
 export const accessTokenGuard = async (
   req: Request,

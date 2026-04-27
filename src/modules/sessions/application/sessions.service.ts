@@ -1,36 +1,43 @@
 import { AuthSessionViewModel } from "../types/session.types";
 import { Result, ResultStatus } from "../../../core/types/result";
 import { createResultObject } from "../../../core/utils/create-result-object";
-import { jwtService } from "../../../auth/utils/jwt.service";
-import { sessionsRepository } from "../../../composition-root";
+import { SessionsRepository } from "../repositories/sessions.repository";
+import { JwtService } from "../../../auth/utils/jwt.service";
 
-export const sessionsService = {
+export class SessionsService {
+  constructor(
+    public sessionsRepository: SessionsRepository,
+    public jwtService: JwtService,
+  ) {}
+
   async getAllSessions(
     userId: string,
   ): Promise<Result<AuthSessionViewModel[]>> {
-    const sessions = await sessionsRepository.getAllActiveSessions(userId);
+    const sessions = await this.sessionsRepository.getAllActiveSessions(userId);
 
     return createResultObject({
       status: ResultStatus.Success,
       data: sessions,
     });
-  },
+  }
 
   async deleteAllMySessions(refreshToken: string): Promise<Result<null>> {
-    const { userId, deviceId } = jwtService.decodeRefreshToken(refreshToken);
+    const { userId, deviceId } =
+      this.jwtService.decodeRefreshToken(refreshToken);
 
-    await sessionsRepository.deleteOtherMySessions(userId, deviceId);
+    await this.sessionsRepository.deleteOtherMySessions(userId, deviceId);
 
     return createResultObject({
       status: ResultStatus.NoContent,
     });
-  },
+  }
 
   async deleteMySession(
     userId: string,
     deletedDeviceId: string,
   ): Promise<Result<null>> {
-    const deletedSession = await sessionsRepository.getSession(deletedDeviceId);
+    const deletedSession =
+      await this.sessionsRepository.getSession(deletedDeviceId);
 
     if (!deletedSession) {
       return createResultObject({
@@ -44,7 +51,7 @@ export const sessionsService = {
       });
     }
 
-    const deletedCount = await sessionsRepository.deleteSession(
+    const deletedCount = await this.sessionsRepository.deleteSession(
       userId,
       deletedDeviceId,
     );
@@ -57,5 +64,5 @@ export const sessionsService = {
     return createResultObject({
       status: ResultStatus.NotFound,
     });
-  },
-};
+  }
+}
