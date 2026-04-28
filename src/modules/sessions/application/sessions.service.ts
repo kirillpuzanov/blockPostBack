@@ -3,11 +3,13 @@ import { Result, ResultStatus } from "../../../core/types/result";
 import { createResultObject } from "../../../core/utils/create-result-object";
 import { SessionsRepository } from "../repositories/sessions.repository";
 import { JwtService } from "../../../auth/utils/jwt.service";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class SessionsService {
   constructor(
-    public sessionsRepository: SessionsRepository,
-    public jwtService: JwtService,
+    @inject(SessionsRepository) public sessionsRepository: SessionsRepository,
+    @inject(JwtService) public jwtService: JwtService,
   ) {}
 
   async getAllSessions(

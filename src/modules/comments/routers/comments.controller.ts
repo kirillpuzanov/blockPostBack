@@ -6,10 +6,14 @@ import { HTTP_STATUS } from "../../../core/const/statuses";
 import { errorHandler } from "../../../core/errors/error.handler";
 import { CommentService } from "../application/comments.service";
 import { mapResultToHttpStatus } from "../../../core/utils/map-result-to-http-status";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class CommentsController {
   constructor(
+    @inject(CommentsQueryRepository)
     public commentsQueryRepository: CommentsQueryRepository,
+    @inject(CommentService)
     public commentService: CommentService,
   ) {}
 

@@ -9,9 +9,16 @@ import {
 import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
 import { PagedOutput } from "../../../core/types/page-and-sort";
 import { NotFoundError } from "../../../core/errors/error.handler";
-import { blogsQueryRepository } from "../../../composition-root";
+import { BlogsQueryRepository } from "../../blogs/repositories/blogs.query.repository";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class PostsQueryRepository {
+  constructor(
+    @inject(BlogsQueryRepository)
+    public blogsQueryRepository: BlogsQueryRepository,
+  ) {}
+
   async getAll(query: PostsQueryInput): Promise<PagedOutput<PostViewModel>> {
     const { pageNumber, pageSize, sortBy, sortDirection } = query;
 
@@ -49,7 +56,7 @@ export class PostsQueryRepository {
   ): Promise<PagedOutput<PostViewModel>> {
     const { pageNumber, pageSize, sortBy, sortDirection } = query;
 
-    const blog = await blogsQueryRepository.getById(blogId);
+    const blog = await this.blogsQueryRepository.getById(blogId);
 
     if (!blog) {
       throw new NotFoundError("blog does not exists", "blogId");

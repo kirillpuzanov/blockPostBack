@@ -3,7 +3,9 @@ import { PagedOutput } from "../../../core/types/page-and-sort";
 import { userCollection } from "../../../db/database";
 import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
 import { ObjectId, WithId } from "mongodb";
+import { injectable } from "inversify";
 
+@injectable()
 export class UsersQueryRepository {
   async getAll(query: UsersQueryInput): Promise<PagedOutput<UserViewModel>> {
     const {

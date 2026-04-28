@@ -17,12 +17,18 @@ import {
 import { PostsQueryRepository } from "../../posts/repositories/posts.query.repository";
 import { PostsService } from "../../posts/application/posts.service";
 import { BlogsService } from "../application/blogs.service";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class BlogsController {
   constructor(
+    @inject(BlogsQueryRepository)
     public blogsQueryRepository: BlogsQueryRepository,
+    @inject(PostsQueryRepository)
     public postsQueryRepository: PostsQueryRepository,
+    @inject(BlogsService)
     public blogsService: BlogsService,
+    @inject(PostsService)
     public postsService: PostsService,
   ) {}
 

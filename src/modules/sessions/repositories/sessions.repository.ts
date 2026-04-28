@@ -1,7 +1,9 @@
 import { WithId } from "mongodb";
 import { AuthSessionDb, AuthSessionViewModel } from "../types/session.types";
 import { authSessionsCollection } from "../../../db/database";
+import { injectable } from "inversify";
 
+@injectable()
 export class SessionsRepository {
   async getSession(deviceId: string): Promise<WithId<AuthSessionDb> | null> {
     return await authSessionsCollection.findOne({ deviceId });

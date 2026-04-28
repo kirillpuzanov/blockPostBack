@@ -4,12 +4,14 @@ import { createUserDB } from "./utils";
 import { UsersRepository } from "../repositories/users.repository";
 import { SessionsRepository } from "../../sessions/repositories/sessions.repository";
 import { BcryptService } from "../../../auth/utils/bcrypt.service";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class UsersService {
   constructor(
-    public usersRepository: UsersRepository,
-    public sessionsRepository: SessionsRepository,
-    public bcryptService: BcryptService,
+    @inject(UsersRepository) public usersRepository: UsersRepository,
+    @inject(SessionsRepository) public sessionsRepository: SessionsRepository,
+    @inject(BcryptService) public bcryptService: BcryptService,
   ) {}
 
   async createUser(input: CreateUserInput): Promise<string> {

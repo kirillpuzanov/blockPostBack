@@ -13,10 +13,13 @@ import {
 } from "../../core/errors/error.handler";
 import { UsersQueryRepository } from "../../modules/users/repositories/users.query.repository";
 import { AuthService } from "../application/auth.service";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class AuthController {
   constructor(
-    public authService: AuthService,
+    @inject(AuthService) public authService: AuthService,
+    @inject(UsersQueryRepository)
     public usersQueryRepository: UsersQueryRepository,
   ) {}
 

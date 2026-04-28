@@ -4,7 +4,9 @@ import { blogCollection } from "../../../db/database";
 import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
 import { PagedOutput } from "../../../core/types/page-and-sort";
 import { NotFoundError } from "../../../core/errors/error.handler";
+import { injectable } from "inversify";
 
+@injectable()
 export class BlogsQueryRepository {
   async getAll(query: BlogQueryInput): Promise<PagedOutput<BlogViewModel>> {
     const { pageNumber, pageSize, sortBy, sortDirection, searchNameTerm } =

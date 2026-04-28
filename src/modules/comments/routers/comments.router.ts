@@ -3,9 +3,11 @@ import { handleIdValidation } from "../../../core/middlewares/id-validation";
 import { validationResult } from "../../../core/middlewares/validation-result";
 import { inputCommentValidation } from "../validation/input-comment.validation";
 import { accessTokenGuard } from "../../../auth/validation/access-token.guard";
-import { commentsController } from "../../../composition-root";
+import { container } from "../../../composition-root";
+import { CommentsController } from "./comments.controller";
 
 export const commentsRouter = Router({});
+const commentsController = container.get(CommentsController);
 
 commentsRouter.get(
   "/:id",

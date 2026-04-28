@@ -10,9 +10,11 @@ import { BlogSortFields } from "../types/blog.types";
 import { authAdminGuard } from "../../../auth/validation/auth-admin.guard";
 import { PostsByBlogSortFields } from "../../posts/types/post.types";
 import { inputPostByBlogFieldValidation } from "../../posts/validation/input-post.validation";
-import { blogsController } from "../../../composition-root";
+import { container } from "../../../composition-root";
+import { BlogsController } from "./blogs.controller";
 
 export const blogsRouter = Router({});
+const blogsController = container.get(BlogsController);
 
 blogsRouter.get(
   "",

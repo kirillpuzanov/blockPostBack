@@ -2,7 +2,9 @@ import { postCollection } from "../../../db/database";
 import { CreatePostInput, PostDb, PostViewModel } from "../types/post.types";
 import { ObjectId } from "mongodb";
 import { NotFoundError } from "../../../core/errors/error.handler";
+import { injectable } from "inversify";
 
+@injectable()
 export class PostsRepository {
   async create(newPost: PostDb): Promise<string> {
     const createdPost = await postCollection.insertOne(newPost);

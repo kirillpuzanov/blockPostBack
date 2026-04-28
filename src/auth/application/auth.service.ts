@@ -16,15 +16,17 @@ import { MailService } from "../utils/mail.service";
 import { MailTemplates } from "../utils/mail-templates";
 import { SessionsRepository } from "../../modules/sessions/repositories/sessions.repository";
 import { UsersRepository } from "../../modules/users/repositories/users.repository";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class AuthService {
   constructor(
-    public bcryptService: BcryptService,
-    public jwtService: JwtService,
-    public mailService: MailService,
-    public mailTemplates: MailTemplates,
-    public sessionsRepository: SessionsRepository,
-    public usersRepository: UsersRepository,
+    @inject(BcryptService) public bcryptService: BcryptService,
+    @inject(JwtService) public jwtService: JwtService,
+    @inject(MailService) public mailService: MailService,
+    @inject(MailTemplates) public mailTemplates: MailTemplates,
+    @inject(SessionsRepository) public sessionsRepository: SessionsRepository,
+    @inject(UsersRepository) public usersRepository: UsersRepository,
   ) {}
 
   async login({

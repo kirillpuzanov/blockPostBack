@@ -9,9 +9,16 @@ import { createResultObject } from "../../../core/utils/create-result-object";
 import { Result, ResultStatus } from "../../../core/types/result";
 import { PagedOutput } from "../../../core/types/page-and-sort";
 import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
-import { postsQueryRepository } from "../../../composition-root";
+import { PostsQueryRepository } from "../../posts/repositories/posts.query.repository";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class CommentsQueryRepository {
+  constructor(
+    @inject(PostsQueryRepository)
+    public postsQueryRepository: PostsQueryRepository,
+  ) {}
+
   async getById(id: string): Promise<Result<CommentViewModel>> {
     const comment = await commentCollection.findOne({ _id: new ObjectId(id) });
 
@@ -33,7 +40,7 @@ export class CommentsQueryRepository {
   ): Promise<Result<PagedOutput<CommentViewModel>>> {
     const { pageNumber, pageSize, sortBy, sortDirection } = query;
 
-    const post = await postsQueryRepository.getById(postId);
+    const post = await this.postsQueryRepository.getById(postId);
 
     if (!post) {
       return createResultObject({

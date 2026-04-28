@@ -8,9 +8,11 @@ import { PostSortFields } from "../types/post.types";
 import { CommentsSortFields } from "../../comments/types/comment.types";
 import { accessTokenGuard } from "../../../auth/validation/access-token.guard";
 import { inputCommentValidation } from "../../comments/validation/input-comment.validation";
-import { postsController } from "../../../composition-root";
+import { container } from "../../../composition-root";
+import { PostsController } from "./posts.controller";
 
 export const postsRouter = Router({});
+const postsController = container.get(PostsController);
 
 postsRouter.get(
   "",

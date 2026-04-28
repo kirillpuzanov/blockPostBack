@@ -9,11 +9,14 @@ import { HTTP_STATUS } from "../../../core/const/statuses";
 import { errorHandler } from "../../../core/errors/error.handler";
 import { UsersQueryRepository } from "../repositories/users.query.repository";
 import { UsersService } from "../application/users.service";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class UsersController {
   constructor(
+    @inject(UsersQueryRepository)
     public usersQueryRepository: UsersQueryRepository,
-    public usersService: UsersService,
+    @inject(UsersService) public usersService: UsersService,
   ) {}
 
   async getUsers(req: Request, res: Response) {

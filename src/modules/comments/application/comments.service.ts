@@ -6,16 +6,18 @@ import { commentCollection } from "../../../db/database";
 import { ObjectId } from "mongodb";
 import { PostsRepository } from "../../posts/repositories/posts.repository";
 import { UsersRepository } from "../../users/repositories/users.repository";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class CommentService {
   usersRepository: UsersRepository;
   postsRepository: PostsRepository;
   commentsRepository: CommentsRepository;
 
   constructor(
-    usersRepository: UsersRepository,
-    postsRepository: PostsRepository,
-    commentsRepository: CommentsRepository,
+    @inject(UsersRepository) usersRepository: UsersRepository,
+    @inject(PostsRepository) postsRepository: PostsRepository,
+    @inject(CommentsRepository) commentsRepository: CommentsRepository,
   ) {
     this.usersRepository = usersRepository;
     this.postsRepository = postsRepository;

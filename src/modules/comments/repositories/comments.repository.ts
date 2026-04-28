@@ -1,7 +1,9 @@
 import { CommentDb } from "../types/comment.types";
 import { commentCollection } from "../../../db/database";
 import { ObjectId } from "mongodb";
+import { injectable } from "inversify";
 
+@injectable()
 export class CommentsRepository {
   async create(comment: CommentDb): Promise<string> {
     const createdComment = await commentCollection.insertOne(comment);

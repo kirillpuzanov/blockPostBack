@@ -11,9 +11,11 @@ import {
 } from "../validation/registration.validation";
 import { refreshTokenGuard } from "../validation/refresh-token.guard";
 import { rateLimitGuard } from "../validation/rate-limit.guard";
-import { authController } from "../../composition-root";
+import { container } from "../../composition-root";
+import { AuthController } from "./auth.controller";
 
 export const authRouter = Router({});
+const authController = container.get(AuthController);
 
 authRouter
   /** login */

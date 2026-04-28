@@ -3,12 +3,14 @@ import { NotFoundError } from "../../../core/errors/error.handler";
 import { PostsService } from "../../posts/application/posts.service";
 import { CommentService } from "../../comments/application/comments.service";
 import { BlogsRepository } from "../repositories/blogs.repository";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class BlogsService {
   constructor(
-    public blogsRepository: BlogsRepository,
-    public commentService: CommentService,
-    public postsService: PostsService,
+    @inject(BlogsRepository) public blogsRepository: BlogsRepository,
+    @inject(CommentService) public commentService: CommentService,
+    @inject(PostsService) public postsService: PostsService,
   ) {}
 
   async createBlog(input: CreateBlogInput): Promise<string> {

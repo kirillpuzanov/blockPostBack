@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { CommentsController } from "./modules/comments/routers/comments.controller";
 import { CommentService } from "./modules/comments/application/comments.service";
 import { CommentsQueryRepository } from "./modules/comments/repositories/comments.query.repository";
@@ -23,96 +24,41 @@ import { AuthController } from "./auth/routers/auth.controller";
 import { MailTemplates } from "./auth/utils/mail-templates";
 import { MailService } from "./auth/utils/mail.service";
 import { AuthService } from "./auth/application/auth.service";
+import { Container } from "inversify";
+
+export const container: Container = new Container();
 
 // --- utils
+container.bind(BcryptService).to(BcryptService);
+container.bind(JwtService).to(JwtService);
+container.bind(MailTemplates).to(MailTemplates);
+container.bind(MailService).to(MailService);
 
-export const bcryptService = new BcryptService();
-export const jwtService = new JwtService();
-export const mailTemplates = new MailTemplates();
-export const mailService = new MailService();
+// --- query repositories
+container.bind(BlogsQueryRepository).to(BlogsQueryRepository);
+container.bind(PostsQueryRepository).to(PostsQueryRepository);
+container.bind(CommentsQueryRepository).to(CommentsQueryRepository);
+container.bind(UsersQueryRepository).to(UsersQueryRepository);
 
-// --- repositories
-
-export const postsQueryRepository = new PostsQueryRepository();
-export const commentsQueryRepository = new CommentsQueryRepository();
-export const blogsQueryRepository = new BlogsQueryRepository();
-export const usersQueryRepository = new UsersQueryRepository();
-
-export const usersRepository = new UsersRepository();
-export const commentsRepository = new CommentsRepository();
-export const postsRepository = new PostsRepository();
-export const blogsRepository = new BlogsRepository();
-export const sessionsRepository = new SessionsRepository();
+// ---  repositories
+container.bind(UsersRepository).to(UsersRepository);
+container.bind(CommentsRepository).to(CommentsRepository);
+container.bind(PostsRepository).to(PostsRepository);
+container.bind(BlogsRepository).to(BlogsRepository);
+container.bind(SessionsRepository).to(SessionsRepository);
 
 // --- services
-
-export const commentService = new CommentService(
-  usersRepository,
-  postsRepository,
-  commentsRepository,
-);
-
-export const postsService = new PostsService(
-  blogsQueryRepository,
-  postsRepository,
-  commentService,
-);
-
-export const usersService = new UsersService(
-  usersRepository,
-  sessionsRepository,
-  bcryptService,
-);
-
-export const blogsService = new BlogsService(
-  blogsRepository,
-  commentService,
-  postsService,
-);
-
-export const sessionsService = new SessionsService(
-  sessionsRepository,
-  jwtService,
-);
-
-export const authService = new AuthService(
-  bcryptService,
-  jwtService,
-  mailService,
-  mailTemplates,
-  sessionsRepository,
-  usersRepository,
-);
+container.bind(CommentService).to(CommentService);
+container.bind(PostsService).to(PostsService);
+container.bind(UsersService).to(UsersService);
+container.bind(BlogsService).to(BlogsService);
+container.bind(SessionsService).to(SessionsService);
+container.bind(AuthService).to(AuthService);
 
 // --- controllers
-
-export const postsController = new PostsController(
-  postsQueryRepository,
-  commentsQueryRepository,
-  postsService,
-  commentService,
-);
-
-export const commentsController = new CommentsController(
-  commentsQueryRepository,
-  commentService,
-);
-
-export const blogsController = new BlogsController(
-  blogsQueryRepository,
-  postsQueryRepository,
-  blogsService,
-  postsService,
-);
-
-export const usersController = new UsersController(
-  usersQueryRepository,
-  usersService,
-);
-
-export const authController = new AuthController(
-  authService,
-  usersQueryRepository,
-);
-
-export const sessionsController = new SessionsController(sessionsService);
+container.bind(PostsController).to(PostsController);
+container.bind(CommentsController).to(CommentsController);
+container.bind(BlogsController).to(BlogsController);
+container.bind(UsersController).to(UsersController);
+container.bind(AuthController).to(AuthController);
+container.bind(SessionsController).to(SessionsController);
