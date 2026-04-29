@@ -5,17 +5,27 @@ import { setupApp } from "../../setup-app";
 import { runDb, stopDb, testClearDB, userCollection } from "../../db/database";
 import { ResultStatus } from "../../core/types/result";
 import { createUserDB } from "../../modules/users/application/utils";
-import { authService, mailService } from "../../composition-root";
+import { MailService } from "../../auth/utils/mail.service";
+import { container } from "../../composition-root";
+import { AuthService } from "../../auth/application/auth.service";
+
+const mockMailService = {
+  sendMail: jest.fn().mockImplementation(() => Promise.resolve()),
+} as unknown as MailService;
+
+container.rebind(MailService).toConstantValue(mockMailService);
+
+const authService = container.get(AuthService);
 
 describe("registration", () => {
   let mongoServer: MongoMemoryServer;
+
   const app = express();
   setupApp(app);
 
-  mailService.sendMail = jest.fn().mockImplementation(() => Promise.resolve());
-
   beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
+
     await runDb(mongoServer.getUri());
     await testClearDB();
   });
@@ -68,7 +78,7 @@ describe("registration", () => {
         message: "this login already registered",
       });
 
-      expect(mailService.sendMail).not.toHaveBeenCalled();
+      expect(mockMailService.sendMail).not.toHaveBeenCalled();
     });
 
     it("should create user with correct data", async () => {
@@ -85,7 +95,7 @@ describe("registration", () => {
 
       expect(result.status).toBe(ResultStatus.NoContent);
 
-      expect(mailService.sendMail).toHaveBeenCalledWith(
+      expect(mockMailService.sendMail).toHaveBeenCalledWith(
         newUserData.email,
         expect.any(String),
         expect.any(Function),
@@ -186,7 +196,7 @@ describe("registration", () => {
     it("should return error badRequest, if user with email does not exist", async () => {
       const result = await registrationResendCase("some_email@gmail.com");
 
-      expect(mailService.sendMail).not.toHaveBeenCalled();
+      expect(mockMailService.sendMail).not.toHaveBeenCalled();
 
       expect(result.status).toBe(ResultStatus.BadRequest);
       expect(result.extensions[0]).toEqual({
@@ -206,7 +216,7 @@ describe("registration", () => {
 
       const result = await registrationResendCase(confirmedUser.email);
 
-      expect(mailService.sendMail).not.toHaveBeenCalled();
+      expect(mockMailService.sendMail).not.toHaveBeenCalled();
 
       expect(result.status).toBe(ResultStatus.BadRequest);
       expect(result.extensions[0]).toEqual({
@@ -226,7 +236,7 @@ describe("registration", () => {
       const result = await registrationResendCase(newUser.email);
 
       expect(result.status).toBe(ResultStatus.NoContent);
-      expect(mailService.sendMail).toHaveBeenCalled();
+      expect(mockMailService.sendMail).toHaveBeenCalled();
 
       /** проверяем что в БД сохранились новые: confirmationCode, sentDate, expirationDate */
       const updatedUsers = await userCollection.findOne({

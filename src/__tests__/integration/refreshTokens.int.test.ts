@@ -5,7 +5,12 @@ import { runDb, stopDb, testClearDB, userCollection } from "../../db/database";
 import { createUserDB } from "../../modules/users/application/utils";
 import { UserDb } from "../../modules/users/types/user.types";
 import { ResultStatus } from "../../core/types/result";
-import { authService, bcryptService } from "../../composition-root";
+import { container } from "../../composition-root";
+import { AuthService } from "../../auth/application/auth.service";
+import { BcryptService } from "../../auth/utils/bcrypt.service";
+
+const authService = container.get(AuthService);
+const bcryptService = container.get(BcryptService);
 
 let user: UserDb & { userId?: string };
 const userPass = "12345678";

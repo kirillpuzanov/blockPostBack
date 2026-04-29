@@ -5,7 +5,10 @@ import { runDb, stopDb, testClearDB } from "../../db/database";
 import { ResultStatus } from "../../core/types/result";
 import { SETTINGS } from "../../core/settings/settings";
 import jwt from "jsonwebtoken";
-import { authService } from "../../composition-root";
+import { container } from "../../composition-root";
+import { AuthService } from "../../auth/application/auth.service";
+
+const authService = container.get(AuthService);
 
 describe("logout", () => {
   let mongoServer: MongoMemoryServer;

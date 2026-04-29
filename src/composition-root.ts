@@ -28,7 +28,7 @@ import { Container } from "inversify";
 
 export const container: Container = new Container();
 
-// --- utils
+// --- utils-services
 container.bind(BcryptService).to(BcryptService);
 container.bind(JwtService).to(JwtService);
 container.bind(MailTemplates).to(MailTemplates);
