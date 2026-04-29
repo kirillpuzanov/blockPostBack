@@ -1,21 +1,19 @@
 import { WithId } from "mongodb";
-import { AuthSessionDb, AuthSessionViewModel } from "../types/session.types";
-import { authSessionsCollection } from "../../../db/database";
+import { AuthSessionDb, AuthSessionViewModel } from "../domain/session.types";
 import { injectable } from "inversify";
+import { SessionModel } from "../domain/session.entity";
 
 @injectable()
 export class SessionsRepository {
   async getSession(deviceId: string): Promise<WithId<AuthSessionDb> | null> {
-    return await authSessionsCollection.findOne({ deviceId });
+    return SessionModel.findOne({ deviceId });
   }
 
   async getAllActiveSessions(userId: string): Promise<AuthSessionViewModel[]> {
-    const sessions = await authSessionsCollection
-      .find({
-        userId: userId,
-        exp: { $gt: Date.now() },
-      })
-      .toArray();
+    const sessions = await SessionModel.find({
+      userId: userId,
+      exp: { $gt: Date.now() },
+    }).lean();
 
     return sessions.map((el) => ({
       ip: el.ip,
@@ -26,7 +24,7 @@ export class SessionsRepository {
   }
 
   async deleteOtherMySessions(userId: string, deviceId: string): Promise<void> {
-    await authSessionsCollection.deleteMany({
+    await SessionModel.deleteMany({
       userId: userId,
       deviceId: { $ne: deviceId },
     });
@@ -34,16 +32,16 @@ export class SessionsRepository {
 
   async deleteAllUserSessions(userId: string): Promise<void> {
     /** при удалении юзера */
-    await authSessionsCollection.deleteMany({ userId: userId });
+    await SessionModel.deleteMany({ userId: userId });
   }
 
   async deleteSession(userId: string, deviceId: string): Promise<number> {
-    const res = await authSessionsCollection.deleteOne({ deviceId, userId });
+    const res = await SessionModel.deleteOne({ deviceId, userId });
     return res.deletedCount;
   }
 
   async createSession(userSession: AuthSessionDb): Promise<void> {
-    await authSessionsCollection.insertOne(userSession);
+    await SessionModel.insertOne(userSession);
   }
 
   async updateSession(
@@ -52,7 +50,7 @@ export class SessionsRepository {
     iat: number,
     exp: number,
   ): Promise<number> {
-    const res = await authSessionsCollection.updateOne(
+    const res = await SessionModel.updateOne(
       { userId, deviceId },
       { $set: { iat, exp } },
     );

@@ -1,4 +1,4 @@
-import { AuthSessionViewModel } from "../types/session.types";
+import { AuthSessionViewModel } from "../domain/session.types";
 import { Result, ResultStatus } from "../../../core/types/result";
 import { createResultObject } from "../../../core/utils/create-result-object";
 import { SessionsRepository } from "../repositories/sessions.repository";

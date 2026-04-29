@@ -9,7 +9,7 @@ import {
   createUserDB,
   getNewConfirmationData,
 } from "../../modules/users/application/utils";
-import { AuthSessionDb } from "../../modules/sessions/types/session.types";
+import { AuthSessionDb } from "../../modules/sessions/domain/session.types";
 import { BcryptService } from "../utils/bcrypt.service";
 import { JwtService } from "../utils/jwt.service";
 import { MailService } from "../utils/mail.service";

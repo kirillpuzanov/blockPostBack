@@ -8,6 +8,7 @@ export type AuthSessionDb = {
   iat: number;
   exp: number;
 };
+
 export type AuthSessionViewModel = {
   ip: string;
   title: string;

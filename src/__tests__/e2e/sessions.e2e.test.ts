@@ -1,12 +1,13 @@
 import express, { Express } from "express";
 import { setupApp } from "../../setup-app";
-import { authSessionsCollection, runDb, stopDb } from "../../db/database";
+import { runDb, stopDb } from "../../db/database";
 import request from "supertest";
 import { routes } from "../../core/const/routes";
 import { HTTP_STATUS } from "../../core/const/statuses";
 import { generateAuthHeader } from "../../core/utils/generate-auth-header";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { JwtService } from "../../auth/utils/jwt.service";
+import { SessionModel } from "../../modules/sessions/domain/session.entity";
 
 const jwtService = new JwtService();
 
@@ -81,7 +82,7 @@ describe("session e2e test", () => {
   });
 
   afterEach(async () => {
-    await authSessionsCollection.deleteMany();
+    await SessionModel.deleteMany();
   });
 
   afterAll(async () => {
@@ -93,7 +94,7 @@ describe("session e2e test", () => {
     await loginAllDevices(app);
 
     /** залогинили 3 устройства пользователя, проверили что есть 3 сессии*/
-    const sessionsCount = await authSessionsCollection.countDocuments();
+    const sessionsCount = await SessionModel.countDocuments();
     expect(sessionsCount).toBe(3);
   });
 
@@ -111,13 +112,13 @@ describe("session e2e test", () => {
 
     expect(refreshResult.status).toBe(200);
 
-    const session = await authSessionsCollection.find({}).toArray();
+    const session = await SessionModel.find({}).lean();
     expect(session).toHaveLength(3);
   });
 
   it("should success delete all device session", async () => {
     await loginAllDevices(app);
-    const sessionsCount = await authSessionsCollection.countDocuments();
+    const sessionsCount = await SessionModel.countDocuments();
     expect(sessionsCount).toBe(3);
 
     /** удаляем все сессии кроме текущей */
@@ -127,7 +128,7 @@ describe("session e2e test", () => {
 
     expect(deleteResult.status).toBe(204);
 
-    const session = await authSessionsCollection.find({}).toArray();
+    const session = await SessionModel.find({}).lean();
     expect(session).toHaveLength(1);
   });
 
@@ -146,7 +147,7 @@ describe("session e2e test", () => {
 
     expect(deleteResult.status).toBe(204);
 
-    const session = await authSessionsCollection.find({}).toArray();
+    const session = await SessionModel.find({}).lean();
     expect(session).toHaveLength(2);
 
     /** проверяем что сессия не активна */
@@ -159,7 +160,7 @@ describe("session e2e test", () => {
 
   it("should return forbidden error, if delete not your session ", async () => {
     /** создаем второго пользователя */
-    const newUserResult = await request(app)
+    await request(app)
       .post(routes.users)
       .set(generateAuthHeader())
       .send({
