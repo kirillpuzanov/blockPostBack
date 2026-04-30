@@ -22,14 +22,9 @@ export const setupApp = (app: Application) => {
 
   app.use("", authRouter);
   app.use(routes.deviceSessions, sessionsRouter);
-
   app.use(routes.blogs, blogsRouter);
-
   app.use(routes.posts, postsRouter);
-
   app.use(routes.comments, commentsRouter);
-
   app.use(routes.users, usersRouter);
-
   app.use(routes.testing, clearDbRouter);
 };

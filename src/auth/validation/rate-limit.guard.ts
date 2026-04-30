@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { HTTP_STATUS } from "../../core/const/statuses";
-import { RateLimitItem } from "../types/auth.types";
-import { rateLimitCollection } from "../../db/database";
+import { RateLimitItem } from "../domain/auth.types";
+import { RateLimitModel } from "../domain/rate-limit.entity";
 
 export const rateLimitGuard = async (
   req: Request,
@@ -15,7 +15,7 @@ export const rateLimitGuard = async (
     /** проверяем количество за последние 10 сек */
     const tenSecondsAgo = Date.now() - 10 * 1000;
 
-    const requestsCount = await rateLimitCollection.countDocuments({
+    const requestsCount = await RateLimitModel.countDocuments({
       ip,
       url,
       lastRequestDate: { $gte: tenSecondsAgo },
@@ -31,7 +31,7 @@ export const rateLimitGuard = async (
       lastRequestDate: Date.now(),
     };
     /** добавили очередное обращение */
-    await rateLimitCollection.insertOne(requestMeta);
+    await RateLimitModel.insertOne(requestMeta);
 
     return next();
   } catch {

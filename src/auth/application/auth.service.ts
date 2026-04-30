@@ -1,4 +1,4 @@
-import { LoginInputWithMeta } from "../types/auth.types";
+import { LoginInputWithMeta } from "../domain/auth.types";
 import { Result, ResultStatus } from "../../core/types/result";
 import { WithId } from "mongodb";
 import { UserDb } from "../../modules/users/domain/user.types";

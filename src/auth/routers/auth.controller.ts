@@ -3,7 +3,7 @@ import {
   LoginInput,
   MeViewModel,
   RegistrationInput,
-} from "../types/auth.types";
+} from "../domain/auth.types";
 import { ResultStatus } from "../../core/types/result";
 import { mapResultToHttpStatus } from "../../core/utils/map-result-to-http-status";
 import { HTTP_STATUS } from "../../core/const/statuses";

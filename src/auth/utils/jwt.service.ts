@@ -1,6 +1,6 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { SETTINGS } from "../../core/settings/settings";
-import { DecodedToken } from "../types/auth.types";
+import { DecodedToken } from "../domain/auth.types";
 import { injectable } from "inversify";
 
 @injectable()
