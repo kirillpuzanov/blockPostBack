@@ -1,4 +1,4 @@
-import { CreateUserInput } from "../types/user.types";
+import { CreateUserInput } from "../domain/user.types";
 import { DomainError, NotFoundError } from "../../../core/errors/error.handler";
 import { createUserDB } from "./utils";
 import { UsersRepository } from "../repositories/users.repository";

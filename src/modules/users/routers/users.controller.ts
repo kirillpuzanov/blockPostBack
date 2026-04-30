@@ -4,7 +4,7 @@ import {
   CreateUserInput,
   UsersQueryInput,
   UserViewModel,
-} from "../types/user.types";
+} from "../domain/user.types";
 import { HTTP_STATUS } from "../../../core/const/statuses";
 import { errorHandler } from "../../../core/errors/error.handler";
 import { UsersQueryRepository } from "../repositories/users.query.repository";

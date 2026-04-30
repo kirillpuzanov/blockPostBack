@@ -1,9 +1,9 @@
-import { UserDb, UsersQueryInput, UserViewModel } from "../types/user.types";
+import { UserDb, UsersQueryInput, UserViewModel } from "../domain/user.types";
 import { PagedOutput } from "../../../core/types/page-and-sort";
-import { userCollection } from "../../../db/database";
 import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
 import { ObjectId, WithId } from "mongodb";
 import { injectable } from "inversify";
+import { UserModel } from "../domain/user.entity";
 
 @injectable()
 export class UsersQueryRepository {
@@ -36,14 +36,13 @@ export class UsersQueryRepository {
     if (!!searchedFields.length) {
       filter = { $or: searchedFields };
     }
-    const users = await userCollection
-      .find(filter)
-      .sort([sortBy, sortDirection])
+    const users = await UserModel.find(filter)
+      .sort({ [sortBy]: sortDirection })
       .skip(skip)
       .limit(pageSize)
-      .toArray();
+      .lean();
 
-    const totalCount = await userCollection.countDocuments(filter);
+    const totalCount = await UserModel.countDocuments(filter);
 
     const usersView = users.map(this._mapToUserView);
 
@@ -55,7 +54,7 @@ export class UsersQueryRepository {
   }
 
   async getById(id: string): Promise<UserViewModel | null> {
-    const user = await userCollection.findOne({ _id: new ObjectId(id) });
+    const user = await UserModel.findOne({ _id: new ObjectId(id) });
 
     if (!user) {
       return null;

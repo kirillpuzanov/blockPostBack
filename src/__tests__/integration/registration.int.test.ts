@@ -2,12 +2,13 @@ import express from "express";
 import { MongoMemoryServer } from "mongodb-memory-server";
 
 import { setupApp } from "../../setup-app";
-import { runDb, stopDb, testClearDB, userCollection } from "../../db/database";
+import { clearDB, runDb, stopDb } from "../../db/database";
 import { ResultStatus } from "../../core/types/result";
 import { createUserDB } from "../../modules/users/application/utils";
 import { MailService } from "../../auth/utils/mail.service";
 import { container } from "../../composition-root";
 import { AuthService } from "../../auth/application/auth.service";
+import { UserModel } from "../../modules/users/domain/user.entity";
 
 const mockMailService = {
   sendMail: jest.fn().mockImplementation(() => Promise.resolve()),
@@ -27,7 +28,7 @@ describe("registration", () => {
     mongoServer = await MongoMemoryServer.create();
 
     await runDb(mongoServer.getUri());
-    await testClearDB();
+    await clearDB();
   });
 
   beforeEach(() => {
@@ -36,7 +37,7 @@ describe("registration", () => {
   });
 
   afterAll(async () => {
-    await testClearDB();
+    await clearDB();
     await stopDb();
     await mongoServer.stop();
   });
@@ -51,7 +52,7 @@ describe("registration", () => {
         "test_email@gmail.com",
         "12345678",
       );
-      await userCollection.insertOne(existingUser);
+      await UserModel.insertOne(existingUser);
 
       /** отправили уже существующий email */
       const resBadEmail = await registerUserCase(
@@ -102,7 +103,7 @@ describe("registration", () => {
       );
 
       /** проверяем что юзер создался, с isConfirmed - false */
-      const createdUsers = await userCollection.find({}).toArray();
+      const createdUsers = await UserModel.find({}).lean();
 
       expect(createdUsers[1].login).toBe(newUserData.login);
       expect(createdUsers[1].email).toBe(newUserData.email);
@@ -130,7 +131,7 @@ describe("registration", () => {
         "12345678",
         true,
       );
-      await userCollection.insertOne(confirmedUser);
+      await UserModel.insertOne(confirmedUser);
 
       const result = await registrationConfirmCase(
         confirmedUser.emailConfirmation.confirmationCode,
@@ -150,7 +151,7 @@ describe("registration", () => {
       );
 
       /**  устанавливаем для вновь созданного юзера expirationDate кода в прошлом */
-      await userCollection.insertOne({
+      await UserModel.insertOne({
         ...expiredUser,
         emailConfirmation: {
           ...expiredUser.emailConfirmation,
@@ -174,7 +175,7 @@ describe("registration", () => {
         "test_email44@gmail.com",
         "12345678",
       );
-      await userCollection.insertOne(successConfirmUser);
+      await UserModel.insertOne(successConfirmUser);
 
       const result = await registrationConfirmCase(
         successConfirmUser.emailConfirmation.confirmationCode,
@@ -182,7 +183,7 @@ describe("registration", () => {
 
       expect(result.status).toBe(ResultStatus.NoContent);
 
-      const createdUsers = await userCollection.findOne({
+      const createdUsers = await UserModel.findOne({
         login: successConfirmUser.login,
       });
       expect(createdUsers?.email).toBe(successConfirmUser.email);
@@ -212,7 +213,7 @@ describe("registration", () => {
         "12345678",
         true,
       );
-      await userCollection.insertOne(confirmedUser);
+      await UserModel.insertOne(confirmedUser);
 
       const result = await registrationResendCase(confirmedUser.email);
 
@@ -231,7 +232,7 @@ describe("registration", () => {
         "test_email66@gmail.com",
         "12345678",
       );
-      await userCollection.insertOne(newUser);
+      await UserModel.insertOne(newUser);
 
       const result = await registrationResendCase(newUser.email);
 
@@ -239,7 +240,7 @@ describe("registration", () => {
       expect(mockMailService.sendMail).toHaveBeenCalled();
 
       /** проверяем что в БД сохранились новые: confirmationCode, sentDate, expirationDate */
-      const updatedUsers = await userCollection.findOne({
+      const updatedUsers = await UserModel.findOne({
         login: newUser.login,
       });
 

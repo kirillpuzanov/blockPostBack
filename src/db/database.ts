@@ -2,23 +2,20 @@ import { BlogDb } from "../modules/blogs/types/blog.types";
 import { Collection, MongoClient } from "mongodb";
 import { SETTINGS } from "../core/settings/settings";
 import { PostDb } from "../modules/posts/types/post.types";
-import { UserDb } from "../modules/users/types/user.types";
 import { CommentDb } from "../modules/comments/types/comment.types";
 import { RateLimitItem } from "../auth/types/auth.types";
 import mongoose from "mongoose";
 import { SessionModel } from "../modules/sessions/domain/session.entity";
+import { UserModel } from "../modules/users/domain/user.entity";
 
 const BLOGS_COLLECTION_NAME = "blogs";
 const POSTS_COLLECTION_NAME = "posts";
-const USERS_COLLECTION_NAME = "users";
 const COMMENTS_COLLECTION_NAME = "comments";
-
 const RATE_LIMIT_COLLECTION_NAME = "rateLimit";
 
 export let client: MongoClient;
 export let blogCollection: Collection<BlogDb>;
 export let postCollection: Collection<PostDb>;
-export let userCollection: Collection<UserDb>;
 export let commentCollection: Collection<CommentDb>;
 export let rateLimitCollection: Collection<RateLimitItem>;
 
@@ -28,7 +25,6 @@ export const runDb = async (dbUrl: string) => {
 
   blogCollection = db.collection<BlogDb>(BLOGS_COLLECTION_NAME);
   postCollection = db.collection<PostDb>(POSTS_COLLECTION_NAME);
-  userCollection = db.collection<UserDb>(USERS_COLLECTION_NAME);
   commentCollection = db.collection<CommentDb>(COMMENTS_COLLECTION_NAME);
   rateLimitCollection = db.collection<RateLimitItem>(
     RATE_LIMIT_COLLECTION_NAME,
@@ -54,12 +50,12 @@ export const stopDb = async () => {
   await client.close();
 };
 
-export const testClearDB = async () => {
+export const clearDB = async () => {
   try {
     await Promise.all([
       blogCollection.deleteMany(),
       postCollection.deleteMany(),
-      userCollection.deleteMany(),
+      UserModel.deleteMany(),
       commentCollection.deleteMany(),
       SessionModel.deleteMany(),
       rateLimitCollection.deleteMany(),

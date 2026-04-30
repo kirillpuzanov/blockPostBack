@@ -1,27 +1,27 @@
-import { UserDb, UserViewModel } from "../types/user.types";
-import { userCollection } from "../../../db/database";
+import { UserDb, UserViewModel } from "../domain/user.types";
 import { ObjectId, WithId } from "mongodb";
 import { injectable } from "inversify";
+import { UserModel } from "../domain/user.entity";
 
 @injectable()
 export class UsersRepository {
   async create(user: UserDb): Promise<string> {
-    const createdUser = await userCollection.insertOne(user);
-    return createdUser.insertedId.toString();
+    const createdUser = await UserModel.insertOne(user);
+    return createdUser._id.toString();
   }
 
   async deleteOne(id: string): Promise<number> {
-    const res = await userCollection.deleteOne({ _id: new ObjectId(id) });
+    const res = await UserModel.deleteOne({ _id: new ObjectId(id) });
     return res.deletedCount;
   }
 
   async update(_id: ObjectId, data: object): Promise<number> {
-    const result = await userCollection.updateOne({ _id }, { $set: data });
+    const result = await UserModel.updateOne({ _id }, { $set: data });
     return result.modifiedCount;
   }
 
   async checkUniqueEmailOrLogin(loginOrEmail: string): Promise<boolean> {
-    const user = await userCollection.findOne({
+    const user = await UserModel.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });
 
@@ -31,13 +31,13 @@ export class UsersRepository {
   async getByLoginOrEmail(
     loginOrEmail: string,
   ): Promise<WithId<UserDb> | null> {
-    return userCollection.findOne({
+    return UserModel.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });
   }
 
   async getByConfirmCode(confirmCode: string): Promise<WithId<UserDb> | null> {
-    return userCollection.findOne({
+    return UserModel.findOne({
       "emailConfirmation.confirmationCode": confirmCode,
     });
   }
@@ -45,13 +45,13 @@ export class UsersRepository {
   async getByRecoveryPassCode(
     confirmCode: string,
   ): Promise<WithId<UserDb> | null> {
-    return userCollection.findOne({
+    return UserModel.findOne({
       "recoveryPassData.recoveryPassCode": confirmCode,
     });
   }
 
   async getById(id: string): Promise<UserViewModel | null> {
-    const user = await userCollection.findOne({ _id: new ObjectId(id) });
+    const user = await UserModel.findOne({ _id: new ObjectId(id) });
 
     if (!user) {
       return null;

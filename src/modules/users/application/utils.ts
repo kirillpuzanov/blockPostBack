@@ -1,4 +1,4 @@
-import { UserDb } from "../types/user.types";
+import { UserDb } from "../domain/user.types";
 import { randomUUID } from "crypto";
 
 const expirationConfirmCodeTimeLimit = 20 * 60 * 1000; // 20 min

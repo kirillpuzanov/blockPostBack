@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { pageSortValidation } from "../../../core/middlewares/page-sort-validation";
-import { UsersSortFields } from "../types/user.types";
+import { UsersSortFields } from "../domain/user.types";
 import { validationResult } from "../../../core/middlewares/validation-result";
 import { authAdminGuard } from "../../../auth/validation/auth-admin.guard";
 import { handleIdValidation } from "../../../core/middlewares/id-validation";

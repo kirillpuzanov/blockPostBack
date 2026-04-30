@@ -1,7 +1,7 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import express from "express";
 import { setupApp } from "../../setup-app";
-import { runDb, stopDb, testClearDB } from "../../db/database";
+import { clearDB, runDb, stopDb } from "../../db/database";
 import { ResultStatus } from "../../core/types/result";
 import { SETTINGS } from "../../core/settings/settings";
 import jwt from "jsonwebtoken";
@@ -23,11 +23,11 @@ describe("logout", () => {
   beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
     await runDb(mongoServer.getUri());
-    await testClearDB();
+    await clearDB();
   });
 
   afterAll(async () => {
-    await testClearDB();
+    await clearDB();
     await stopDb();
     await mongoServer.stop();
   });

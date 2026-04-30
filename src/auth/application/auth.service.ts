@@ -1,7 +1,7 @@
 import { LoginInputWithMeta } from "../types/auth.types";
 import { Result, ResultStatus } from "../../core/types/result";
 import { WithId } from "mongodb";
-import { UserDb } from "../../modules/users/types/user.types";
+import { UserDb } from "../../modules/users/domain/user.types";
 import { createResultObject } from "../../core/utils/create-result-object";
 import { randomUUID } from "crypto";
 

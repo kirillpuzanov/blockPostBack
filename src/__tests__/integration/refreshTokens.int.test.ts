@@ -1,13 +1,14 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import express from "express";
 import { setupApp } from "../../setup-app";
-import { runDb, stopDb, testClearDB, userCollection } from "../../db/database";
+import { clearDB, runDb, stopDb } from "../../db/database";
 import { createUserDB } from "../../modules/users/application/utils";
-import { UserDb } from "../../modules/users/types/user.types";
+import { UserDb } from "../../modules/users/domain/user.types";
 import { ResultStatus } from "../../core/types/result";
 import { container } from "../../composition-root";
 import { AuthService } from "../../auth/application/auth.service";
 import { BcryptService } from "../../auth/utils/bcrypt.service";
+import { UserModel } from "../../modules/users/domain/user.entity";
 
 const authService = container.get(AuthService);
 const bcryptService = container.get(BcryptService);
@@ -23,18 +24,18 @@ describe("refreshTokens", () => {
   beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
     await runDb(mongoServer.getUri());
-    await testClearDB();
+    await clearDB();
 
     /** добавляем тестового пользователя в бд */
     const passwordHash = await bcryptService.generateHash(userPass);
     user = createUserDB("test_login", "test_email@gmail.com", passwordHash);
-    const createdUser = await userCollection.insertOne(user);
-    const userId = createdUser.insertedId.toString();
+    const createdUser = await UserModel.insertOne(user);
+    const userId = createdUser._id.toString();
     user = { ...user, userId };
   });
 
   afterAll(async () => {
-    await testClearDB();
+    await clearDB();
     await stopDb();
     await mongoServer.stop();
   });
