@@ -6,7 +6,7 @@ import { generateAuthHeader } from "../../../core/utils/generate-auth-header";
 import {
   BlogViewModel,
   CreateBlogInput,
-} from "../../../modules/blogs/types/blog.types";
+} from "../../../modules/blogs/domain/blog.types";
 
 export const createBlog = async (
   app: Express,

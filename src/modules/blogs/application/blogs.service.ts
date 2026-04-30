@@ -1,4 +1,4 @@
-import { BlogDb, CreateBlogInput } from "../types/blog.types";
+import { BlogDb, CreateBlogInput } from "../domain/blog.types";
 import { NotFoundError } from "../../../core/errors/error.handler";
 import { PostsService } from "../../posts/application/posts.service";
 import { CommentService } from "../../comments/application/comments.service";

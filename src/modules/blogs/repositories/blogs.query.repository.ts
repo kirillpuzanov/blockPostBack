@@ -1,10 +1,10 @@
-import { BlogDb, BlogQueryInput, BlogViewModel } from "../types/blog.types";
+import { BlogDb, BlogQueryInput, BlogViewModel } from "../domain/blog.types";
 import { ObjectId, WithId } from "mongodb";
-import { blogCollection } from "../../../db/database";
 import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
 import { PagedOutput } from "../../../core/types/page-and-sort";
 import { NotFoundError } from "../../../core/errors/error.handler";
 import { injectable } from "inversify";
+import { BlogModel } from "../domain/blog.entity";
 
 @injectable()
 export class BlogsQueryRepository {
@@ -19,14 +19,13 @@ export class BlogsQueryRepository {
       filter.name = { $regex: searchNameTerm, $options: "i" };
     }
 
-    const blogs = await blogCollection
-      .find(filter)
-      .sort([sortBy, sortDirection])
+    const blogs = await BlogModel.find(filter)
+      .sort({ [sortBy]: sortDirection })
       .skip(skip)
       .limit(pageSize)
-      .toArray();
+      .lean();
 
-    const totalCount = await blogCollection.countDocuments(filter);
+    const totalCount = await BlogModel.countDocuments(filter);
 
     const blogsView = blogs.map(this._mapToBlogView);
 
@@ -38,7 +37,7 @@ export class BlogsQueryRepository {
   }
 
   async getById(id: string): Promise<BlogViewModel> {
-    const blog = await blogCollection.findOne({ _id: new ObjectId(id) });
+    const blog = await BlogModel.findOne({ _id: new ObjectId(id) });
 
     if (!blog) {
       throw new NotFoundError("blog does not exists", "blogId");

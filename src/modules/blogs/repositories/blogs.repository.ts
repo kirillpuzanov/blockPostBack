@@ -1,18 +1,18 @@
-import { BlogDb, CreateBlogInput } from "../types/blog.types";
+import { BlogDb, CreateBlogInput } from "../domain/blog.types";
 import { ObjectId } from "mongodb";
-import { blogCollection } from "../../../db/database";
 import { injectable } from "inversify";
+import { BlogModel } from "../domain/blog.entity";
 
 @injectable()
 export class BlogsRepository {
   async create(newBlog: BlogDb): Promise<string> {
-    const createdBlog = await blogCollection.insertOne(newBlog);
-    return createdBlog.insertedId.toString();
+    const createdBlog = await BlogModel.insertOne(newBlog);
+    return createdBlog._id.toString();
   }
 
   async update(updatedBlog: CreateBlogInput, id: string): Promise<number> {
     const { name, description, websiteUrl } = updatedBlog;
-    const res = await blogCollection.updateOne(
+    const res = await BlogModel.updateOne(
       { _id: new ObjectId(id) },
       { $set: { name, description, websiteUrl } },
     );
@@ -20,7 +20,7 @@ export class BlogsRepository {
   }
 
   async deleteById(id: string): Promise<number> {
-    const res = await blogCollection.deleteOne({ _id: new ObjectId(id) });
+    const res = await BlogModel.deleteOne({ _id: new ObjectId(id) });
     return res.deletedCount;
   }
 }

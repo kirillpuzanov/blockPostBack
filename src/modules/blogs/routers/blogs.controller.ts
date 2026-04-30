@@ -4,7 +4,7 @@ import {
   BlogQueryInput,
   BlogViewModel,
   CreateBlogInput,
-} from "../types/blog.types";
+} from "../domain/blog.types";
 import { BlogsQueryRepository } from "../repositories/blogs.query.repository";
 import { HTTP_STATUS } from "../../../core/const/statuses";
 import { errorHandler } from "../../../core/errors/error.handler";

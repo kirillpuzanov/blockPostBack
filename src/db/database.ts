@@ -1,4 +1,3 @@
-import { BlogDb } from "../modules/blogs/types/blog.types";
 import { Collection, MongoClient } from "mongodb";
 import { SETTINGS } from "../core/settings/settings";
 import { RateLimitItem } from "../auth/types/auth.types";
@@ -7,21 +6,17 @@ import { SessionModel } from "../modules/sessions/domain/session.entity";
 import { UserModel } from "../modules/users/domain/user.entity";
 import { PostModel } from "../modules/posts/domain/post.entity";
 import { CommentModel } from "../modules/comments/domain/comment.entity";
-
-const BLOGS_COLLECTION_NAME = "blogs";
+import { BlogModel } from "../modules/blogs/domain/blog.entity";
 
 const RATE_LIMIT_COLLECTION_NAME = "rateLimit";
 
 export let client: MongoClient;
-export let blogCollection: Collection<BlogDb>;
 
 export let rateLimitCollection: Collection<RateLimitItem>;
 
 export const runDb = async (dbUrl: string) => {
   client = new MongoClient(dbUrl);
   const db = client.db(SETTINGS.DB_NAME);
-
-  blogCollection = db.collection<BlogDb>(BLOGS_COLLECTION_NAME);
 
   rateLimitCollection = db.collection<RateLimitItem>(
     RATE_LIMIT_COLLECTION_NAME,
@@ -50,7 +45,7 @@ export const stopDb = async () => {
 export const clearDB = async () => {
   try {
     await Promise.all([
-      blogCollection.deleteMany(),
+      BlogModel.deleteMany(),
       PostModel.deleteMany(),
       UserModel.deleteMany(),
       CommentModel.deleteMany(),
