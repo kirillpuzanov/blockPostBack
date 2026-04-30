@@ -12,7 +12,7 @@ const RecoveryPassDataSchema = new mongoose.Schema(
   { _id: false }, // не создавать _id для поддокумента
 );
 
-export const UserSchema = new mongoose.Schema<UserDb>({
+const UserSchema = new mongoose.Schema<UserDb>({
   login: { type: String, require: true },
   email: { type: String, require: true },
   createdAt: { type: String, require: true },

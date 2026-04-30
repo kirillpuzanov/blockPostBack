@@ -8,7 +8,7 @@ import { inputBlogFieldValidation } from "../validation/input-blog.validation";
 import { pageSortValidation } from "../../../core/middlewares/page-sort-validation";
 import { BlogSortFields } from "../types/blog.types";
 import { authAdminGuard } from "../../../auth/validation/auth-admin.guard";
-import { PostsByBlogSortFields } from "../../posts/types/post.types";
+import { PostsByBlogSortFields } from "../../posts/domain/post.types";
 import { inputPostByBlogFieldValidation } from "../../posts/validation/input-post.validation";
 import { container } from "../../../composition-root";
 import { BlogsController } from "./blogs.controller";

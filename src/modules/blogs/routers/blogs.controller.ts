@@ -13,7 +13,7 @@ import {
   CreatePostByBlogInput,
   PostsByBlogQueryInput,
   PostViewModel,
-} from "../../posts/types/post.types";
+} from "../../posts/domain/post.types";
 import { PostsQueryRepository } from "../../posts/repositories/posts.query.repository";
 import { PostsService } from "../../posts/application/posts.service";
 import { BlogsService } from "../application/blogs.service";

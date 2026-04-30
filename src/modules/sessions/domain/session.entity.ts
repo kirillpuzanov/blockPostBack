@@ -3,7 +3,7 @@ import { AuthSessionDb } from "./session.types";
 
 const SESSIONS_COLLECTION_NAME = "authDeviceSessions";
 
-export const SessionSchema = new mongoose.Schema<AuthSessionDb>({
+const SessionSchema = new mongoose.Schema<AuthSessionDb>({
   userId: { type: String, require: true },
   deviceId: { type: String, require: true },
   deviceName: { type: String, require: true },

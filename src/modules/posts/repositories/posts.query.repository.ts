@@ -1,16 +1,16 @@
 import { ObjectId, WithId } from "mongodb";
-import { postCollection } from "../../../db/database";
 import {
   PostDb,
   PostsByBlogQueryInput,
   PostsQueryInput,
   PostViewModel,
-} from "../types/post.types";
+} from "../domain/post.types";
 import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
 import { PagedOutput } from "../../../core/types/page-and-sort";
 import { NotFoundError } from "../../../core/errors/error.handler";
 import { BlogsQueryRepository } from "../../blogs/repositories/blogs.query.repository";
 import { inject, injectable } from "inversify";
+import { PostModel } from "../domain/post.entity";
 
 @injectable()
 export class PostsQueryRepository {
@@ -24,14 +24,13 @@ export class PostsQueryRepository {
 
     const skip = (pageNumber - 1) * pageSize;
 
-    const posts = await postCollection
-      .find()
-      .sort([sortBy, sortDirection])
+    const posts = await PostModel.find()
+      .sort({ [sortBy]: sortDirection })
       .skip(skip)
       .limit(pageSize)
-      .toArray();
+      .lean();
 
-    const totalCount = await postCollection.countDocuments();
+    const totalCount = await PostModel.countDocuments();
     const postsView = posts.map(this._mapToPostView);
 
     return getPaginatedOutput(postsView, {
@@ -42,7 +41,7 @@ export class PostsQueryRepository {
   }
 
   async getById(id: string): Promise<PostViewModel> {
-    const post = await postCollection.findOne({ _id: new ObjectId(id) });
+    const post = await PostModel.findOne({ _id: new ObjectId(id) });
 
     if (!post) {
       throw new NotFoundError("post not found", "id");
@@ -64,13 +63,12 @@ export class PostsQueryRepository {
 
     const skip = (pageNumber - 1) * pageSize;
 
-    const postsByBlog = await postCollection
-      .find({ blogId })
-      .sort([sortBy, sortDirection])
+    const postsByBlog = await PostModel.find({ blogId })
+      .sort({ [sortBy]: sortDirection })
       .skip(skip)
       .limit(pageSize)
-      .toArray();
-    const totalCount = await postCollection.countDocuments({ blogId });
+      .lean();
+    const totalCount = await PostModel.countDocuments({ blogId });
 
     const postsByBlogView = postsByBlog.map(this._mapToPostView);
     return getPaginatedOutput(postsByBlogView, {

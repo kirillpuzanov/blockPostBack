@@ -4,7 +4,7 @@ import {
   CreatePostInput,
   PostsQueryInput,
   PostViewModel,
-} from "../types/post.types";
+} from "../domain/post.types";
 import { HTTP_STATUS } from "../../../core/const/statuses";
 import { errorHandler } from "../../../core/errors/error.handler";
 import { PagedOutput } from "../../../core/types/page-and-sort";

@@ -1,10 +1,10 @@
-import { CreatePostInput, PostDb } from "../types/post.types";
+import { CreatePostInput, PostDb } from "../domain/post.types";
 import { NotFoundError } from "../../../core/errors/error.handler";
-import { postCollection } from "../../../db/database";
 import { CommentService } from "../../comments/application/comments.service";
 import { PostsRepository } from "../repositories/posts.repository";
 import { BlogsQueryRepository } from "../../blogs/repositories/blogs.query.repository";
 import { inject, injectable } from "inversify";
+import { PostModel } from "../domain/post.entity";
 
 @injectable()
 export class PostsService {
@@ -63,7 +63,7 @@ export class PostsService {
   }
 
   async deleteManyPost(filter: Record<string, string>): Promise<void> {
-    await postCollection.deleteMany(filter);
+    await PostModel.deleteMany(filter);
     return;
   }
 
@@ -71,7 +71,7 @@ export class PostsService {
     filter: Record<string, string>,
     data: Record<string, string>,
   ): Promise<void> {
-    await postCollection.updateMany(filter, { $set: data });
+    await PostModel.updateMany(filter, { $set: data });
     return;
   }
 }
