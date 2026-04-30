@@ -1,12 +1,12 @@
 import { createResultObject } from "../../../core/utils/create-result-object";
 import { Result, ResultStatus } from "../../../core/types/result";
-import { CommentDb } from "../types/comment.types";
+import { CommentDb } from "../domain/comment.types";
 import { CommentsRepository } from "../repositories/comments.repository";
-import { commentCollection } from "../../../db/database";
 import { ObjectId } from "mongodb";
 import { PostsRepository } from "../../posts/repositories/posts.repository";
 import { UsersRepository } from "../../users/repositories/users.repository";
 import { inject, injectable } from "inversify";
+import { CommentModel } from "../domain/comment.entity";
 
 @injectable()
 export class CommentService {
@@ -101,7 +101,7 @@ export class CommentService {
   }
 
   async deleteManyComments(filter: Record<string, string>): Promise<void> {
-    await commentCollection.deleteMany(filter);
+    await CommentModel.deleteMany(filter);
     return;
   }
 
@@ -109,7 +109,7 @@ export class CommentService {
     userId: string,
     commentId: string,
   ): Promise<Result<null>> {
-    const comment = await commentCollection.findOne({
+    const comment = await CommentModel.findOne({
       _id: new ObjectId(commentId),
     });
 

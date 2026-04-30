@@ -1,17 +1,17 @@
-import { CommentDb } from "../types/comment.types";
-import { commentCollection } from "../../../db/database";
+import { CommentDb } from "../domain/comment.types";
 import { ObjectId } from "mongodb";
 import { injectable } from "inversify";
+import { CommentModel } from "../domain/comment.entity";
 
 @injectable()
 export class CommentsRepository {
   async create(comment: CommentDb): Promise<string> {
-    const createdComment = await commentCollection.insertOne(comment);
-    return createdComment.insertedId.toString();
+    const createdComment = await CommentModel.insertOne(comment);
+    return createdComment._id.toString();
   }
 
   async update(commentId: string, content: string): Promise<number> {
-    const updatedComment = await commentCollection.updateOne(
+    const updatedComment = await CommentModel.updateOne(
       { _id: new ObjectId(commentId) },
       { $set: { content } },
     );
@@ -19,7 +19,7 @@ export class CommentsRepository {
   }
 
   async deleteOne(commentId: string): Promise<number> {
-    const updatedComment = await commentCollection.deleteOne({
+    const updatedComment = await CommentModel.deleteOne({
       _id: new ObjectId(commentId),
     });
     return updatedComment.deletedCount;

@@ -12,7 +12,7 @@ import {
   CommentsQueryInput,
   CommentViewModel,
   CreateCommentInput,
-} from "../../comments/types/comment.types";
+} from "../../comments/domain/comment.types";
 import { ResultStatus } from "../../../core/types/result";
 import { mapResultToHttpStatus } from "../../../core/utils/map-result-to-http-status";
 import { PostsQueryRepository } from "../repositories/posts.query.repository";

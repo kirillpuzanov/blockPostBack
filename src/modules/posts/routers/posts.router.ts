@@ -5,7 +5,7 @@ import { handleIdValidation } from "../../../core/middlewares/id-validation";
 import { inputPostFieldValidation } from "../validation/input-post.validation";
 import { pageSortValidation } from "../../../core/middlewares/page-sort-validation";
 import { PostSortFields } from "../domain/post.types";
-import { CommentsSortFields } from "../../comments/types/comment.types";
+import { CommentsSortFields } from "../../comments/domain/comment.types";
 import { accessTokenGuard } from "../../../auth/validation/access-token.guard";
 import { inputCommentValidation } from "../../comments/validation/input-comment.validation";
 import { container } from "../../../composition-root";

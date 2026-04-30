@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CommentViewModel, UpdateCommentInput } from "../types/comment.types";
+import { CommentViewModel, UpdateCommentInput } from "../domain/comment.types";
 import { CommentsQueryRepository } from "../repositories/comments.query.repository";
 import { ResultStatus } from "../../../core/types/result";
 import { HTTP_STATUS } from "../../../core/const/statuses";

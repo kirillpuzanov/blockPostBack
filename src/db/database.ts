@@ -1,22 +1,20 @@
 import { BlogDb } from "../modules/blogs/types/blog.types";
 import { Collection, MongoClient } from "mongodb";
 import { SETTINGS } from "../core/settings/settings";
-import { CommentDb } from "../modules/comments/types/comment.types";
 import { RateLimitItem } from "../auth/types/auth.types";
 import mongoose from "mongoose";
 import { SessionModel } from "../modules/sessions/domain/session.entity";
 import { UserModel } from "../modules/users/domain/user.entity";
 import { PostModel } from "../modules/posts/domain/post.entity";
+import { CommentModel } from "../modules/comments/domain/comment.entity";
 
 const BLOGS_COLLECTION_NAME = "blogs";
 
-const COMMENTS_COLLECTION_NAME = "comments";
 const RATE_LIMIT_COLLECTION_NAME = "rateLimit";
 
 export let client: MongoClient;
 export let blogCollection: Collection<BlogDb>;
 
-export let commentCollection: Collection<CommentDb>;
 export let rateLimitCollection: Collection<RateLimitItem>;
 
 export const runDb = async (dbUrl: string) => {
@@ -25,7 +23,6 @@ export const runDb = async (dbUrl: string) => {
 
   blogCollection = db.collection<BlogDb>(BLOGS_COLLECTION_NAME);
 
-  commentCollection = db.collection<CommentDb>(COMMENTS_COLLECTION_NAME);
   rateLimitCollection = db.collection<RateLimitItem>(
     RATE_LIMIT_COLLECTION_NAME,
   );
@@ -56,7 +53,7 @@ export const clearDB = async () => {
       blogCollection.deleteMany(),
       PostModel.deleteMany(),
       UserModel.deleteMany(),
-      commentCollection.deleteMany(),
+      CommentModel.deleteMany(),
       SessionModel.deleteMany(),
       rateLimitCollection.deleteMany(),
     ]);
