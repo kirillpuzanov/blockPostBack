@@ -6,6 +6,7 @@ import { PostModel } from "../modules/posts/domain/post.entity";
 import { CommentModel } from "../modules/comments/domain/comment.entity";
 import { BlogModel } from "../modules/blogs/domain/blog.entity";
 import { RateLimitModel } from "../auth/domain/rate-limit.entity";
+import { LikeModel } from "../modules/like/domain/like.entity";
 
 export const runDb = async (dbUrl: string) => {
   try {
@@ -32,6 +33,7 @@ export const clearDB = async () => {
       CommentModel.deleteMany(),
       SessionModel.deleteMany(),
       RateLimitModel.deleteMany(),
+      LikeModel.deleteMany(),
     ]);
   } catch {
     console.log("!!! error clear test DB !!");

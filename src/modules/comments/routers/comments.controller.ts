@@ -7,6 +7,7 @@ import { errorHandler } from "../../../core/errors/error.handler";
 import { CommentService } from "../application/comments.service";
 import { mapResultToHttpStatus } from "../../../core/utils/map-result-to-http-status";
 import { inject, injectable } from "inversify";
+import { LikeInput } from "../../like/domain/like.types";
 
 @injectable()
 export class CommentsController {
@@ -68,6 +69,31 @@ export class CommentsController {
       const commentId = req.params.id;
       const userId = req.userMetaData!.id;
       const result = await this.commentService.deleteComment(userId, commentId);
+
+      if (result.status !== ResultStatus.NoContent) {
+        return res.sendStatus(mapResultToHttpStatus(result.status));
+      }
+
+      return res.sendStatus(HTTP_STATUS.noContent);
+    } catch (error) {
+      errorHandler(error, res);
+    }
+  }
+
+  async updateLikeStatus(
+    req: Request<{ id: string }, {}, LikeInput>,
+    res: Response,
+  ) {
+    try {
+      const commentId = req.params.id;
+      const userId = req.userMetaData!.id;
+      const likeStatus = req.body.likeStatus;
+
+      const result = await this.commentService.updateLikeStatus(
+        userId,
+        commentId,
+        likeStatus,
+      );
 
       if (result.status !== ResultStatus.NoContent) {
         return res.sendStatus(mapResultToHttpStatus(result.status));

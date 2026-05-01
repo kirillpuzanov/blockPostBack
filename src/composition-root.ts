@@ -26,6 +26,8 @@ import { MailService } from "./auth/utils/mail.service";
 import { AuthService } from "./auth/application/auth.service";
 import { Container } from "inversify";
 import { LikeQueryRepository } from "./modules/like/repositories/like.query.repository";
+import { LikeService } from "./modules/like/application/like.service";
+import { LikeRepository } from "./modules/like/repositories/like.repository";
 
 export const container: Container = new Container();
 
@@ -48,6 +50,7 @@ container.bind(CommentsRepository).to(CommentsRepository);
 container.bind(PostsRepository).to(PostsRepository);
 container.bind(BlogsRepository).to(BlogsRepository);
 container.bind(SessionsRepository).to(SessionsRepository);
+container.bind(LikeRepository).to(LikeRepository);
 
 // --- services
 container.bind(CommentService).to(CommentService);
@@ -56,6 +59,7 @@ container.bind(UsersService).to(UsersService);
 container.bind(BlogsService).to(BlogsService);
 container.bind(SessionsService).to(SessionsService);
 container.bind(AuthService).to(AuthService);
+container.bind(LikeService).to(LikeService);
 
 // --- controllers
 container.bind(PostsController).to(PostsController);

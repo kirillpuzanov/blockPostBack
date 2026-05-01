@@ -6,6 +6,7 @@ import { accessTokenGuard } from "../../../auth/validation/access-token.guard";
 import { container } from "../../../composition-root";
 import { CommentsController } from "./comments.controller";
 import { optionalAccessGuard } from "../../../auth/validation/optional-access.guard";
+import { inputLikeStatusValidation } from "../../like/validation/like.validation";
 
 export const commentsRouter = Router({});
 const commentsController = container.get(CommentsController);
@@ -25,6 +26,15 @@ commentsRouter.put(
   inputCommentValidation,
   validationResult,
   commentsController.updateComment.bind(commentsController),
+);
+
+commentsRouter.put(
+  "/:id/like-status",
+  accessTokenGuard,
+  handleIdValidation,
+  inputLikeStatusValidation,
+  validationResult,
+  commentsController.updateLikeStatus.bind(commentsController),
 );
 
 commentsRouter.delete(

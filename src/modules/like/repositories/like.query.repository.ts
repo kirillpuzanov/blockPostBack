@@ -2,7 +2,7 @@ import { injectable } from "inversify";
 import {
   LikeInfo,
   LikeInfoWithStatus,
-  LikeStaus,
+  LikeStatus,
   UserLikes,
 } from "../domain/like.types";
 import { LikeModel } from "../domain/like.entity";
@@ -17,7 +17,7 @@ export class LikeQueryRepository {
       ...entity,
       likesInfo: {
         ...entity.likesInfo,
-        myStatus: myLikes[entity.id] ?? LikeStaus.None,
+        myStatus: myLikes[entity.id] ?? LikeStatus.None,
       },
     };
   }

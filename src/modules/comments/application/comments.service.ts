@@ -7,21 +7,26 @@ import { PostsRepository } from "../../posts/repositories/posts.repository";
 import { UsersRepository } from "../../users/repositories/users.repository";
 import { inject, injectable } from "inversify";
 import { CommentModel } from "../domain/comment.entity";
+import { LikeStatus } from "../../like/domain/like.types";
+import { LikeService } from "../../like/application/like.service";
 
 @injectable()
 export class CommentService {
   usersRepository: UsersRepository;
   postsRepository: PostsRepository;
   commentsRepository: CommentsRepository;
+  likeService: LikeService;
 
   constructor(
     @inject(UsersRepository) usersRepository: UsersRepository,
     @inject(PostsRepository) postsRepository: PostsRepository,
     @inject(CommentsRepository) commentsRepository: CommentsRepository,
+    @inject(LikeService) likeService: LikeService,
   ) {
     this.usersRepository = usersRepository;
     this.postsRepository = postsRepository;
     this.commentsRepository = commentsRepository;
+    this.likeService = likeService;
   }
 
   async createComment(
@@ -128,5 +133,39 @@ export class CommentService {
     }
 
     return createResultObject({ status: ResultStatus.Success });
+  }
+
+  async updateLikeStatus(
+    userId: string,
+    commentId: string,
+    newLikeStatus: LikeStatus,
+  ): Promise<Result<null>> {
+    const existingComment = await this.commentsRepository.findById(commentId);
+
+    if (!existingComment) {
+      return createResultObject({ status: ResultStatus.NotFound });
+    }
+
+    /** обновляем лайк / получаем дельту для изменения счетчика */
+    const { status, data } = await this.likeService.updateLike(
+      userId,
+      commentId,
+      newLikeStatus,
+    );
+
+    // todo - как будто бутылочное горлышко ??
+    //  Обьекдинять общей транзакцией ? А может и не нужно - значение будет меняться независимо от текущего кол-ва .. Можно уйти в минус ))
+    //  Узнать как ведет себя БД, если одновременно постявят 1000 лайков одной сущности
+
+    /** обновляем счетчик лайков комментария */
+    if (
+      data &&
+      status === ResultStatus.NoContent &&
+      Object.keys(data).length > 0
+    ) {
+      await this.commentsRepository.updateLikes(commentId, data);
+    }
+
+    return createResultObject({ status: ResultStatus.NoContent });
   }
 }

@@ -1,10 +1,15 @@
 import { CommentDb } from "../domain/comment.types";
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import { injectable } from "inversify";
 import { CommentModel } from "../domain/comment.entity";
+import { LikeUpdateDelta } from "../../like/domain/like.types";
 
 @injectable()
 export class CommentsRepository {
+  async findById(commentId: string): Promise<WithId<CommentDb> | null> {
+    return CommentModel.findOne({ _id: new ObjectId(commentId) }).lean();
+  }
+
   async create(comment: CommentDb): Promise<string> {
     const createdComment = await CommentModel.insertOne(comment);
     return createdComment._id.toString();
@@ -14,6 +19,17 @@ export class CommentsRepository {
     const updatedComment = await CommentModel.updateOne(
       { _id: new ObjectId(commentId) },
       { $set: { content } },
+    );
+    return updatedComment.matchedCount;
+  }
+
+  async updateLikes(
+    commentId: string,
+    likeUpdateDelta: LikeUpdateDelta,
+  ): Promise<number> {
+    const updatedComment = await CommentModel.updateOne(
+      { _id: new ObjectId(commentId) },
+      { $inc: likeUpdateDelta },
     );
     return updatedComment.matchedCount;
   }
