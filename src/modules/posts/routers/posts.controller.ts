@@ -64,11 +64,13 @@ export class PostsController {
   ) {
     try {
       const postId = req.params.id;
+      const userId = req.userMetaData?.id;
       const matchedQuery = getMatchedQuery<CommentsQueryInput>(req);
 
       const result = await this.commentsQueryRepository.getCommentsByPost(
         postId,
         matchedQuery,
+        userId,
       );
       if (result.status === ResultStatus.Success) {
         return res.status(HTTP_STATUS.ok).send(result.data);
@@ -139,6 +141,7 @@ export class PostsController {
 
       const commentResult = await this.commentsQueryRepository.getById(
         createResult.data!.commentId,
+        userId,
       );
 
       return res.status(HTTP_STATUS.created).send(commentResult.data);

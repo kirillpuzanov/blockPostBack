@@ -47,6 +47,10 @@ export class CommentService {
         userLogin: user.login,
       },
       createdAt: new Date().toISOString(),
+      likesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+      },
     };
 
     const commentId = await this.commentsRepository.create(comment);

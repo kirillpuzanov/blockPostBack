@@ -136,7 +136,7 @@ describe("session e2e test", () => {
     await loginAllDevices(app);
 
     /** получаем deviceId второго устройства */
-    const secondDeviceId = jwtService.decodeRefreshToken(
+    const secondDeviceId = jwtService.decodeToken(
       userDevices[1].refreshToken,
     ).deviceId;
 
@@ -188,7 +188,7 @@ describe("session e2e test", () => {
     await loginAllDevices(app);
 
     /** получаем deviceId первого устройства */
-    const firstDeviceId = jwtService.decodeRefreshToken(
+    const firstDeviceId = jwtService.decodeToken(
       userDevices[1].refreshToken,
     ).deviceId;
 

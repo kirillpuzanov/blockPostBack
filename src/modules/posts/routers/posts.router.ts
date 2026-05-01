@@ -10,6 +10,7 @@ import { accessTokenGuard } from "../../../auth/validation/access-token.guard";
 import { inputCommentValidation } from "../../comments/validation/input-comment.validation";
 import { container } from "../../../composition-root";
 import { PostsController } from "./posts.controller";
+import { optionalAccessGuard } from "../../../auth/validation/optional-access.guard";
 
 export const postsRouter = Router({});
 const postsController = container.get(PostsController);
@@ -30,6 +31,7 @@ postsRouter.get(
 
 postsRouter.get(
   "/:id/comments",
+  optionalAccessGuard,
   handleIdValidation,
   pageSortValidation(CommentsSortFields),
   validationResult,

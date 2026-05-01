@@ -5,12 +5,14 @@ import { inputCommentValidation } from "../validation/input-comment.validation";
 import { accessTokenGuard } from "../../../auth/validation/access-token.guard";
 import { container } from "../../../composition-root";
 import { CommentsController } from "./comments.controller";
+import { optionalAccessGuard } from "../../../auth/validation/optional-access.guard";
 
 export const commentsRouter = Router({});
 const commentsController = container.get(CommentsController);
 
 commentsRouter.get(
   "/:id",
+  optionalAccessGuard,
   handleIdValidation,
   validationResult,
   commentsController.getComment.bind(commentsController),

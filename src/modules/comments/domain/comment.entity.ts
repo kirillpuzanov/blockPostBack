@@ -13,6 +13,10 @@ const CommentSchema = new mongoose.Schema<CommentDb>({
     userId: { type: String, require: true },
     userLogin: { type: String, require: true },
   },
+  likesInfo: {
+    likesCount: { type: Number, default: 0 },
+    dislikesCount: { type: Number, default: 0 },
+  },
 });
 
 export const CommentModel = mongoose.model<CommentDb>(

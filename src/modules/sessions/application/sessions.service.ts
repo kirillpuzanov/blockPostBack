@@ -24,8 +24,7 @@ export class SessionsService {
   }
 
   async deleteAllMySessions(refreshToken: string): Promise<Result<null>> {
-    const { userId, deviceId } =
-      this.jwtService.decodeRefreshToken(refreshToken);
+    const { userId, deviceId } = this.jwtService.decodeToken(refreshToken);
 
     await this.sessionsRepository.deleteOtherMySessions(userId, deviceId);
 

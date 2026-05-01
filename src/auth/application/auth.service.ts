@@ -54,7 +54,7 @@ export class AuthService {
     );
 
     /** создаем сессию для этого утстройства */
-    const { exp, iat } = this.jwtService.decodeRefreshToken(refreshToken);
+    const { exp, iat } = this.jwtService.decodeToken(refreshToken);
     const session: AuthSessionDb = {
       ip,
       exp,
@@ -205,8 +205,7 @@ export class AuthService {
   ): Promise<Result<{ accessToken: string; refreshToken: string }>> {
     /** проверка валидности текущего токена уже сделана в refreshTokenGuard */
 
-    const { userId, deviceId } =
-      this.jwtService.decodeRefreshToken(oldRefreshToken);
+    const { userId, deviceId } = this.jwtService.decodeToken(oldRefreshToken);
     /** создаем новую пару токенов */
     const { accessToken, refreshToken } = this.jwtService.createTokens(
       userId,
@@ -214,7 +213,7 @@ export class AuthService {
     );
 
     /** берем новые данные жизни токена */
-    const { iat, exp } = this.jwtService.decodeRefreshToken(refreshToken);
+    const { iat, exp } = this.jwtService.decodeToken(refreshToken);
 
     /** обновляем данные жизни текущей сессии */
     const updatedCount = await this.sessionsRepository.updateSession(
@@ -237,8 +236,7 @@ export class AuthService {
 
   async logout(refreshToken: string): Promise<Result<null>> {
     /** проверка валидности текущего токена уже сделана в refreshTokenGuard */
-    const { userId, deviceId } =
-      this.jwtService.decodeRefreshToken(refreshToken);
+    const { userId, deviceId } = this.jwtService.decodeToken(refreshToken);
 
     /** удаляем текущую сессию */
     await this.sessionsRepository.deleteSession(userId, deviceId);

@@ -10,16 +10,16 @@ export class JwtService {
     deviceId: string,
   ): { accessToken: string; refreshToken: string } {
     const accessToken = jwt.sign({ userId }, SETTINGS.JWT_SECRET, {
-      expiresIn: "10 Sec",
+      expiresIn: "10 Min",
     });
     const refreshToken = jwt.sign({ userId, deviceId }, SETTINGS.JWT_SECRET, {
-      expiresIn: "20 Sec",
+      expiresIn: "20 Min",
     });
 
     return { accessToken, refreshToken };
   }
 
-  decodeRefreshToken(token: string): DecodedToken {
+  decodeToken(token: string): DecodedToken {
     const decoded = jwt.decode(token) as JwtPayload;
     return {
       userId: decoded.userId,

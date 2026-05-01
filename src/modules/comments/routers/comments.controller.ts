@@ -22,7 +22,12 @@ export class CommentsController {
     res: Response,
   ) {
     try {
-      const result = await this.commentsQueryRepository.getById(req.params.id);
+      const userId = req.userMetaData?.id;
+
+      const result = await this.commentsQueryRepository.getById(
+        req.params.id,
+        userId,
+      );
 
       if (result.status === ResultStatus.Success) {
         return res.status(HTTP_STATUS.ok).send(result.data);
