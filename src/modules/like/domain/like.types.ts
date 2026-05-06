@@ -13,12 +13,6 @@ export type LikeInfo = {
   dislikesCount: number;
 };
 
-export type LikeInfoWithStatus = {
-  likesCount: number;
-  dislikesCount: number;
-  myStatus: LikeStatus;
-};
-
 export type LikeDb = {
   parentId: string;
   createdAt: Date;
@@ -31,6 +25,6 @@ export type LikeDb = {
 
 export type UserLikes = Record<string, LikeStatus>;
 export type LikeUpdateDelta = {
-  "likesInfo.likesCount"?: number;
-  "likesInfo.dislikesCount"?: number;
+  likesCount?: number;
+  dislikesCount?: number;
 };

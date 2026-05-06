@@ -11,7 +11,7 @@ import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
 import { PostsQueryRepository } from "../../posts/repositories/posts.query.repository";
 import { inject, injectable } from "inversify";
 import { CommentModel } from "../domain/comment.entity";
-import { UserLikes } from "../../like/domain/like.types";
+import { LikeStatus, UserLikes } from "../../like/domain/like.types";
 import { LikeQueryRepository } from "../../like/repositories/like.query.repository";
 
 @injectable()
@@ -102,9 +102,12 @@ export class CommentsQueryRepository {
       likesInfo: comment.likesInfo,
     };
 
-    return this.likeQueryRepository.getWithUserLikeStatus(
-      mappedComment,
-      myLikes,
-    );
+    return {
+      ...mappedComment,
+      likesInfo: {
+        ...mappedComment.likesInfo,
+        myStatus: myLikes[mappedComment.id] ?? LikeStatus.None,
+      },
+    };
   }
 }

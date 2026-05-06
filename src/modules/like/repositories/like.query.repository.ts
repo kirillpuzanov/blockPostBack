@@ -1,27 +1,9 @@
 import { injectable } from "inversify";
-import {
-  LikeInfo,
-  LikeInfoWithStatus,
-  LikeStatus,
-  UserLikes,
-} from "../domain/like.types";
+import { UserLikes } from "../domain/like.types";
 import { LikeModel } from "../domain/like.entity";
 
 @injectable()
 export class LikeQueryRepository {
-  getWithUserLikeStatus<T extends { id: string; likesInfo: LikeInfo }>(
-    entity: T,
-    myLikes: UserLikes,
-  ): T & { likesInfo: LikeInfoWithStatus } {
-    return {
-      ...entity,
-      likesInfo: {
-        ...entity.likesInfo,
-        myStatus: myLikes[entity.id] ?? LikeStatus.None,
-      },
-    };
-  }
-
   async getUserLikes(
     userId: string | undefined,
     entityIds: string[],

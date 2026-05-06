@@ -1,5 +1,11 @@
 import { PageAndSortInput } from "../../../core/types/page-and-sort";
-import { LikeInfo, LikeInfoWithStatus } from "../../like/domain/like.types";
+import { LikeInfo, LikeStatus } from "../../like/domain/like.types";
+
+export type CommentLikeInfoWithStatus = {
+  likesCount: number;
+  dislikesCount: number;
+  myStatus: LikeStatus;
+};
 
 export type CommentViewModel = {
   id: string;
@@ -10,7 +16,7 @@ export type CommentViewModel = {
   };
   createdAt: string;
 
-  likesInfo: LikeInfoWithStatus;
+  likesInfo: CommentLikeInfoWithStatus;
 };
 
 export type CreateCommentInput = {

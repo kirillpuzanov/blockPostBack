@@ -17,12 +17,20 @@ export class LikeRepository {
     return query;
   }
 
-  async deleteLike(id: string, session?: ClientSession): Promise<void> {
-    let query = LikeModel.deleteOne({ _id: id });
+  async updateLikeStatus(
+    id: string,
+    status: LikeStatus,
+    session?: ClientSession,
+  ): Promise<void> {
+    let query = LikeModel.updateOne({ _id: id }, { $set: { status } });
     if (session) {
       query = query.session(session);
     }
     await query;
+  }
+
+  async deleteEntityAllLikes(parentId: string): Promise<void> {
+    await LikeModel.deleteMany({ parentId });
   }
 
   async upsertLike(

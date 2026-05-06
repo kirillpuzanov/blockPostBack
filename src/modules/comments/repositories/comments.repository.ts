@@ -2,7 +2,6 @@ import { CommentDb } from "../domain/comment.types";
 import { ObjectId, WithId } from "mongodb";
 import { injectable } from "inversify";
 import { CommentModel } from "../domain/comment.entity";
-import { LikeUpdateDelta } from "../../like/domain/like.types";
 
 @injectable()
 export class CommentsRepository {
@@ -25,7 +24,7 @@ export class CommentsRepository {
 
   async updateLikes(
     commentId: string,
-    likeUpdateDelta: LikeUpdateDelta,
+    likeUpdateDelta: Record<string, number>,
   ): Promise<number> {
     const updatedComment = await CommentModel.updateOne(
       { _id: new ObjectId(commentId) },

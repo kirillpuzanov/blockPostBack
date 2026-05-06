@@ -45,8 +45,13 @@ export class LikeService {
       if (newLikeStatus === "None") {
         /** снимаем лайк / дизлайк - удаляем объект */
         if (existingLike) {
-          await this.likeRepository.deleteLike(
+          // await this.likeRepository.deleteLike(
+          //   existingLike._id.toString(),
+          //   session,
+          // );
+          await this.likeRepository.updateLikeStatus(
             existingLike._id.toString(),
+            newLikeStatus,
             session,
           );
         }
@@ -83,7 +88,10 @@ export class LikeService {
     }
   }
 
-  // todo - не нравится
+  async deleteEntityAllLikes(parentId: string): Promise<void> {
+    await this.likeRepository.deleteEntityAllLikes(parentId);
+  }
+
   private calculateCountersDelta(
     oldStatus: LikeStatus | undefined,
     newStatus: LikeStatus,
@@ -102,11 +110,11 @@ export class LikeService {
     if (newStatus === LikeStatus.Dislike) dislikesCount++;
 
     if (likesCount !== 0) {
-      delta["likesInfo.likesCount"] = likesCount;
+      delta.likesCount = likesCount;
     }
 
     if (dislikesCount !== 0) {
-      delta["likesInfo.dislikesCount"] = dislikesCount;
+      delta.dislikesCount = dislikesCount;
     }
 
     return delta;

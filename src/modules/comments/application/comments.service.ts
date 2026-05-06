@@ -105,11 +105,13 @@ export class CommentService {
     if (deletedCount < 1) {
       return createResultObject({ status: ResultStatus.NotFound });
     }
+    await this.likeService.deleteEntityAllLikes(commentId);
 
     return createResultObject({ status: ResultStatus.NoContent });
   }
 
   async deleteManyComments(filter: Record<string, string>): Promise<void> {
+    // todo - удалять также все лайки для удаленных комментов
     await CommentModel.deleteMany(filter);
     return;
   }
@@ -153,17 +155,17 @@ export class CommentService {
       newLikeStatus,
     );
 
-    // todo - как будто бутылочное горлышко ??
-    //  Обьекдинять общей транзакцией ? А может и не нужно - значение будет меняться независимо от текущего кол-ва .. Можно уйти в минус ))
-    //  Узнать как ведет себя БД, если одновременно постявят 1000 лайков одной сущности
-
     /** обновляем счетчик лайков комментария */
     if (
       data &&
       status === ResultStatus.NoContent &&
       Object.keys(data).length > 0
     ) {
-      await this.commentsRepository.updateLikes(commentId, data);
+      const updateInfo = {
+        "likesInfo.likesCount": data.likesCount ?? 0,
+        "likesInfo.dislikesCount": data.dislikesCount ?? 0,
+      };
+      await this.commentsRepository.updateLikes(commentId, updateInfo);
     }
 
     return createResultObject({ status: ResultStatus.NoContent });
