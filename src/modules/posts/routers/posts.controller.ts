@@ -36,8 +36,13 @@ export class PostsController {
 
   async getPosts(req: Request, res: Response) {
     try {
+      const userId = req.userMetaData?.id;
+
       const matchedQuery = getMatchedQuery<PostsQueryInput>(req);
-      const posts = await this.postsQueryRepository.getAll(matchedQuery);
+      const posts = await this.postsQueryRepository.getAll(
+        matchedQuery,
+        userId,
+      );
 
       res.status(HTTP_STATUS.ok).send(posts);
     } catch (error) {
@@ -50,7 +55,12 @@ export class PostsController {
     res: Response,
   ) {
     try {
-      const postView = await this.postsQueryRepository.getById(req.params.id);
+      const userId = req.userMetaData?.id;
+
+      const postView = await this.postsQueryRepository.getById(
+        req.params.id,
+        userId,
+      );
 
       res.status(HTTP_STATUS.ok).send(postView);
     } catch (error) {
@@ -65,6 +75,13 @@ export class PostsController {
     try {
       const postId = req.params.id;
       const userId = req.userMetaData?.id;
+
+      const post = await this.postsQueryRepository.getById(postId, userId);
+
+      if (!post) {
+        return res.sendStatus(HTTP_STATUS.notFound);
+      }
+
       const matchedQuery = getMatchedQuery<CommentsQueryInput>(req);
 
       const result = await this.commentsQueryRepository.getCommentsByPost(
@@ -87,8 +104,10 @@ export class PostsController {
     res: Response,
   ) {
     try {
+      const userId = req.userMetaData?.id;
+
       const postId = await this.postsService.createPost(req.body);
-      const postView = await this.postsQueryRepository.getById(postId);
+      const postView = await this.postsQueryRepository.getById(postId, userId);
 
       res.status(HTTP_STATUS.created).send(postView);
     } catch (error) {

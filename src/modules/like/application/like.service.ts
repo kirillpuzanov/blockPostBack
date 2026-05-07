@@ -45,10 +45,6 @@ export class LikeService {
       if (newLikeStatus === "None") {
         /** снимаем лайк / дизлайк - удаляем объект */
         if (existingLike) {
-          // await this.likeRepository.deleteLike(
-          //   existingLike._id.toString(),
-          //   session,
-          // );
           await this.likeRepository.updateLikeStatus(
             existingLike._id.toString(),
             newLikeStatus,
@@ -57,7 +53,7 @@ export class LikeService {
         }
       } else {
         const user = await this.usersRepository.getById(userId);
-
+        // todo возможно нужна проверка на юзера
         /** создаем / обновляем лайк */
         await this.likeRepository.upsertLike(
           parentId,

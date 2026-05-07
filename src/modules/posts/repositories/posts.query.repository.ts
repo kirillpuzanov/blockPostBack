@@ -11,15 +11,22 @@ import { NotFoundError } from "../../../core/errors/error.handler";
 import { BlogsQueryRepository } from "../../blogs/repositories/blogs.query.repository";
 import { inject, injectable } from "inversify";
 import { PostModel } from "../domain/post.entity";
+import { LikeQueryRepository } from "../../like/repositories/like.query.repository";
+import { LikeStatus, UserLikes } from "../../like/domain/like.types";
 
 @injectable()
 export class PostsQueryRepository {
   constructor(
     @inject(BlogsQueryRepository)
     public blogsQueryRepository: BlogsQueryRepository,
+    @inject(LikeQueryRepository)
+    public likeQueryRepository: LikeQueryRepository,
   ) {}
 
-  async getAll(query: PostsQueryInput): Promise<PagedOutput<PostViewModel>> {
+  async getAll(
+    query: PostsQueryInput,
+    userId: string | undefined,
+  ): Promise<PagedOutput<PostViewModel>> {
     const { pageNumber, pageSize, sortBy, sortDirection } = query;
 
     const skip = (pageNumber - 1) * pageSize;
@@ -31,7 +38,14 @@ export class PostsQueryRepository {
       .lean();
 
     const totalCount = await PostModel.countDocuments();
-    const postsView = posts.map(this._mapToPostView);
+
+    const postsIds = posts.map((el) => el._id.toString());
+    const myLikes = await this.likeQueryRepository.getUserLikes(
+      userId,
+      postsIds,
+    );
+
+    const postsView = posts.map((el) => this._mapToPostView(el, myLikes));
 
     return getPaginatedOutput(postsView, {
       pageNumber,
@@ -40,18 +54,27 @@ export class PostsQueryRepository {
     });
   }
 
-  async getById(id: string): Promise<PostViewModel> {
+  async getById(
+    id: string,
+    userId: string | undefined,
+  ): Promise<PostViewModel> {
     const post = await PostModel.findOne({ _id: new ObjectId(id) });
 
     if (!post) {
       throw new NotFoundError("post not found", "id");
     }
-    return this._mapToPostView(post);
+
+    const userLikes = await this.likeQueryRepository.getUserLikes(userId, [
+      post._id.toString(),
+    ]);
+
+    return this._mapToPostView(post, userLikes);
   }
 
   async getPostsByBlog(
     blogId: string,
     query: PostsByBlogQueryInput,
+    userId: string | undefined,
   ): Promise<PagedOutput<PostViewModel>> {
     const { pageNumber, pageSize, sortBy, sortDirection } = query;
 
@@ -70,7 +93,15 @@ export class PostsQueryRepository {
       .lean();
     const totalCount = await PostModel.countDocuments({ blogId });
 
-    const postsByBlogView = postsByBlog.map(this._mapToPostView);
+    const postsByBlogIds = postsByBlog.map((el) => el._id.toString());
+    const myLikes = await this.likeQueryRepository.getUserLikes(
+      userId,
+      postsByBlogIds,
+    );
+
+    const postsByBlogView = postsByBlog.map((el) =>
+      this._mapToPostView(el, myLikes),
+    );
     return getPaginatedOutput(postsByBlogView, {
       pageNumber,
       pageSize,
@@ -78,24 +109,23 @@ export class PostsQueryRepository {
     });
   }
 
-  _mapToPostView(post: WithId<PostDb>): PostViewModel {
-    const {
-      title,
-      shortDescription,
-      blogId,
-      content,
-      blogName,
-      createdAt,
-      _id,
-    } = post;
+  _mapToPostView(post: WithId<PostDb>, userLikes: UserLikes): PostViewModel {
+    const mappedPost = {
+      id: post._id.toString(),
+      title: post.title,
+      shortDescription: post.shortDescription,
+      blogId: post.blogId,
+      content: post.content,
+      blogName: post.blogName,
+      createdAt: post.createdAt,
+      extendedLikesInfo: post.extendedLikesInfo,
+    };
     return {
-      id: _id.toString(),
-      title,
-      shortDescription,
-      blogId,
-      content,
-      blogName,
-      createdAt,
+      ...mappedPost,
+      extendedLikesInfo: {
+        ...mappedPost.extendedLikesInfo,
+        myStatus: userLikes[mappedPost.id] ?? LikeStatus.None,
+      },
     };
   }
 }

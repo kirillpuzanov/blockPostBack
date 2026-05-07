@@ -18,6 +18,7 @@ const postsController = container.get(PostsController);
 postsRouter.get(
   "",
   pageSortValidation(PostSortFields),
+  optionalAccessGuard,
   validationResult,
   postsController.getPosts.bind(postsController),
 );
@@ -25,6 +26,7 @@ postsRouter.get(
 postsRouter.get(
   "/:id",
   handleIdValidation,
+  optionalAccessGuard,
   validationResult,
   postsController.getPost.bind(postsController),
 );

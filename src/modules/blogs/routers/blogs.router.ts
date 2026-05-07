@@ -12,6 +12,7 @@ import { PostsByBlogSortFields } from "../../posts/domain/post.types";
 import { inputPostByBlogFieldValidation } from "../../posts/validation/input-post.validation";
 import { container } from "../../../composition-root";
 import { BlogsController } from "./blogs.controller";
+import { optionalAccessGuard } from "../../../auth/validation/optional-access.guard";
 
 export const blogsRouter = Router({});
 const blogsController = container.get(BlogsController);
@@ -34,6 +35,7 @@ blogsRouter.get(
   "/:blogId/posts",
   handleBlogIdValidation,
   pageSortValidation(PostsByBlogSortFields),
+  optionalAccessGuard,
   validationResult,
   blogsController.getPostsByBlog.bind(blogsController),
 );

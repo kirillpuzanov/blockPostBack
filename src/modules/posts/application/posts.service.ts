@@ -32,6 +32,11 @@ export class PostsService {
       title,
       blogName: blog.name,
       createdAt: new Date().toISOString(),
+      extendedLikesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        newestLikes: [],
+      },
     };
     return this.postsRepository.create(newPost);
   }

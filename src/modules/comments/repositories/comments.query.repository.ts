@@ -8,7 +8,6 @@ import { createResultObject } from "../../../core/utils/create-result-object";
 import { Result, ResultStatus } from "../../../core/types/result";
 import { PagedOutput } from "../../../core/types/page-and-sort";
 import { getPaginatedOutput } from "../../../core/utils/get-paginated-output";
-import { PostsQueryRepository } from "../../posts/repositories/posts.query.repository";
 import { inject, injectable } from "inversify";
 import { CommentModel } from "../domain/comment.entity";
 import { LikeStatus, UserLikes } from "../../like/domain/like.types";
@@ -17,8 +16,6 @@ import { LikeQueryRepository } from "../../like/repositories/like.query.reposito
 @injectable()
 export class CommentsQueryRepository {
   constructor(
-    @inject(PostsQueryRepository)
-    public postsQueryRepository: PostsQueryRepository,
     @inject(LikeQueryRepository)
     public likeQueryRepository: LikeQueryRepository,
   ) {}
@@ -52,14 +49,6 @@ export class CommentsQueryRepository {
   ): Promise<Result<PagedOutput<CommentViewModel>>> {
     const { pageNumber, pageSize, sortBy, sortDirection } = query;
 
-    const post = await this.postsQueryRepository.getById(postId);
-
-    if (!post) {
-      return createResultObject({
-        status: ResultStatus.NotFound,
-      });
-    }
-
     const skip = (pageNumber - 1) * pageSize;
 
     const commentsByPost = await CommentModel.find({ postId })
@@ -92,7 +81,7 @@ export class CommentsQueryRepository {
 
   _mapToCommentView(
     comment: WithId<CommentDb>,
-    myLikes: UserLikes,
+    userLikes: UserLikes,
   ): CommentViewModel {
     const mappedComment = {
       id: comment._id.toString(),
@@ -106,7 +95,7 @@ export class CommentsQueryRepository {
       ...mappedComment,
       likesInfo: {
         ...mappedComment.likesInfo,
-        myStatus: myLikes[mappedComment.id] ?? LikeStatus.None,
+        myStatus: userLikes[mappedComment.id] ?? LikeStatus.None,
       },
     };
   }

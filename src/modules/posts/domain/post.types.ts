@@ -1,4 +1,18 @@
 import { PageAndSortInput } from "../../../core/types/page-and-sort";
+import { LikeStatus } from "../../like/domain/like.types";
+
+type NewestLikes = {
+  addedAt: string;
+  userId: string;
+  login: string;
+};
+
+type PostLikeInfo = {
+  likesCount: number;
+  dislikesCount: number;
+  myStatus: LikeStatus;
+  newestLikes: NewestLikes[];
+};
 
 export type PostViewModel = {
   id: string;
@@ -8,6 +22,8 @@ export type PostViewModel = {
   blogId: string;
   blogName: string;
   createdAt: string;
+
+  extendedLikesInfo: PostLikeInfo;
 };
 
 export type CreatePostInput = {
@@ -24,6 +40,12 @@ export type PostDb = {
   blogId: string;
   blogName: string;
   createdAt: string;
+
+  extendedLikesInfo: {
+    likesCount: number;
+    dislikesCount: number;
+    newestLikes: NewestLikes[];
+  };
 };
 
 export type CreatePostByBlogInput = {

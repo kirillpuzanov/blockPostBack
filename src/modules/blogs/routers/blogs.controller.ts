@@ -62,11 +62,13 @@ export class BlogsController {
   ) {
     try {
       const blogId = req.params.blogId;
+      const userId = req.userMetaData?.id;
       const matchedQuery = getMatchedQuery<PostsByBlogQueryInput>(req);
 
       const postsByBlog = await this.postsQueryRepository.getPostsByBlog(
         blogId,
         matchedQuery,
+        userId,
       );
       res.status(HTTP_STATUS.ok).send(postsByBlog);
     } catch (error) {
@@ -119,6 +121,7 @@ export class BlogsController {
   ) {
     try {
       const blogId = req.params.blogId;
+      const userId = req.userMetaData?.id;
       const { content, shortDescription, title } = req.body;
 
       const createdPostId = await this.postsService.createPost({
@@ -127,7 +130,10 @@ export class BlogsController {
         title,
         blogId,
       });
-      const postView = await this.postsQueryRepository.getById(createdPostId);
+      const postView = await this.postsQueryRepository.getById(
+        createdPostId,
+        userId,
+      );
 
       res.status(HTTP_STATUS.created).send(postView);
     } catch (error) {

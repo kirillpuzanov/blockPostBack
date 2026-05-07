@@ -1,5 +1,5 @@
 import { PageAndSortInput } from "../../../core/types/page-and-sort";
-import { LikeInfo, LikeStatus } from "../../like/domain/like.types";
+import { LikeStatus } from "../../like/domain/like.types";
 
 export type CommentLikeInfoWithStatus = {
   likesCount: number;
@@ -37,7 +37,10 @@ export type CommentDb = {
   };
   createdAt: string;
 
-  likesInfo: LikeInfo;
+  likesInfo: {
+    likesCount: number;
+    dislikesCount: number;
+  };
 };
 
 export enum CommentsSortFields {
