@@ -20,6 +20,7 @@ import { CommentsQueryRepository } from "../../comments/repositories/comments.qu
 import { PostsService } from "../application/posts.service";
 import { CommentService } from "../../comments/application/comments.service";
 import { inject, injectable } from "inversify";
+import { LikeInput } from "../../like/domain/like.types";
 
 @injectable()
 export class PostsController {
@@ -166,6 +167,31 @@ export class PostsController {
       return res.status(HTTP_STATUS.created).send(commentResult.data);
     } catch (e) {
       errorHandler(e, res);
+    }
+  }
+
+  async updateLikeStatus(
+    req: Request<{ id: string }, {}, LikeInput>,
+    res: Response,
+  ) {
+    try {
+      const commentId = req.params.id;
+      const userId = req.userMetaData!.id;
+      const likeStatus = req.body.likeStatus;
+
+      const result = await this.postsService.updateLikeStatus(
+        userId,
+        commentId,
+        likeStatus,
+      );
+
+      if (result.status !== ResultStatus.NoContent) {
+        return res.sendStatus(mapResultToHttpStatus(result.status));
+      }
+
+      return res.sendStatus(HTTP_STATUS.noContent);
+    } catch (error) {
+      errorHandler(error, res);
     }
   }
 }

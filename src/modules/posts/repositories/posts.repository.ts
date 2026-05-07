@@ -34,4 +34,15 @@ export class PostsRepository {
     }
     return post;
   }
+
+  async updateLikes(
+    postId: string,
+    updateData: Record<"$set" | "$inc", object>,
+  ): Promise<number> {
+    const updatedComment = await PostModel.updateOne(
+      { _id: new ObjectId(postId) },
+      updateData,
+    );
+    return updatedComment.matchedCount;
+  }
 }

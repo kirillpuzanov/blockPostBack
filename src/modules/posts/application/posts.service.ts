@@ -5,6 +5,11 @@ import { PostsRepository } from "../repositories/posts.repository";
 import { BlogsQueryRepository } from "../../blogs/repositories/blogs.query.repository";
 import { inject, injectable } from "inversify";
 import { PostModel } from "../domain/post.entity";
+import { LikeStatus } from "../../like/domain/like.types";
+import { Result, ResultStatus } from "../../../core/types/result";
+import { createResultObject } from "../../../core/utils/create-result-object";
+import { LikeService } from "../../like/application/like.service";
+import { LikeRepository } from "../../like/repositories/like.repository";
 
 @injectable()
 export class PostsService {
@@ -15,6 +20,10 @@ export class PostsService {
     public postsRepository: PostsRepository,
     @inject(CommentService)
     public commentService: CommentService,
+    @inject(LikeService)
+    public likeService: LikeService,
+    @inject(LikeRepository)
+    public likeRepository: LikeRepository,
   ) {}
 
   async createPost(input: CreatePostInput): Promise<string> {
@@ -78,5 +87,50 @@ export class PostsService {
   ): Promise<void> {
     await PostModel.updateMany(filter, { $set: data });
     return;
+  }
+
+  async updateLikeStatus(
+    userId: string,
+    postId: string,
+    newLikeStatus: LikeStatus,
+  ): Promise<Result<null>> {
+    const existingPost = await this.postsRepository.getById(postId);
+
+    if (!existingPost) {
+      return createResultObject({ status: ResultStatus.NotFound });
+    }
+
+    /** обновляем лайк / получаем дельту для изменения счетчика */
+    const { status, data } = await this.likeService.updateLike(
+      userId,
+      postId,
+      newLikeStatus,
+    );
+
+    const lastPostLikes = await this.likeRepository.getLastLikes(postId);
+    const newestLikes = lastPostLikes.map((el) => ({
+      addedAt: el.createdAt,
+      userId: el.author.userId,
+      login: el.author.userLogin,
+    }));
+
+    const updatePayload = {
+      $set: { "extendedLikesInfo.newestLikes": newestLikes },
+    } as Record<"$set" | "$inc", object>;
+
+    /** добавляем к обновлению счетчик лайков поста */
+    if (
+      data &&
+      status === ResultStatus.NoContent &&
+      Object.keys(data).length > 0
+    ) {
+      updatePayload.$inc = {
+        "extendedLikesInfo.likesCount": data.likesCount ?? 0,
+        "extendedLikesInfo.dislikesCount": data.dislikesCount ?? 0,
+      };
+    }
+    await this.postsRepository.updateLikes(postId, updatePayload);
+
+    return createResultObject({ status: ResultStatus.NoContent });
   }
 }

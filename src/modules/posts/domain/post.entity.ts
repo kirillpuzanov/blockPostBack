@@ -3,6 +3,11 @@ import { PostDb } from "./post.types";
 
 const POSTS_COLLECTION_NAME = "posts";
 
+const NewestLikesSchema = new mongoose.Schema(
+  { addedAt: String, userId: String, login: String },
+  { _id: false }, // не создавать _id для поддокумента
+);
+
 const PostSchema = new mongoose.Schema<PostDb>({
   title: { type: String, require: true },
   shortDescription: { type: String, require: true },
@@ -15,7 +20,7 @@ const PostSchema = new mongoose.Schema<PostDb>({
     likesCount: { type: Number, default: 0 },
     dislikesCount: { type: Number, default: 0 },
 
-    newestLikes: [{ addedAt: String, userId: String, login: String }],
+    newestLikes: [NewestLikesSchema],
   },
 });
 

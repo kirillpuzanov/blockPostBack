@@ -17,6 +17,16 @@ export class LikeRepository {
     return query;
   }
 
+  async getLastLikes(parentId: string, limit = 3): Promise<WithId<LikeDb>[]> {
+    return LikeModel.find({
+      parentId,
+      status: LikeStatus.Like,
+    })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+  }
+
   async updateLikeStatus(
     id: string,
     status: LikeStatus,

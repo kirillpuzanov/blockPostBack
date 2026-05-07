@@ -11,6 +11,7 @@ import { inputCommentValidation } from "../../comments/validation/input-comment.
 import { container } from "../../../composition-root";
 import { PostsController } from "./posts.controller";
 import { optionalAccessGuard } from "../../../auth/validation/optional-access.guard";
+import { inputLikeStatusValidation } from "../../like/validation/like.validation";
 
 export const postsRouter = Router({});
 const postsController = container.get(PostsController);
@@ -49,6 +50,15 @@ postsRouter.post(
 );
 
 postsRouter.put(
+  "/:id/like-status",
+  accessTokenGuard,
+  handleIdValidation,
+  inputLikeStatusValidation,
+  validationResult,
+  postsController.updateLikeStatus.bind(postsController),
+);
+
+postsRouter.put(
   "/:id",
   authAdminGuard,
   handleIdValidation,
@@ -56,6 +66,7 @@ postsRouter.put(
   validationResult,
   postsController.updatePost.bind(postsController),
 );
+
 postsRouter.delete(
   "/:id",
   authAdminGuard,
